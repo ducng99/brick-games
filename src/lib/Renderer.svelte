@@ -1,7 +1,7 @@
 <script lang="ts">
     import { CBlock } from "../components/Block";
     import Block from "../components/Block.svelte";
-    import { bricks, height, width } from "./RendererStore";
+    import { bricks, height, width } from "../stores/RendererStore";
 
     for (let row = 0; row < $height; row++) {
         $bricks[row] = [];
@@ -19,7 +19,7 @@
      */
     export function setBlock(x: number, y: number, state: boolean): boolean {
         if (x >= 0 && x < $bricks.length && y >= 0 && y < $bricks[x].length) {
-            $bricks[y][x].on.update(() => state);
+            $bricks[y][x].toggle(state);
 
             return true;
         }
@@ -33,21 +33,29 @@
     export function clearScreen(): void {
         $bricks.forEach((row) => {
             row.forEach((block) => {
-                block.on.update(() => false);
+                block.toggle(false);
             });
         });
     }
 </script>
 
-{#each $bricks as rows}
-    <div class="row">
-        {#each rows as blockInfo}
-            <Block {blockInfo} />
-        {/each}
-    </div>
-{/each}
+<div class="container">
+    {#each $bricks as rows}
+        <div class="row">
+            {#each rows as blockInfo}
+                <Block {blockInfo} />
+            {/each}
+        </div>
+    {/each}
+</div>
 
 <style>
+    .container {
+        padding: 0.4em 0.2em;
+        background-color: var(--game-bg);
+        box-shadow: 0 0 1px 2px black;
+    }
+
     .row {
         display: flex;
     }

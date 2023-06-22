@@ -1,4 +1,8 @@
-br {
-    display: block;
-    height: 0;
+:root {
+    --game-bg: #899178;
+}
+
+body {
+    margin: 0;
+    background-color: darkslategray;
 }
