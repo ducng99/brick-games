@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CBlock } from "./Block";
+    import type CBlock from "./CBlock";
 
     export let blockInfo: CBlock;
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { CBlock } from "../components/Block";
+    import CBlock from "../components/CBlock";
     import Block from "../components/Block.svelte";
     import { bricks, height, width } from "../stores/RendererStore";
 

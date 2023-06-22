@@ -1,6 +1,6 @@
-import { writable } from "svelte/store";
-import type { CBlock } from "../components/Block";
-import type Renderer from "../lib/Renderer.svelte";
+import { writable } from 'svelte/store';
+import type CBlock from '../components/CBlock';
+import type Renderer from '../lib/Renderer.svelte';
 
 export const width = writable(10);
 export const height = writable(20);
