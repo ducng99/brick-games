@@ -13,6 +13,8 @@ interface Brain {
  * A generic brain class that is used for any game logic.
  */
 abstract class Brain {
+    state: 'created' | 'started' | 'running' | 'stopped' = 'created';
+
     /**
      * Initialize the brain.
      */

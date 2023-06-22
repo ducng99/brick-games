@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { bricks } from '../../stores/RendererStore';
+import { RendererInstance } from '../../stores/RendererStore';
 
 /**
  * A generic entity class that can be used for any game object.
@@ -16,10 +16,10 @@ class Entity {
         this.y = y;
         this._sprite = sprite;
 
-        const _bricks = get(bricks);
+        const renderer = get(RendererInstance);
 
         sprite.forEach(([spriteX, spriteY]) => {
-            _bricks[y + spriteY][x + spriteX].toggle(true);
+            renderer?.setBlock(x + spriteX, y + spriteY, true);
         });
     }
 
@@ -32,20 +32,18 @@ class Entity {
     move(x: number, y: number): void {
         if (x === this.x && y === this.y) return;
 
-        const _bricks = get(bricks);
-
-        const bricksToUpdate: { on: string[]; off: string[] } = {
+        const bricksToUpdate: { on: Array<[number, number]>; off: Array<[number, number]> } = {
             on: [],
             off: []
         };
 
         // Get old sprite's bricks positions to disable
-        bricksToUpdate.off = this._sprite.map(([spriteX, spriteY]) => JSON.stringify([this.x + spriteX, this.y + spriteY]));
+        bricksToUpdate.off = this._sprite.map(([spriteX, spriteY]) => [this.x + spriteX, this.y + spriteY]);
 
         // Get new sprite's bricks positions to enable. Remove from "off" list if exists (remains on).
         this._sprite.forEach(([spriteX, spriteY]) => {
-            const newSpritePosition = JSON.stringify([x + spriteX, y + spriteY]);
-            const offIndex = bricksToUpdate.off.findIndex((brick) => brick === newSpritePosition);
+            const newSpritePosition: [number, number] = [x + spriteX, y + spriteY];
+            const offIndex = bricksToUpdate.off.findIndex((brick) => brick[0] === newSpritePosition[0] && brick[1] === newSpritePosition[1]);
 
             if (offIndex !== -1) {
                 bricksToUpdate.off.splice(offIndex, 1);
@@ -54,20 +52,14 @@ class Entity {
             }
         });
 
-        bricksToUpdate.off.forEach((brick) => {
-            const [x, y] = JSON.parse(brick) as [number, number];
+        const renderer = get(RendererInstance);
 
-            if (x >= 0 && x < _bricks[0].length && y >= 0 && y < _bricks.length) {
-                _bricks[y][x].toggle(false);
-            }
+        bricksToUpdate.off.forEach((brick) => {
+            renderer?.setBlock(brick[0], brick[1], false);
         });
 
         bricksToUpdate.on.forEach((brick) => {
-            const [x, y] = JSON.parse(brick) as [number, number];
-
-            if (x >= 0 && x < _bricks[0].length && y >= 0 && y < _bricks.length) {
-                _bricks[y][x].toggle(true);
-            }
+            renderer?.setBlock(brick[0], brick[1], true);
         });
 
         this.x = x;
