@@ -18,7 +18,7 @@
      * @return true if successfully updated, false otherwise
      */
     export function setBlock(x: number, y: number, state: boolean): boolean {
-        if (x >= 0 && x < $bricks.length && y >= 0 && y < $bricks[x].length) {
+        if (y >= 0 && y < $bricks.length && x >= 0 && x < $bricks[y].length) {
             $bricks[y][x].toggle(state);
 
             return true;
