@@ -1,7 +1,7 @@
 <script lang="ts">
-    import CBlock from "../components/CBlock";
-    import Block from "../components/Block.svelte";
-    import { bricks, height, width } from "../stores/RendererStore";
+    import CBlock from '../components/CBlock';
+    import Block from '../components/Block.svelte';
+    import { bricks, height, width } from '../stores/RendererStore';
 
     for (let row = 0; row < $height; row++) {
         $bricks[row] = [];

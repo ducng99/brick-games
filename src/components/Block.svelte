@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type CBlock from "./CBlock";
+    import type CBlock from './CBlock';
 
     export let blockInfo: CBlock;
 
-    let isOn = blockInfo.on;
+    const isOn = blockInfo.on;
 </script>
 
 <div class="brick" class:on={$isOn} />
