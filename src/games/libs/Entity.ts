@@ -26,10 +26,12 @@ class Entity {
     /**
      * Update entity position to absolute coordinates.
      * This function only updates the bricks that are affected by the sprite (old and new).
-     * @param newX
-     * @param newY
+     * @param x
+     * @param y
      */
-    move(newX: number, newY: number): void {
+    move(x: number, y: number): void {
+        if (x === this.x && y === this.y) return;
+
         const _bricks = get(bricks);
 
         const bricksToUpdate: { on: string[]; off: string[] } = {
@@ -40,9 +42,9 @@ class Entity {
         // Get old sprite's bricks positions to disable
         bricksToUpdate.off = this._sprite.map(([spriteX, spriteY]) => JSON.stringify([this.x + spriteX, this.y + spriteY]));
 
-        // Get new sprite's bricks positions and enable. Remove from off list if exists.
+        // Get new sprite's bricks positions to enable. Remove from "off" list if exists (remains on).
         this._sprite.forEach(([spriteX, spriteY]) => {
-            const newSpritePosition = JSON.stringify([newX + spriteX, newY + spriteY]);
+            const newSpritePosition = JSON.stringify([x + spriteX, y + spriteY]);
             const offIndex = bricksToUpdate.off.findIndex((brick) => brick === newSpritePosition);
 
             if (offIndex !== -1) {
@@ -54,14 +56,33 @@ class Entity {
 
         bricksToUpdate.off.forEach((brick) => {
             const [x, y] = JSON.parse(brick) as [number, number];
-            _bricks[y][x].toggle(false);
+
+            if (x >= 0 && x < _bricks[0].length && y >= 0 && y < _bricks.length) {
+                _bricks[y][x].toggle(false);
+            }
         });
 
         bricksToUpdate.on.forEach((brick) => {
             const [x, y] = JSON.parse(brick) as [number, number];
-            _bricks[y][x].toggle(true);
+
+            if (x >= 0 && x < _bricks[0].length && y >= 0 && y < _bricks.length) {
+                _bricks[y][x].toggle(true);
+            }
         });
-    };
+
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * Move entity position to relative coordinates.
+     * @param x
+     * @param y
+     * @uses {@link move}
+     */
+    moveRelative(x: number, y: number): void {
+        this.move(this.x + x, this.y + y);
+    }
 }
 
 export default Entity;
