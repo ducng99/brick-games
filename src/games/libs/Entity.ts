@@ -77,6 +77,17 @@ class Entity {
             this.move(this.x + x, this.y + y);
         }
     }
+
+    /**
+     * Checks if this entity is colliding with another entity using their sprites
+     * @param entity Another entity to check collision with.
+     */
+    isColliding(entity: Entity): boolean {
+        const thisSprite = this._sprite.map(([spriteX, spriteY]) => [this.x + spriteX, this.y + spriteY]);
+        const entitySprite = entity._sprite.map(([spriteX, spriteY]) => [entity.x + spriteX, entity.y + spriteY]);
+
+        return thisSprite.some((thisBrick) => entitySprite.some((entityBrick) => thisBrick[0] === entityBrick[0] && thisBrick[1] === entityBrick[1]));
+    }
 }
 
 export default Entity;
