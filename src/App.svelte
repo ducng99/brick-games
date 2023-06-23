@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import Renderer from './lib/Renderer.svelte';
+    import Renderer from './libs/Renderer.svelte';
     import { RendererInstance } from './stores/RendererStore';
 
     let renderer: Renderer;

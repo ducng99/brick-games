@@ -73,7 +73,9 @@ class Entity {
      * @uses {@link move}
      */
     moveRelative(x: number, y: number): void {
-        this.move(this.x + x, this.y + y);
+        if (x != 0 || y != 0) {
+            this.move(this.x + x, this.y + y);
+        }
     }
 }
 
