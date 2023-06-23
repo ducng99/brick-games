@@ -1,8 +1,9 @@
 interface Brain {
     /**
-     * (Optional) Update the brain.
+     * (Optional) Update the brain logic each frame.
+     * @param delta The time in milliseconds since the last update.
      */
-    update?: () => void;
+    update?: (delta: number) => void;
     /**
      * (Optional) Stop the brain.
      */
