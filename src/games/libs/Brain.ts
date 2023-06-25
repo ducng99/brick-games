@@ -1,20 +1,24 @@
 interface Brain {
     /**
      * (Optional) Update the brain logic each frame.
-     * @param delta The time in milliseconds since the last update.
      */
-    update?: (delta: number) => void;
+    update?: () => void;
+
     /**
      * (Optional) Stop the brain.
+     * This function mainly used to clear all objects and listeners.
      */
     stop?: () => void;
 }
+
+type BrainState = 'created' | 'started' | 'running' | 'stopped';
 
 /**
  * A generic brain class that is used for any game logic.
  */
 abstract class Brain {
-    state: 'created' | 'started' | 'running' | 'stopped' = 'created';
+    state: BrainState = 'created';
+    protected lastFrame: number = 0;
 
     /**
      * Initialize the brain.

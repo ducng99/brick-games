@@ -3,23 +3,49 @@ import { RendererInstance } from '../../stores/RendererStore';
 
 /**
  * A generic entity class that can be used for any game object.
- * Stores X-Y position and width-height size.
+ * Stores position and sprite.
  */
 class Entity {
-    x: number;
-    y: number;
+    protected _x: number;
+    protected _y: number;
 
-    private readonly _sprite: Array<[number, number]>;
+    get x(): number {
+        return this._x;
+    }
+
+    get y(): number {
+        return this._y;
+    }
+
+    protected _sprite: Array<[number, number]>;
 
     constructor(x: number, y: number, sprite: Array<[number, number]>) {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
         this._sprite = sprite;
 
+        this.draw();
+    }
+
+    /**
+     * Draw entity on the screen.
+     */
+    draw(): void {
         const renderer = get(RendererInstance);
 
-        sprite.forEach(([spriteX, spriteY]) => {
-            renderer?.setBlock(x + spriteX, y + spriteY, true);
+        this._sprite.forEach(([spriteX, spriteY]) => {
+            renderer?.setBlock(this.x + spriteX, this.y + spriteY, true);
+        });
+    }
+
+    /**
+     * Clear entity from the screen.
+     */
+    clear(): void {
+        const renderer = get(RendererInstance);
+
+        this._sprite.forEach(([spriteX, spriteY]) => {
+            renderer?.setBlock(this.x + spriteX, this.y + spriteY, false);
         });
     }
 
@@ -30,7 +56,7 @@ class Entity {
      * @param y
      */
     move(x: number, y: number): void {
-        if (x === this.x && y === this.y) return;
+        if (x === this._x && y === this._y) return;
 
         const bricksToUpdate: { on: Array<[number, number]>; off: Array<[number, number]> } = {
             on: [],
@@ -38,7 +64,7 @@ class Entity {
         };
 
         // Get old sprite's bricks positions to disable
-        bricksToUpdate.off = this._sprite.map(([spriteX, spriteY]) => [this.x + spriteX, this.y + spriteY]);
+        bricksToUpdate.off = this._sprite.map(([spriteX, spriteY]) => [this._x + spriteX, this._y + spriteY]);
 
         // Get new sprite's bricks positions to enable. Remove from "off" list if exists (remains on).
         this._sprite.forEach(([spriteX, spriteY]) => {
@@ -62,8 +88,8 @@ class Entity {
             renderer?.setBlock(brick[0], brick[1], true);
         });
 
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
     }
 
     /**
@@ -74,7 +100,7 @@ class Entity {
      */
     moveRelative(x: number, y: number): void {
         if (x != 0 || y != 0) {
-            this.move(this.x + x, this.y + y);
+            this.move(this._x + x, this._y + y);
         }
     }
 
@@ -83,8 +109,8 @@ class Entity {
      * @param entity Another entity to check collision with.
      */
     isColliding(entity: Entity): boolean {
-        const thisSprite = this._sprite.map(([spriteX, spriteY]) => [this.x + spriteX, this.y + spriteY]);
-        const entitySprite = entity._sprite.map(([spriteX, spriteY]) => [entity.x + spriteX, entity.y + spriteY]);
+        const thisSprite = this._sprite.map(([spriteX, spriteY]) => [this._x + spriteX, this._y + spriteY]);
+        const entitySprite = entity._sprite.map(([spriteX, spriteY]) => [entity._x + spriteX, entity._y + spriteY]);
 
         return thisSprite.some((thisBrick) => entitySprite.some((entityBrick) => thisBrick[0] === entityBrick[0] && thisBrick[1] === entityBrick[1]));
     }

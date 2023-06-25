@@ -21,8 +21,16 @@ window.addEventListener('keyup', (event) => {
     keysDown.delete(event.code);
 });
 
-export function isKeyDown(key: string): boolean {
-    return keysDown.has(key);
+/**
+ * Check if a key is down or if any key is down.
+ * @param key Key to check if is down. If not provided, checks if any key is down.
+ */
+export function isKeyDown(key?: string): boolean {
+    if (key) {
+        return keysDown.has(key);
+    } else {
+        return keysDown.size > 0;
+    }
 }
 
 export function addOnKeyDownListener(key: string, callback: () => void) {
