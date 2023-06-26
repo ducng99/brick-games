@@ -47,7 +47,6 @@
             "error",
             "always"
         ],
-        "comma-dangle": 0,
         "space-before-function-paren": [
             "error",
             {
