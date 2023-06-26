@@ -5,11 +5,10 @@ import Brain from '../libs/Brain';
 import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
-import { randomInt } from '../../libs/Utils';
 
 const carHeight = 4;
 const playerCarY = 16;
-const maxSpeed = 120;
+const maxSpeed = 170;
 
 class CarRacingBrain extends Brain {
     private _player?: Car;
@@ -65,8 +64,8 @@ class CarRacingBrain extends Brain {
             let actualSpeed = this._speed;
 
             if (isKeyDown('Space')) {
-                if (this._speed + 100 < maxSpeed) {
-                    actualSpeed += 100;
+                if (this._speed + 150 < maxSpeed) {
+                    actualSpeed += 150;
                 } else {
                     actualSpeed = maxSpeed;
                 }
@@ -74,7 +73,7 @@ class CarRacingBrain extends Brain {
 
             const now = performance.now();
             const delta = now - this.lastFrame;
-            const shouldUpdateTime = 150 - actualSpeed * 1;
+            const shouldUpdateTime = 200 - actualSpeed * 1;
 
             if (delta > shouldUpdateTime) {
                 const stepsFloat = delta / shouldUpdateTime;
@@ -101,7 +100,7 @@ class CarRacingBrain extends Brain {
                         if (car.isCollidingBox(this.player)) {
                             this._explosion = new Explosion(car.x, car.y - 1);
                         } else if (car.y == playerCarY + 1) {
-                            this._score += 100 + actualSpeed;
+                            this._score.update(score => score + 100 + actualSpeed);
 
                             if (this._speed < maxSpeed) {
                                 this._speed++;
@@ -114,7 +113,7 @@ class CarRacingBrain extends Brain {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 if (this._otherCars.at(-1)!.y >= 5) {
                     const x = Math.random() > 0.5 ? 2 : 5;
-                    this._otherCars.push(new Car(x, -randomInt(0, 4) - carHeight));
+                    this._otherCars.push(new Car(x, -carHeight));
                 }
 
                 this.lastFrame = now;

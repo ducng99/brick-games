@@ -1,3 +1,5 @@
+import { writable, type Writable } from 'svelte/store';
+
 interface Brain {
     /**
      * (Optional) Update the brain logic each frame.
@@ -19,9 +21,9 @@ type BrainState = 'created' | 'started' | 'running' | 'stopped';
 abstract class Brain {
     state: BrainState = 'created';
     protected lastFrame: number = performance.now();
-    protected _score: number = 0;
+    protected _score: Writable<number> = writable(0);
 
-    get score(): number {
+    get score(): Writable<number> {
         return this._score;
     }
 
