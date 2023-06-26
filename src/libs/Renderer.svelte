@@ -52,7 +52,6 @@
 <style>
     .container {
         padding: 0.4em 0.2em;
-        background-color: var(--game-bg);
         box-shadow: 0 0 1px 2px black;
     }
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import Renderer from './libs/Renderer.svelte';
+    import Sidebar from './libs/Sidebar.svelte';
     import { RendererInstance } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
@@ -71,7 +72,10 @@
 </script>
 
 <main>
-    <Renderer bind:this={renderer} />
+    <div>
+        <Renderer bind:this={renderer} />
+        <Sidebar score={game?.score}/>
+    </div>
 </main>
 
 <style>
@@ -80,5 +84,12 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+    }
+
+    div {
+        display: flex;
+        background-color: var(--game-bg);
+        padding: 1em;
+        box-shadow: inset 0 0 0.2em 0 black;
     }
 </style>
