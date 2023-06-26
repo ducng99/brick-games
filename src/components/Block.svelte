@@ -12,8 +12,8 @@
 <style lang="scss">
     .brick {
         --game-block-min-opacity: 0.05;
-        --game-block-on-transition-time: 66ms;
-        --game-block-off-transition-time: 99ms;
+        --game-block-on-transition-time: 48ms;
+        --game-block-off-transition-time: 66ms;
 
         width: var(--game-block-size);
         height: var(--game-block-size);
