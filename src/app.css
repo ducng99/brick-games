@@ -8,7 +8,17 @@ body {
     background-color: darkslategray;
 }
 
+svg {
+    width: 1em;
+    height: 1em;
+}
+
 @font-face {
     font-family: 'DSEG';
     src: url('fonts/DSEG7ClassicMini-Italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'JetbrainsMono';
+    src: url('fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
 }
