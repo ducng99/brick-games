@@ -112,7 +112,7 @@ class Entity {
      */
     moveRelative(x: number, y: number): void {
         if (x != 0 || y != 0) {
-            this.move(this._x + x, this._y + y);
+            this.move(this.x + x, this.y + y);
         }
     }
 

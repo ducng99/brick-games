@@ -18,7 +18,12 @@ type BrainState = 'created' | 'started' | 'running' | 'stopped';
  */
 abstract class Brain {
     state: BrainState = 'created';
-    protected lastFrame: number = 0;
+    protected lastFrame: number = performance.now();
+    protected _score: number = 0;
+
+    get score(): number {
+        return this._score;
+    }
 
     /**
      * Initialize the brain.
