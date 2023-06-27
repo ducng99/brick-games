@@ -1,3 +1,9 @@
+## [0.1.1+patch2] - 2023-06-27
+
+### 🐛 Bug Fixes
+
+- *(deploy)* Fixed incorrect paths for fonts
+
 ## [0.1.1+patch1] - 2023-06-27
 
 ### 🐛 Bug Fixes
