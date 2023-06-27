@@ -1,11 +1,14 @@
 <script lang="ts">
     import { type Writable } from 'svelte/store';
+    import { pad } from './Utils';
 
     export let score: Writable<number> | undefined;
+
+    $: scoreText = pad(pad($score ?? 0, 3), 6, '!');
 </script>
 
 <div id="sidebar">
-    <div id="score">{$score ?? 0}</div>
+    <div id="score">{scoreText}</div>
     <div class="text">SCORE
         <span id="soundIcon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-music-note-beamed" viewBox="0 0 16 16">
@@ -13,18 +16,18 @@
                 <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"/>
                 <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"/>
             </svg>
-        </span></div>
+        </span>
+    </div>
 </div>
 
 <style lang="scss">
     #sidebar {
         padding-left: calc(var(--game-block-size) / 2);
-        width: calc(var(--game-block-size) * 5);
     }
 
     #score {
         font-family: 'DSEG';
-        font-size: calc(var(--game-block-size));
+        font-size: calc(var(--game-block-size) * 1.5);
         text-align: right;
         width: 100%;
     }
