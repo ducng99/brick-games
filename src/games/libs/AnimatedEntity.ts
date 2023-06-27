@@ -70,7 +70,7 @@ class AnimatedEntity extends Entity {
                     this._animationState = 'finished';
                 }
 
-                this._lastFrame = now - (stepsFloat - steps) * this._delay;
+                this._lastFrame = now;
             }
         }
     };
