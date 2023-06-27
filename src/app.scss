@@ -16,10 +16,10 @@ svg {
 
 @font-face {
     font-family: 'DSEG';
-    src: url('fonts/DSEG7ClassicMini-Italic.ttf') format('truetype');
+    src: url('@/assets/fonts/DSEG7ClassicMini-Italic.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'JetbrainsMono';
-    src: url('fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+    src: url('@/assets/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
 }
