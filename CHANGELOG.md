@@ -1,3 +1,9 @@
+## [0.1.1+patch1] - 2023-06-27
+
+### 🐛 Bug Fixes
+
+- *(deploy)* Fixed incorrect GH base path
+
 ## [0.1.1] - 2023-06-27
 
 ### 🎨 Styling
