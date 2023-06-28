@@ -5,6 +5,7 @@ import Brain from '../libs/Brain';
 import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
+import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 
 const carHeight = 4;
 const playerCarY = 16;
@@ -15,7 +16,8 @@ class CarRacingBrain extends Brain {
     private readonly _walls: Wall[] = [];
     private readonly _otherCars: Car[] = [];
     private _speed: number = 0;
-    private _explosion: Explosion | undefined;
+    private _explosion?: Explosion;
+    private _transition?: WipeBottomToTopTransition;
 
     get player(): Car {
         if (!this._player) this._player = new Car(2, playerCarY);
@@ -53,9 +55,20 @@ class CarRacingBrain extends Brain {
         if (this.state === 'running') {
             if (this._explosion) {
                 if (this._explosion.AnimationState === 'finished') {
-                    this.stop();
+                    this._explosion = undefined;
+                    this._transition = new WipeBottomToTopTransition();
                 } else {
                     this._explosion.update();
+                }
+
+                return;
+            }
+
+            if (this._transition) {
+                if (this._transition.AnimationState === 'finished') {
+                    this.stop();
+                } else {
+                    this._transition.update();
                 }
 
                 return;
@@ -128,6 +141,7 @@ class CarRacingBrain extends Brain {
         this._walls.length = 0;
         this._otherCars.length = 0;
         this._explosion = undefined;
+        this._transition = undefined;
 
         removeOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
