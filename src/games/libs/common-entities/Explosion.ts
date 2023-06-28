@@ -1,4 +1,4 @@
-import AnimatedEntity from '../AnimatedEntity';
+import AnimatedFrames from '../AnimatedFrames';
 
 /**
  *
@@ -72,9 +72,9 @@ const frames: Array<Array<[number, number]>> = Array.from<unknown, Array<Array<[
     ]
 ]).flat();
 
-class Explosion extends AnimatedEntity {
+class Explosion extends AnimatedFrames {
     constructor(x: number, y: number) {
-        super(x, y, frames, 100, [x, y, 5, 5]);
+        super(x, y, 100, frames, [x, y, 5, 5]);
     }
 }
 
