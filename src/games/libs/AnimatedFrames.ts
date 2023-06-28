@@ -1,12 +1,13 @@
 import { get } from 'svelte/store';
 import { RendererInstance } from '../../stores/RendererStore';
 import AnimatedEntity from './AnimatedEntity';
+import type { Sprite } from './Entity';
 
 /**
  * Helper base class for simple pre-defined frames animations.
  */
 class AnimatedFrames extends AnimatedEntity {
-    private readonly _frames: Array<Array<[number, number]>>;
+    private readonly _frames: Sprite[];
     private _currentFrameIndex: number = 0;
     private readonly _clearSquare?: [number, number, number, number];
 
@@ -17,7 +18,7 @@ class AnimatedFrames extends AnimatedEntity {
      * @param delay Delay between frames in milliseconds.
      * @param clearSquare An array of 4 numbers: [x, y, width, height] to clear the area before playing the animation.
      */
-    constructor(x: number, y: number, delay: number, frames: Array<Array<[number, number]>>, clearSquare?: [number, number, number, number]) {
+    constructor(x: number, y: number, delay: number, frames: Sprite[], clearSquare?: [number, number, number, number]) {
         if (frames.length === 0) throw new Error('Frames not provided');
         super(x, y, frames[0], delay);
 
@@ -27,7 +28,8 @@ class AnimatedFrames extends AnimatedEntity {
 
     update = () => {
         if (this.AnimationState === 'idle') {
-            this._animationState = 'playing';
+            this.AnimationState = 'playing';
+            this.lastFrame = performance.now();
 
             if (this._clearSquare) {
                 const renderer = get(RendererInstance);
@@ -43,7 +45,7 @@ class AnimatedFrames extends AnimatedEntity {
 
         if (this.AnimationState === 'playing') {
             const now = performance.now();
-            const delta = now - this._lastFrame;
+            const delta = now - this.lastFrame;
 
             if (delta > this._delay) {
                 const stepsFloat = delta / this._delay;
@@ -53,10 +55,10 @@ class AnimatedFrames extends AnimatedEntity {
                 if (this._currentFrameIndex < this._frames.length) {
                     this.updateSprite(this._frames[this._currentFrameIndex]);
                 } else {
-                    this._animationState = 'finished';
+                    this.AnimationState = 'finished';
                 }
 
-                this._lastFrame = now;
+                this.lastFrame = now;
             }
         }
     };

@@ -3,16 +3,15 @@ import Entity, { type Sprite } from './Entity';
 type AnimatedEntityState = 'idle' | 'playing' | 'finished';
 
 abstract class AnimatedEntity extends Entity {
-    protected _animationState: AnimatedEntityState = 'idle';
+    private _animationState: AnimatedEntityState = 'idle';
     protected readonly _delay: number;
-    protected _lastFrame: number = performance.now();
+    protected lastFrame: number = 0;
 
     /**
      * @param x
      * @param y
-     * @param frames An array of frames, each frame is an array of sprites.
+     * @param sprite Initial sprite.
      * @param delay Delay between frames in milliseconds.
-     * @param clearSquare An array of 4 numbers: [x, y, width, height] to clear the area before playing the animation.
      */
     constructor(x: number, y: number, sprite: Sprite, delay: number) {
         super(x, y, sprite);
@@ -22,6 +21,10 @@ abstract class AnimatedEntity extends Entity {
 
     get AnimationState(): AnimatedEntityState {
         return this._animationState;
+    }
+
+    protected set AnimationState(state: AnimatedEntityState) {
+        this._animationState = state;
     }
 
     abstract update(): void;
