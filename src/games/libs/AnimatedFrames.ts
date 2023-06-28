@@ -44,12 +44,10 @@ class AnimatedFrames extends AnimatedEntity {
         }
 
         if (this.AnimationState === 'playing') {
-            const now = performance.now();
-            const delta = now - this.lastFrame;
+            const delta = performance.now() - this.lastFrame;
 
-            if (delta > this._delay) {
-                const stepsFloat = delta / this._delay;
-                const steps = Math.floor(stepsFloat);
+            if (delta >= this._delay) {
+                const steps = Math.floor(delta / this._delay);
                 this._currentFrameIndex += steps;
 
                 if (this._currentFrameIndex < this._frames.length) {
@@ -58,7 +56,7 @@ class AnimatedFrames extends AnimatedEntity {
                     this.AnimationState = 'finished';
                 }
 
-                this.lastFrame = now;
+                this.lastFrame = performance.now();
             }
         }
     };

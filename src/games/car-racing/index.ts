@@ -1,14 +1,16 @@
 import { get } from 'svelte/store';
 import { isKeyDown, addOnKeyDownListener, removeOnKeyDownListener } from '../../libs/KeyboardHandler';
-import { height as screenHeight } from '../../stores/RendererStore';
+import { height as screenHeight, width as screenWidth } from '../../stores/RendererStore';
 import Brain from '../libs/Brain';
 import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
+import { randomInt } from '../../libs/Utils';
 
 const carHeight = 4;
-const playerCarY = 16;
+const carWidth = 3;
+const playerCarY = get(screenHeight) - carHeight;
 const maxSpeed = 170;
 
 class CarRacingBrain extends Brain {
@@ -27,14 +29,14 @@ class CarRacingBrain extends Brain {
 
     start = () => {
         // Setup walls
-        for (let i = 0; i < 5; i++) {
-            this._walls.push(new Wall(0, i * 5 - 2));
-            this._walls.push(new Wall(9, i * 5 - 2));
+        for (let i = -2; i < get(screenHeight); i += 5) {
+            this._walls.push(new Wall(0, i));
+            this._walls.push(new Wall(9, i));
         }
 
         // Setup other cars
-        // Randomly choose left or right lane
-        const x = Math.random() > 0.5 ? 2 : 5;
+        // Randomly choose lane
+        const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
         this._otherCars.push(new Car(x, -carHeight));
 
         // Setup player car
@@ -47,7 +49,7 @@ class CarRacingBrain extends Brain {
     };
 
     update = () => {
-        if (this.state === 'started' && isKeyDown()) {
+        if (this.state === 'started' && isKeyDown('Space')) {
             this.state = 'running';
             this.lastFrame = performance.now();
         }
@@ -55,6 +57,7 @@ class CarRacingBrain extends Brain {
         if (this.state === 'running') {
             if (this._explosion) {
                 if (this._explosion.AnimationState === 'finished') {
+                    this._explosion.clear();
                     this._explosion = undefined;
                     this._transition = new WipeBottomToTopTransition();
                 } else {
@@ -66,7 +69,7 @@ class CarRacingBrain extends Brain {
 
             if (this._transition) {
                 if (this._transition.AnimationState === 'finished') {
-                    this.stop();
+                    this._transition.clear();
                 } else {
                     this._transition.update();
                 }
@@ -84,13 +87,11 @@ class CarRacingBrain extends Brain {
                 }
             }
 
-            const now = performance.now();
-            const delta = now - this.lastFrame;
+            const delta = performance.now() - this.lastFrame;
             const shouldUpdateTime = 200 - actualSpeed * 1;
 
-            if (delta > shouldUpdateTime) {
-                const stepsFloat = delta / shouldUpdateTime;
-                const steps = Math.floor(stepsFloat);
+            if (delta >= shouldUpdateTime) {
+                const steps = Math.floor(delta / shouldUpdateTime);
 
                 this._walls.forEach((wall) => {
                     wall.moveRelative(0, 1 * steps);
@@ -113,7 +114,7 @@ class CarRacingBrain extends Brain {
                         if (car.isCollidingBox(this.player)) {
                             this._explosion = new Explosion(car.x, car.y - 1);
                         } else if (car.y == playerCarY + 1) {
-                            this._score.update(score => score + 100 + actualSpeed);
+                            this._score.update(score => score + 100 + Math.floor(actualSpeed / 10));
 
                             if (this._speed < maxSpeed) {
                                 this._speed++;
@@ -123,13 +124,13 @@ class CarRacingBrain extends Brain {
                 }
 
                 // Generate new car if last car's Y is at least 5 blocks away from the top
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                if (this._otherCars.at(-1)!.y >= 5) {
-                    const x = Math.random() > 0.5 ? 2 : 5;
-                    this._otherCars.push(new Car(x, -carHeight));
+                const lastCarY = this._otherCars.at(-1)?.y ?? 0;
+                if (lastCarY >= 5) {
+                    const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
+                    this._otherCars.push(new Car(x, -carHeight + lastCarY - 5));
                 }
 
-                this.lastFrame = now;
+                this.lastFrame = performance.now();
             }
         }
     };
@@ -148,37 +149,37 @@ class CarRacingBrain extends Brain {
     };
 
     playerMoveLeft = () => {
-        if (this._explosion) return;
+        if (!this._explosion && !this._transition && this.state === 'running') {
+            const x = -3;
 
-        const x = -3;
-
-        if (this.player.x + x == 2) {
-            this.player.moveRelative(x, 0);
-        }
-
-        // Checks collision with other cars
-        this._otherCars.forEach((car) => {
-            if (car.isCollidingBox(this.player)) {
-                this._explosion = new Explosion(car.x, car.y - 1);
+            if (this.player.x + x == 2) {
+                this.player.moveRelative(x, 0);
             }
-        });
+
+            // Checks collision with other cars
+            this._otherCars.forEach((car) => {
+                if (car.isCollidingBox(this.player)) {
+                    this._explosion = new Explosion(car.x, car.y - 1);
+                }
+            });
+        }
     };
 
     playerMoveRight = () => {
-        if (this._explosion) return;
+        if (!this._explosion && !this._transition && this.state === 'running') {
+            const x = 3;
 
-        const x = 3;
-
-        if (this.player.x + x == 5) {
-            this.player.moveRelative(x, 0);
-        }
-
-        // Checks collision with other cars
-        this._otherCars.forEach((car) => {
-            if (car.isCollidingBox(this.player)) {
-                this._explosion = new Explosion(car.x, car.y - 1);
+            if (this.player.x + x == 5) {
+                this.player.moveRelative(x, 0);
             }
-        });
+
+            // Checks collision with other cars
+            this._otherCars.forEach((car) => {
+                if (car.isCollidingBox(this.player)) {
+                    this._explosion = new Explosion(car.x, car.y - 1);
+                }
+            });
+        }
     };
 }
 

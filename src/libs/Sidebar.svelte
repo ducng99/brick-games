@@ -1,10 +1,10 @@
 <script lang="ts">
     import { type Writable } from 'svelte/store';
-    import { pad } from './Utils';
+    import { clamp, pad } from './Utils';
 
     export let score: Writable<number> | undefined;
 
-    $: scoreText = pad(pad($score ?? 0, 3), 6, '!');
+    $: scoreText = pad(pad(clamp($score ?? 0, 0, 999999), 3), 6, '!');
 </script>
 
 <div id="sidebar">

@@ -28,9 +28,9 @@ window.addEventListener('keyup', (event) => {
 export function isKeyDown(key?: string): boolean {
     if (key) {
         return keysDown.has(key);
-    } else {
-        return keysDown.size > 0;
     }
+
+    return keysDown.size > 0;
 }
 
 export function addOnKeyDownListener(key: string, callback: () => void) {

@@ -8,7 +8,7 @@ interface Brain {
 
     /**
      * (Optional) Stop the brain.
-     * This function mainly used to clear all objects and listeners.
+     * This function mainly used to clear all entities and event listeners.
      */
     stop?: () => void;
 }

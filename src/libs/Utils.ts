@@ -12,11 +12,22 @@ export function randomInt(min: number, max: number) {
  * Paddding a number with specified char
  * @param num Number to pad
  * @param size Size of the padded string
- * @param char Char to pad with
+ * @param char Char to pad with. Default is '0'
  * @returns Padded string
  */
 export function pad(num: number | string, size: number, char: string = '0'): string {
     let s = num.toString();
     while (s.length < size) s = char + s;
     return s;
+}
+
+/**
+ * Clamps a number between min and max
+ * @param num Number to clamp
+ * @param min Minimum value
+ * @param max Maximum value
+ * @returns Clamped number
+ */
+export function clamp(num: number, min: number, max: number): number {
+    return Math.min(Math.max(num, min), max);
 }
