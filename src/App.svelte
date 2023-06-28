@@ -5,8 +5,8 @@
     import { RendererInstance } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
+    import { get } from 'svelte/store';
 
-    let renderer: Renderer | null = null;
     let game: Brain | null = null;
     const currentGameId: string = 'car-racing';
 
@@ -23,8 +23,6 @@
     }
 
     onMount(() => {
-        RendererInstance.update(() => renderer);
-
         addOnKeyDownListener('KeyR', restartGame);
 
         return () => {
@@ -67,13 +65,13 @@
 
         game = null;
 
-        renderer?.clearScreen();
+        get(RendererInstance)?.clearScreen();
     }
 </script>
 
 <main>
     <div>
-        <Renderer bind:this={renderer} />
+        <Renderer bind:this={$RendererInstance} />
         <Sidebar score={game?.score}/>
     </div>
 </main>
