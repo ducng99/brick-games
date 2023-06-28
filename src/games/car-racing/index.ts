@@ -26,8 +26,8 @@ class CarRacingBrain extends Brain {
     start = () => {
         // Setup walls
         for (let i = 0; i < 5; i++) {
-            this._walls.push(new Wall(0, -i * 5 - 3));
-            this._walls.push(new Wall(9, -i * 5 - 3));
+            this._walls.push(new Wall(0, i * 5 - 2));
+            this._walls.push(new Wall(9, i * 5 - 2));
         }
 
         // Setup other cars
