@@ -1,4 +1,5 @@
 import AnimatedFrames from '../AnimatedFrames';
+import type { Sprite } from '../Entity';
 
 /**
  *
@@ -40,7 +41,7 @@ import AnimatedFrames from '../AnimatedFrames';
  * ----------
  * 4 times the above
  */
-const frames: Array<Array<[number, number]>> = Array.from<unknown, Array<Array<[number, number]>>>({ length: 4 }, () => [
+const frames: Sprite[] = Array.from<unknown, Sprite[]>({ length: 4 }, () => [
     [
         [2, 2]
     ],

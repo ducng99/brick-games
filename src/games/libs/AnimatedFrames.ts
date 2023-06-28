@@ -7,6 +7,7 @@ import AnimatedEntity from './AnimatedEntity';
  */
 class AnimatedFrames extends AnimatedEntity {
     private readonly _frames: Array<Array<[number, number]>>;
+    private _currentFrameIndex: number = 0;
     private readonly _clearSquare?: [number, number, number, number];
 
     /**
@@ -50,9 +51,7 @@ class AnimatedFrames extends AnimatedEntity {
                 this._currentFrameIndex += steps;
 
                 if (this._currentFrameIndex < this._frames.length) {
-                    this.clear();
-                    this._sprite = this._frames[this._currentFrameIndex];
-                    this.draw();
+                    this.updateSprite(this._frames[this._currentFrameIndex]);
                 } else {
                     this._animationState = 'finished';
                 }

@@ -1,11 +1,11 @@
-import Entity from '../libs/Entity';
+import Entity, { type Sprite } from '../libs/Entity';
 
 /**
  * []
  * []
  * []
  */
-const wallSprite: Array<[number, number]> = [
+const wallSprite: Sprite = [
     [0, 0],
     [0, 1],
     [0, 2]

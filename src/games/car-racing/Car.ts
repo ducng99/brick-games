@@ -1,4 +1,4 @@
-import Entity from '../libs/Entity';
+import Entity, { type Sprite } from '../libs/Entity';
 
 /**
  *   []
@@ -6,7 +6,7 @@ import Entity from '../libs/Entity';
  *   []
  * []  []
  */
-const carSprite: Array<[number, number]> = [
+const carSprite: Sprite = [
     [1, 0],
     [0, 1],
     [1, 1],
