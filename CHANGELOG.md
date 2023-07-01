@@ -1,3 +1,26 @@
+## [0.1.2] - 2023-07-01
+
+### ⛰️  Features
+
+- *(car-racing)* Added wipe bottom-to-top transition
+- *(car-racing)* Added health and display in sidebar
+- Added RendererMini in sidebar
+
+### 🚜 Refactor
+
+- Refactored AnimatedEntity class, splitting to AnimatedFrames
+- Changed how animated frames/sprites transition
+- Added `Sprite` type
+- Let svelte update renderer instance
+
+### 🎨 Styling
+
+- Make brick's border thicker
+
+### ⚙️ Miscellaneous Tasks
+
+- *(car-racing)* Walls are now displayed on game start
+
 ## [0.1.1+patch2] - 2023-06-27
 
 ### 🐛 Bug Fixes
