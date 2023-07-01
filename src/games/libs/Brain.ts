@@ -1,4 +1,4 @@
-import { writable, type Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 interface Brain {
     /**
@@ -20,10 +20,10 @@ type BrainState = 'created' | 'started' | 'running' | 'stopped';
  */
 abstract class Brain {
     state: BrainState = 'created';
-    protected lastFrame: number = 0;
-    protected _score: Writable<number> = writable(0);
+    protected lastFrame = 0;
+    protected _score = writable(0);
 
-    get score(): Writable<number> {
+    get score() {
         return this._score;
     }
 

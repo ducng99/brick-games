@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { type Writable } from 'svelte/store';
     import { clamp, pad } from './Utils';
+    import Renderer from './Renderer.svelte';
+    import { bricks, width, height, RendererMiniInstance } from '../stores/RendererMiniStore';
 
-    export let score: Writable<number> | undefined;
+    export let score: number | undefined;
 
-    $: scoreText = pad(pad(clamp($score ?? 0, 0, 999999), 3), 6, '!');
+    $: scoreText = pad(pad(clamp(score ?? 0, 0, 999999), 3), 6, '!');
 </script>
 
 <div id="sidebar">
@@ -17,6 +18,9 @@
                 <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"/>
             </svg>
         </span>
+    </div>
+    <div id="rendererMini">
+        <Renderer bricks={$bricks} width={$width} height={$height} border={false} bind:this={$RendererMiniInstance} />
     </div>
 </div>
 
@@ -46,5 +50,10 @@
     #soundIcon {
         margin: 0 0.5em;
         display: flex;
+    }
+
+    #rendererMini {
+        display: flex;
+        justify-content: center;
     }
 </style>

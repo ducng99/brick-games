@@ -1,12 +1,16 @@
 <script lang="ts">
     import CBlock from '../components/CBlock';
     import Block from '../components/Block.svelte';
-    import { bricks, height, width } from '../stores/RendererStore';
 
-    for (let row = 0; row < $height; row++) {
-        $bricks[row] = [];
-        for (let col = 0; col < $width; col++) {
-            $bricks[row][col] = new CBlock();
+    export let bricks: CBlock[][];
+    export let width: number;
+    export let height: number;
+    export let border: boolean = true;
+
+    for (let row = 0; row < height; row++) {
+        bricks[row] = [];
+        for (let col = 0; col < width; col++) {
+            bricks[row][col] = new CBlock();
         }
     }
 
@@ -18,8 +22,8 @@
      * @return true if successfully updated, false otherwise
      */
     export function setBlock(x: number, y: number, state: boolean): boolean {
-        if (y >= 0 && y < $bricks.length && x >= 0 && x < $bricks[y].length) {
-            $bricks[y][x].toggle(state);
+        if (y >= 0 && y < bricks.length && x >= 0 && x < bricks[y].length) {
+            bricks[y][x].toggle(state);
 
             return true;
         }
@@ -31,7 +35,7 @@
      * Toggle all blocks to "off" state
      */
     export function clearScreen(): void {
-        $bricks.forEach((row) => {
+        bricks.forEach((row) => {
             row.forEach((block) => {
                 block.toggle(false);
             });
@@ -39,8 +43,8 @@
     }
 </script>
 
-<div class="container">
-    {#each $bricks as rows}
+<div class="container" class:border={border}>
+    {#each bricks as rows}
         <div class="row">
             {#each rows as blockInfo}
                 <Block {blockInfo} />
@@ -49,10 +53,13 @@
     {/each}
 </div>
 
-<style>
+<style lang="scss">
     .container {
         padding: 0.4em 0.2em;
-        box-shadow: 0 0 1px 2px black;
+
+        &.border {
+            box-shadow: 0 0 1px 2px black;
+        }
     }
 
     .row {

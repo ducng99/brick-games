@@ -2,13 +2,14 @@
     import { onMount } from 'svelte';
     import Renderer from './libs/Renderer.svelte';
     import Sidebar from './libs/Sidebar.svelte';
-    import { RendererInstance } from './stores/RendererStore';
+    import { RendererInstance, bricks, width, height } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import { get } from 'svelte/store';
 
     let game: Brain | null = null;
     const currentGameId: string = 'car-racing';
+    $: gameScore = game?.score;
 
     $: {
         selectGame(currentGameId);
@@ -71,8 +72,8 @@
 
 <main>
     <div>
-        <Renderer bind:this={$RendererInstance} />
-        <Sidebar score={game?.score}/>
+        <Renderer bricks={$bricks} width={$width} height={$height} bind:this={$RendererInstance} />
+        <Sidebar score={$gameScore} />
     </div>
 </main>
 
