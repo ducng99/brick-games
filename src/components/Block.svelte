@@ -19,8 +19,8 @@
         height: var(--game-block-size);
         background: black;
         opacity: var(--game-block-min-opacity);
-        border: 0.1em solid var(--game-bg);
-        box-shadow: inset 0 0 0.5px 0.1em black,
+        border: 0.2em solid var(--game-bg);
+        box-shadow: inset 0 0 0 0.2em black,
             inset 0 0 0 0.5em var(--game-bg);
         transition: opacity var(--game-block-off-transition-time) ease-out;
 
