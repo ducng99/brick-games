@@ -7,6 +7,7 @@ import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { randomInt } from '../../libs/Utils';
+import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -15,6 +16,7 @@ const maxSpeed = 170;
 
 class CarRacingBrain extends Brain {
     private _player?: Car;
+    private _health: number = 4;
     private readonly _walls: Wall[] = [];
     private readonly _otherCars: Car[] = [];
     private _speed: number = 0;
@@ -28,24 +30,17 @@ class CarRacingBrain extends Brain {
     }
 
     start = () => {
-        // Setup walls
-        for (let i = -2; i < get(screenHeight); i += 5) {
-            this._walls.push(new Wall(0, i));
-            this._walls.push(new Wall(9, i));
-        }
-
-        // Setup other cars
-        // Randomly choose lane
-        const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
-        this._otherCars.push(new Car(x, -carHeight));
-
-        // Setup player car
-        this.player.moveRelative(0, 0);
-
+        // Setup keyboard listeners
         addOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         addOnKeyDownListener('ArrowRight', this.playerMoveRight);
 
-        this.state = 'started';
+        // Show health
+        const miniRenderer = get(RendererMiniInstance);
+        for (let i = 0; i < this._health; i++) {
+            miniRenderer?.setBlock(i, 0, true);
+        }
+
+        this.restart();
     };
 
     update = () => {
@@ -70,6 +65,12 @@ class CarRacingBrain extends Brain {
             if (this._transition) {
                 if (this._transition.AnimationState === 'finished') {
                     this._transition.clear();
+
+                    if (this._health > 0) {
+                        this.restart();
+                    } else {
+                        this.stop();
+                    }
                 } else {
                     this._transition.update();
                 }
@@ -112,6 +113,7 @@ class CarRacingBrain extends Brain {
                     } else {
                         // Checks collision with player
                         if (car.isCollidingBox(this.player)) {
+                            this.health -= 1;
                             this._explosion = new Explosion(car.x, car.y - 1);
                         } else if (car.y == playerCarY + 1) {
                             this._score.update(score => score + 100 + Math.floor(actualSpeed / 10));
@@ -148,17 +150,42 @@ class CarRacingBrain extends Brain {
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
     };
 
+    restart = () => {
+        this._player = undefined;
+        this._walls.length = 0;
+        this._otherCars.length = 0;
+        this._explosion = undefined;
+        this._transition = undefined;
+
+        // Setup walls
+        for (let i = -2; i < get(screenHeight); i += 5) {
+            this._walls.push(new Wall(0, i));
+            this._walls.push(new Wall(9, i));
+        }
+
+        // Setup other cars
+        // Randomly choose lane
+        const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
+        this._otherCars.push(new Car(x, -carHeight));
+
+        // Setup player car
+        this.player.moveRelative(0, 0);
+
+        this.state = 'started';
+    };
+
     playerMoveLeft = () => {
         if (!this._explosion && !this._transition && this.state === 'running') {
-            const x = -3;
+            const x = -carWidth;
 
-            if (this.player.x + x == 2) {
+            if (this.player.x + x >= 2) {
                 this.player.moveRelative(x, 0);
             }
 
             // Checks collision with other cars
             this._otherCars.forEach((car) => {
                 if (car.isCollidingBox(this.player)) {
+                    this.health -= 1;
                     this._explosion = new Explosion(car.x, car.y - 1);
                 }
             });
@@ -167,20 +194,35 @@ class CarRacingBrain extends Brain {
 
     playerMoveRight = () => {
         if (!this._explosion && !this._transition && this.state === 'running') {
-            const x = 3;
+            const x = carWidth;
 
-            if (this.player.x + x == 5) {
+            if (this.player.x + x <= get(screenWidth) - carWidth - 2) {
                 this.player.moveRelative(x, 0);
             }
 
             // Checks collision with other cars
             this._otherCars.forEach((car) => {
                 if (car.isCollidingBox(this.player)) {
+                    this.health -= 1;
                     this._explosion = new Explosion(car.x, car.y - 1);
                 }
             });
         }
     };
+
+    get health(): number {
+        return this._health;
+    }
+
+    private set health(health: number) {
+        if (health != this._health) {
+            const oldHealth = this._health;
+            this._health = health;
+
+            const miniRenderer = get(RendererMiniInstance);
+            miniRenderer?.setBlock(Math.min(health, oldHealth), 0, health > oldHealth);
+        }
+    }
 }
 
 export default CarRacingBrain;
