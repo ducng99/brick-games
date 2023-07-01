@@ -31,7 +31,7 @@
 
     #score {
         font-family: 'DSEG';
-        font-size: calc(var(--game-block-size) * 1.5);
+        font-size: calc(var(--game-block-size) * 1.4);
         text-align: right;
         width: 100%;
     }
