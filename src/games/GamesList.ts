@@ -1,15 +1,21 @@
+import { writable } from 'svelte/store';
+
 interface GameInfo {
-    id: string;
     name: string;
     loader: () => Promise<any>;
 }
 
-const GamesList: GameInfo[] = [
-    {
-        id: 'car-racing',
+export const CurrentGameId = writable('');
+
+/**
+ * Games metadata.
+ * Each key is the game id.
+ */
+const GamesList: Record<string, GameInfo> = {
+    'car-racing': {
         name: 'Car Racing',
         loader: () => import('./car-racing')
     }
-];
+};
 
 export default GamesList;

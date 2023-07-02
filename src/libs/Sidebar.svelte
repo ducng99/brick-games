@@ -2,6 +2,8 @@
     import { clamp, pad } from './Utils';
     import Renderer from './Renderer.svelte';
     import { bricks, width, height, RendererMiniInstance } from '../stores/RendererMiniStore';
+    import GamesList from '../games/GamesList';
+    import { MenuCurrentSelectGameId } from '../games';
 
     export let score: number | undefined;
 
@@ -10,7 +12,7 @@
 
 <div id="sidebar">
     <div id="score">{scoreText}</div>
-    <div class="text">SCORE
+    <div id="scoreLabel" class="text">SCORE
         <span id="soundIcon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-music-note-beamed" viewBox="0 0 16 16">
                 <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"/>
@@ -22,10 +24,19 @@
     <div id="rendererMini">
         <Renderer bricks={$bricks} width={$width} height={$height} border={false} bind:this={$RendererMiniInstance} />
     </div>
+    <div id="currentGameName" class="text">
+        {#if $MenuCurrentSelectGameId in GamesList}
+            {GamesList[$MenuCurrentSelectGameId].name}
+        {:else}
+            Game over
+        {/if}
+    </div>
 </div>
 
 <style lang="scss">
     #sidebar {
+        display: flex;
+        flex-direction: column;
         padding-left: calc(var(--game-block-size) / 2);
     }
 
@@ -40,11 +51,14 @@
         font-family: 'JetbrainsMono';
         font-size: 2em;
         font-weight: bold;
-        margin: 1em 0;
+        text-transform: uppercase;
+    }
 
+    #scoreLabel {
         display: flex;
         align-items: center;
         justify-content: flex-end;
+        margin: 1em 0;
     }
 
     #soundIcon {
@@ -55,5 +69,10 @@
     #rendererMini {
         display: flex;
         justify-content: center;
+    }
+
+    #currentGameName {
+        margin-top: auto;
+        text-align: center;
     }
 </style>

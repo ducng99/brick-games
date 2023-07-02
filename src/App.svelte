@@ -5,20 +5,20 @@
     import { RendererInstance, bricks, width, height } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
-    import { get } from 'svelte/store';
+    import GamesList, { CurrentGameId } from './games/GamesList';
+    import GameMenu from './games';
 
-    let game: Brain | null = null;
-    const currentGameId: string = 'car-racing';
-    $: gameScore = game?.score;
+    const gameMenu = new GameMenu();
+
+    let game: Brain = gameMenu;
+    $: gameScore = game.score;
+
+    $: loadNewGame($CurrentGameId);
 
     $: {
-        selectGame(currentGameId);
-    }
+        game.start();
 
-    $: {
-        game?.start();
-
-        if (game?.update) {
+        if (game.update) {
             requestAnimationFrame(processFrame);
         }
     }
@@ -32,18 +32,18 @@
         };
     });
 
-    function selectGame(id: string) {
+    function loadNewGame(id: string) {
         stopGame();
 
-        import('./games/GamesList').then(list => {
-            list.default.find(game => game.id === id)?.loader().then(_ => {
+        if (id in GamesList) {
+            GamesList[id].loader().then(_ => {
                 game = new _.default();
             }).catch(() => console.error('Failed to load game.'));
-        }).catch(() => console.error('Failed to load games list.'));
+        }
     }
 
     function processFrame() {
-        if (game?.update) {
+        if (game.update) {
             if (game.state === 'stopped') {
                 stopGame();
                 return;
@@ -56,17 +56,19 @@
     }
 
     function restartGame() {
-        selectGame(currentGameId);
+        loadNewGame($CurrentGameId);
     }
 
     function stopGame() {
-        if (game?.stop && game.state !== 'stopped') {
+        if (game.stop && game.state !== 'stopped') {
             game.stop();
         }
 
-        game = null;
+        if ($RendererInstance?.clearScreen) {
+            $RendererInstance.clearScreen();
+        }
 
-        get(RendererInstance)?.clearScreen();
+        game = gameMenu;
     }
 </script>
 
