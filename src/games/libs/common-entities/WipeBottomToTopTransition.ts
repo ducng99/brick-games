@@ -6,7 +6,7 @@ import type { Sprite } from '../Entity';
 const width = get(screenWidth);
 const height = get(screenHeight);
 
-const frames: Sprite[] = Array.from({ length: height }, (_, row) => {
+const frames: Sprite[] = Array.from({ length: height - 1 }, (_, row) => {
     const ret: Sprite = [];
 
     for (let i = 0; i <= row; i++) {
@@ -16,7 +16,7 @@ const frames: Sprite[] = Array.from({ length: height }, (_, row) => {
     }
 
     return ret;
-}).slice(0, -1).concat(Array.from({ length: height }, (_, row) => {
+}).concat(Array.from({ length: height }, (_, row) => {
     const ret: Sprite = [];
 
     for (let i = height - row - 1; i >= 0; i--) {
