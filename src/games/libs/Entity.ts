@@ -8,23 +8,13 @@ export type Sprite = Array<[number, number]>;
  * Stores position and sprite.
  */
 class Entity {
-    protected _x: number;
-    protected _y: number;
-    protected _width?: number;
-    protected _height?: number;
-
-    get x(): number {
-        return this._x;
-    }
-
-    get y(): number {
-        return this._y;
-    }
-
-    protected _sprite: Sprite;
+    private _x: number;
+    private _y: number;
+    private _sprite: Sprite;
+    private readonly _width?: number;
+    private readonly _height?: number;
 
     /**
-     *
      * @param x
      * @param y
      * @param sprite An array of [x, y] coordinates that represents the sprite.
@@ -39,6 +29,14 @@ class Entity {
         this._height = height;
 
         this.draw();
+    }
+
+    get x(): number {
+        return this._x;
+    }
+
+    get y(): number {
+        return this._y;
     }
 
     /**
