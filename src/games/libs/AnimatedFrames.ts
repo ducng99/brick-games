@@ -40,6 +40,8 @@ class AnimatedFrames extends AnimatedEntity {
                         renderer?.setBlock(col, row, false);
                     }
                 }
+
+                this.draw();
             }
         }
 
