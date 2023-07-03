@@ -1,5 +1,3 @@
-import { get } from 'svelte/store';
-import { RendererInstance } from '../../stores/RendererStore';
 import AnimatedEntity from './AnimatedEntity';
 import type { Sprite } from './Entity';
 
@@ -32,12 +30,11 @@ class AnimatedFrames extends AnimatedEntity {
             this.lastFrame = performance.now();
 
             if (this._clearSquare) {
-                const renderer = get(RendererInstance);
                 const [sqX, sqY, sqWidth, sqHeight] = this._clearSquare;
 
                 for (let row = sqY; row < sqY + sqHeight; row++) {
                     for (let col = sqX; col < sqX + sqWidth; col++) {
-                        renderer?.setBlock(col, row, false);
+                        this.renderer?.setBlock(col, row, false);
                     }
                 }
 

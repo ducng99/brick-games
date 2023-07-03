@@ -1,4 +1,6 @@
 import { writable } from 'svelte/store';
+import type Renderer from '../../libs/Renderer.svelte';
+import { RendererInstance } from '../../stores/RendererStore';
 
 interface Brain {
     /**
@@ -22,6 +24,13 @@ abstract class Brain {
     state: BrainState = 'created';
     protected lastFrame = 0;
     protected _score = writable(0);
+    protected renderer: Renderer | null = null;
+
+    constructor() {
+        RendererInstance.subscribe(instance => {
+            this.renderer = instance;
+        });
+    }
 
     get score() {
         return this._score;

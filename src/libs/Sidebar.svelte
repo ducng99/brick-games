@@ -1,7 +1,7 @@
 <script lang="ts">
     import { clamp, pad } from './Utils';
     import Renderer from './Renderer.svelte';
-    import { bricks, width, height, RendererMiniInstance } from '../stores/RendererMiniStore';
+    import { width, height, RendererMiniInstance } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
     import { MenuCurrentSelectGameId } from '../games';
 
@@ -22,7 +22,7 @@
         </span>
     </div>
     <div id="rendererMini">
-        <Renderer bricks={$bricks} width={$width} height={$height} border={false} bind:this={$RendererMiniInstance} />
+        <Renderer width={$width} height={$height} border={false} bind:this={$RendererMiniInstance} />
     </div>
     <div id="currentGameName" class="text">
         {#if $MenuCurrentSelectGameId in GamesList}

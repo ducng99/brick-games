@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import Renderer from './libs/Renderer.svelte';
     import Sidebar from './libs/Sidebar.svelte';
-    import { RendererInstance, bricks, width, height } from './stores/RendererStore';
+    import { RendererInstance, width, height } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import GamesList, { CurrentGameId } from './games/GamesList';
@@ -74,7 +74,7 @@
 
 <main>
     <div>
-        <Renderer bricks={$bricks} width={$width} height={$height} bind:this={$RendererInstance} />
+        <Renderer width={$width} height={$height} bind:this={$RendererInstance} />
         <Sidebar score={$gameScore} />
     </div>
 </main>

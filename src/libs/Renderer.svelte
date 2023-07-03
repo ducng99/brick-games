@@ -2,7 +2,7 @@
     import CBlock from '../components/CBlock';
     import Block from '../components/Block.svelte';
 
-    export let bricks: CBlock[][];
+    const bricks: CBlock[][] = [];
     export let width: number;
     export let height: number;
     export let border: boolean = true;
@@ -43,7 +43,7 @@
     }
 </script>
 
-<div class="container" class:border={border}>
+<div class="container" class:border>
     {#each bricks as rows}
         <div class="row">
             {#each rows as blockInfo}
@@ -58,7 +58,7 @@
         padding: 0.4em 0.2em;
 
         &.border {
-            box-shadow: 0 0 1px 2px black;
+            box-shadow: 0 0 0.05em 0.1em black;
         }
     }
 

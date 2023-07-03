@@ -1,5 +1,5 @@
-import { get } from 'svelte/store';
 import { RendererInstance } from '../../stores/RendererStore';
+import type Renderer from '../../libs/Renderer.svelte';
 
 export type Sprite = Array<[number, number]>;
 
@@ -13,6 +13,7 @@ class Entity {
     private _sprite: Sprite;
     private readonly _width?: number;
     private readonly _height?: number;
+    protected renderer: Renderer | null = null;
 
     /**
      * @param x
@@ -27,6 +28,10 @@ class Entity {
         this._sprite = sprite;
         this._width = width;
         this._height = height;
+
+        RendererInstance.subscribe(instance => {
+            this.renderer = instance;
+        });
 
         this.draw();
     }
@@ -43,10 +48,8 @@ class Entity {
      * Draw entity on the screen.
      */
     draw(): void {
-        const renderer = get(RendererInstance);
-
         this._sprite.forEach(([spriteX, spriteY]) => {
-            renderer?.setBlock(this.x + spriteX, this.y + spriteY, true);
+            this.renderer?.setBlock(this.x + spriteX, this.y + spriteY, true);
         });
     }
 
@@ -54,10 +57,8 @@ class Entity {
      * Clear entity from the screen.
      */
     clear(): void {
-        const renderer = get(RendererInstance);
-
         this._sprite.forEach(([spriteX, spriteY]) => {
-            renderer?.setBlock(this.x + spriteX, this.y + spriteY, false);
+            this.renderer?.setBlock(this.x + spriteX, this.y + spriteY, false);
         });
     }
 
@@ -87,14 +88,12 @@ class Entity {
             }
         });
 
-        const renderer = get(RendererInstance);
-
         bricksToUpdate.off.forEach((brick) => {
-            renderer?.setBlock(brick[0], brick[1], false);
+            this.renderer?.setBlock(brick[0], brick[1], false);
         });
 
         bricksToUpdate.on.forEach((brick) => {
-            renderer?.setBlock(brick[0], brick[1], true);
+            this.renderer?.setBlock(brick[0], brick[1], true);
         });
 
         this._sprite = newSprite;
@@ -129,14 +128,12 @@ class Entity {
             }
         });
 
-        const renderer = get(RendererInstance);
-
         bricksToUpdate.off.forEach((brick) => {
-            renderer?.setBlock(brick[0], brick[1], false);
+            this.renderer?.setBlock(brick[0], brick[1], false);
         });
 
         bricksToUpdate.on.forEach((brick) => {
-            renderer?.setBlock(brick[0], brick[1], true);
+            this.renderer?.setBlock(brick[0], brick[1], true);
         });
 
         this._x = x;
