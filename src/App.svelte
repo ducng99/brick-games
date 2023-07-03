@@ -8,22 +8,21 @@
     import GamesList, { CurrentGameId } from './games/GamesList';
     import GameMenu from './games';
 
-    const gameMenu = new GameMenu();
-
-    let game: Brain = gameMenu;
-    $: gameScore = game.score;
+    let game: Brain | null = null;
+    $: gameScore = game?.score;
 
     $: loadNewGame($CurrentGameId);
 
     $: {
-        game.start();
+        game?.start();
 
-        if (game.update) {
+        if (game?.update) {
             requestAnimationFrame(processFrame);
         }
     }
 
     onMount(() => {
+        game = new GameMenu();
         addOnKeyDownListener('KeyR', restartGame);
 
         return () => {
@@ -43,15 +42,15 @@
     }
 
     function processFrame() {
-        if (game.update) {
-            if (game.state === 'stopped') {
+        if (game?.update) {
+            if (game?.state === 'stopped') {
                 stopGame();
-                return;
+                game = new GameMenu();
+            } else {
+                game?.update();
+
+                requestAnimationFrame(processFrame);
             }
-
-            game.update();
-
-            requestAnimationFrame(processFrame);
         }
     }
 
@@ -60,15 +59,13 @@
     }
 
     function stopGame() {
-        if (game.stop && game.state !== 'stopped') {
+        if (game?.stop && game.state !== 'stopped') {
             game.stop();
         }
 
         if ($RendererInstance?.clearScreen) {
             $RendererInstance.clearScreen();
         }
-
-        game = gameMenu;
     }
 </script>
 
