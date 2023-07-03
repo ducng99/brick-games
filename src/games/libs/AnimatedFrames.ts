@@ -8,6 +8,7 @@ class AnimatedFrames extends AnimatedEntity {
     private readonly _frames: Sprite[];
     private _currentFrameIndex: number = 0;
     private readonly _clearSquare?: [number, number, number, number];
+    private readonly _infiniteLoop: boolean;
 
     /**
      * @param x
@@ -15,13 +16,15 @@ class AnimatedFrames extends AnimatedEntity {
      * @param frames An array of frames, each frame is an array of sprites.
      * @param delay Delay between frames in milliseconds.
      * @param clearSquare An array of 4 numbers: [x, y, width, height] to clear the area before playing the animation.
+     * @param infiniteLoop If true, the animation will loop forever.
      */
-    constructor(x: number, y: number, delay: number, frames: Sprite[], clearSquare?: [number, number, number, number]) {
+    constructor(x: number, y: number, delay: number, frames: Sprite[], clearSquare?: [number, number, number, number], infiniteLoop: boolean = false) {
         if (frames.length === 0) throw new Error('Frames not provided');
         super(x, y, frames[0], delay);
 
         this._frames = frames;
         this._clearSquare = clearSquare;
+        this._infiniteLoop = infiniteLoop;
     }
 
     update = () => {
@@ -47,12 +50,18 @@ class AnimatedFrames extends AnimatedEntity {
 
             if (delta >= this._delay) {
                 const steps = Math.floor(delta / this._delay);
-                this._currentFrameIndex += steps;
 
-                if (this._currentFrameIndex < this._frames.length) {
+                if (this._infiniteLoop) {
+                    this._currentFrameIndex = (this._currentFrameIndex + steps) % this._frames.length;
                     this.updateSprite(this._frames[this._currentFrameIndex]);
                 } else {
-                    this.AnimationState = 'finished';
+                    this._currentFrameIndex += steps;
+
+                    if (this._currentFrameIndex < this._frames.length) {
+                        this.updateSprite(this._frames[this._currentFrameIndex]);
+                    } else {
+                        this.AnimationState = 'finished';
+                    }
                 }
 
                 this.lastFrame = performance.now();
