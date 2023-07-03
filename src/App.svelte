@@ -63,6 +63,8 @@
             game.stop();
         }
 
+        // On unmount the instance exists but not the props,
+        // hence checking function exists
         if ($RendererInstance?.clearScreen) {
             $RendererInstance.clearScreen();
         }

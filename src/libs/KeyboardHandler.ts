@@ -33,28 +33,56 @@ export function isKeyDown(key?: string): boolean {
     return keysDown.size > 0;
 }
 
+/**
+ * Add a callback to be called when a key is pressed.
+ * @param key
+ * @param callback
+ * @see {@link removeOnKeyDownListener}
+ * @returns `callback` function reference.
+ */
 export function addOnKeyDownListener(key: string, callback: () => void) {
     if (!keyDownCallbacks.has(key)) {
         keyDownCallbacks.set(key, new Set());
     }
 
     keyDownCallbacks.get(key)?.add(callback);
+
+    return callback;
 }
 
+/**
+ * Add a callback to be called when a key is released.
+ * @param key
+ * @param callback
+ * @returns `callback` function reference.
+ * @see {@link removeOnKeyUpListener}
+ */
 export function addOnKeyUpListener(key: string, callback: () => void) {
     if (!keyUpCallbacks.has(key)) {
         keyUpCallbacks.set(key, new Set());
     }
 
     keyUpCallbacks.get(key)?.add(callback);
+
+    return callback;
 }
 
+/**
+ * Remove a callback from being called when a key is pressed.
+ * @param key
+ * @param callback
+ */
 export function removeOnKeyDownListener(key: string, callback: () => void) {
     if (keyDownCallbacks.has(key)) {
         keyDownCallbacks.get(key)?.delete(callback);
     }
 }
 
+/**
+ * Remove a callback from being called when a key is released.
+ * @param key
+ * @param callback
+ */
 export function removeOnKeyUpListener(key: string, callback: () => void) {
     if (keyUpCallbacks.has(key)) {
         keyUpCallbacks.get(key)?.delete(callback);
