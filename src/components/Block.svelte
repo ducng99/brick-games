@@ -1,13 +1,21 @@
 <script lang="ts">
-    import { blocksBackground, blocksTransition } from '../stores/SettingsStore';
+    import { get } from 'svelte/store';
+    import { blocksBackground, blocksTransition, debugMode } from '../stores/SettingsStore';
     import type CBlock from './CBlock';
 
     export let blockInfo: CBlock;
 
     const isOn = blockInfo.on;
+
+    function manualToggle() {
+        if (get(debugMode)) {
+            blockInfo.toggle();
+        }
+    }
 </script>
 
-<div class="brick" class:on={$isOn} class:no-bg={!$blocksBackground} class:no-transition={!$blocksTransition} />
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="brick" class:on={$isOn} class:no-bg={!$blocksBackground} class:no-transition={!$blocksTransition} on:click={manualToggle} role="button" tabindex="-1"/>
 
 <style lang="scss">
     .brick {

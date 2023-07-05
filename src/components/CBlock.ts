@@ -1,10 +1,18 @@
 import { writable } from 'svelte/store';
 
 class CBlock {
-    private readonly on = writable(false);
+    private readonly _on = writable(false);
 
-    toggle(state: boolean) {
-        this.on.set(state);
+    get on() {
+        return this._on;
+    }
+
+    toggle(state?: boolean) {
+        if (typeof state === 'boolean') {
+            this._on.set(state);
+        } else {
+            this._on.update((value) => !value);
+        }
     }
 }
 

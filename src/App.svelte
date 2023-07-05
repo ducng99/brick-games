@@ -7,6 +7,7 @@
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import GamesList, { CurrentGameId } from './games/GamesList';
     import GameMenu from './games';
+    import { debugMode } from './stores/SettingsStore';
 
     let game: Brain | null = null;
     $: gameScore = game?.score;
@@ -25,8 +26,18 @@
         game = new GameMenu();
         addOnKeyDownListener('KeyR', restartGame);
 
+        const logBricksCallback = addOnKeyDownListener('KeyL', () => {
+            $RendererInstance?.logBricks();
+        });
+
+        const clearScreenCallback = addOnKeyDownListener('KeyC', () => {
+            $RendererInstance?.clearScreen();
+        });
+
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
+            removeOnKeyDownListener('KeyL', logBricksCallback);
+            removeOnKeyDownListener('KeyC', clearScreenCallback);
             stopGame();
         };
     });
@@ -47,7 +58,9 @@
                 stopGame();
                 game = new GameMenu();
             } else {
-                game?.update();
+                if (!$debugMode) {
+                    game?.update();
+                }
 
                 requestAnimationFrame(processFrame);
             }

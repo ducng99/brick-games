@@ -1,6 +1,7 @@
 <script lang="ts">
     import CBlock from '../components/CBlock';
     import Block from '../components/Block.svelte';
+    import { get } from 'svelte/store';
 
     const bricks: CBlock[][] = [];
     export let width: number;
@@ -40,6 +41,24 @@
                 block.toggle(false);
             });
         });
+    }
+
+    /**
+     * Logs an array of blocks that are currently on
+    */
+    export function logBricks(): void {
+        // Get blocks that are on, store as array of [x, y] using index
+        const onBlocks: Array<[number, number]> = [];
+
+        bricks.forEach((row, y) => {
+            row.forEach((block, x) => {
+                if (get(block.on)) {
+                    onBlocks.push([x, y]);
+                }
+            });
+        });
+
+        console.log(JSON.stringify(onBlocks));
     }
 </script>
 
