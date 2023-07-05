@@ -7,7 +7,6 @@ import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { randomInt } from '../../libs/Utils';
-import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -35,12 +34,13 @@ class CarRacingBrain extends Brain {
         addOnKeyDownListener('ArrowRight', this.playerMoveRight);
 
         // Show health
-        const miniRenderer = get(RendererMiniInstance);
         for (let i = 0; i < this._health; i++) {
-            miniRenderer?.setBlock(i, 0, true);
+            this.rendererMini?.setBlock(i, 0, true);
         }
 
         this.restart();
+
+        return super.start();
     };
 
     update = () => {
@@ -138,8 +138,6 @@ class CarRacingBrain extends Brain {
     };
 
     stop = () => {
-        this.state = 'stopped';
-
         this._player = undefined;
         this._walls.length = 0;
         this._otherCars.length = 0;
@@ -148,6 +146,8 @@ class CarRacingBrain extends Brain {
 
         removeOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
+
+        return super.stop();
     };
 
     restart = () => {
@@ -219,8 +219,7 @@ class CarRacingBrain extends Brain {
             const oldHealth = this._health;
             this._health = health;
 
-            const miniRenderer = get(RendererMiniInstance);
-            miniRenderer?.setBlock(Math.min(health, oldHealth), 0, health > oldHealth);
+            this.rendererMini?.setBlock(Math.min(health, oldHealth), 0, health > oldHealth);
         }
     }
 }
