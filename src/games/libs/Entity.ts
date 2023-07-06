@@ -3,6 +3,8 @@ import type Renderer from '../../libs/Renderer.svelte';
 
 export type Sprite = Array<[number, number]>;
 
+const entityCleaner = new FinalizationRegistry((cleanup: () => void) => cleanup);
+
 /**
  * A generic entity class that can be used for any game object.
  * Stores position and sprite.
@@ -13,7 +15,7 @@ class Entity {
     private _sprite: Sprite;
     private readonly _width?: number;
     private readonly _height?: number;
-    protected renderer: Renderer | null = null;
+    protected renderer?: Renderer;
 
     /**
      * @param x
@@ -29,8 +31,12 @@ class Entity {
         this._width = width;
         this._height = height;
 
-        RendererInstance.subscribe(instance => {
+        const rendererUnsubscribe = RendererInstance.subscribe(instance => {
             this.renderer = instance;
+        });
+
+        entityCleaner.register(this, () => {
+            rendererUnsubscribe();
         });
 
         this.draw();
