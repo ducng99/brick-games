@@ -1,3 +1,13 @@
+## [0.2.1] - 2023-07-06
+
+### 🐛 Bug Fixes
+
+- Fixed game restart loads menu instead
+
+### 🚜 Refactor
+
+- [**breaking**] Makes store value available without `get`
+
 ## [0.2.0] - 2023-07-06
 
 ### ⛰️  Features
