@@ -29,8 +29,8 @@ const frames: Sprite[] = Array.from({ length: height - 1 }, (_, row) => {
 }));
 
 class WipeBottomToTopTransition extends AnimatedFrames {
-    constructor() {
-        super(0, 0, 10, frames);
+    constructor(delay = 10) {
+        super(0, 0, delay, frames);
     }
 }
 

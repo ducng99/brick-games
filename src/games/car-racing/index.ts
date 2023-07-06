@@ -54,7 +54,7 @@ class CarRacingBrain extends Brain {
                 if (this._explosion.AnimationState === 'finished') {
                     this._explosion.clear();
                     this._explosion = undefined;
-                    this._transition = new WipeBottomToTopTransition();
+                    this._transition = new WipeBottomToTopTransition(this._health == 0 ? 100 : undefined);
                 } else {
                     this._explosion.update();
                 }
