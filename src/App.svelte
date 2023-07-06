@@ -46,7 +46,7 @@
     });
 
     function loadNewGame(id: string) {
-        stopGame();
+        stopGame(false);
 
         if (id in GamesList) {
             GamesList[id].loader().then(Game => {
@@ -60,7 +60,7 @@
     function processFrame() {
         if (game?.update) {
             if (game?.state === 'stopped') {
-                stopGame();
+                stopGame(!(game instanceof GameMenu));
             } else {
                 if (!$debugMode) {
                     game?.update();
@@ -71,12 +71,12 @@
         }
     }
 
-    function stopGame() {
+    function stopGame(loadMenu = true) {
         if (game?.stop && game.state !== 'stopped') {
             game.stop();
         }
 
-        if (!(game instanceof GameMenu)) {
+        if (loadMenu) {
             game = new GameMenu();
             $CurrentGameId = '';
         }
