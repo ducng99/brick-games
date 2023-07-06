@@ -1,8 +1,13 @@
 import { writable } from 'svelte/store';
+import type AnimatedFrames from './libs/AnimatedFrames';
+import type Brain from './libs/Brain';
+
+type Callable<T, A = unknown> = new (...args: A[]) => T;
 
 interface GameInfo {
     name: string;
-    loader: () => Promise<any>;
+    animation: () => Promise<Callable<AnimatedFrames>>;
+    loader: () => Promise<Callable<Brain>>;
 }
 
 export const CurrentGameId = writable('');
@@ -14,7 +19,8 @@ export const CurrentGameId = writable('');
 const GamesList: Record<string, GameInfo> = {
     'car-racing': {
         name: 'Car Racing',
-        loader: () => import('./car-racing')
+        animation: async () => (await import('./car-racing/MenuAnimation')).default,
+        loader: async () => (await import('./car-racing')).default
     }
 };
 

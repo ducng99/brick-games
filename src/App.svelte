@@ -24,7 +24,10 @@
 
     onMount(() => {
         game = new GameMenu();
-        addOnKeyDownListener('KeyR', restartGame);
+
+        const restartGame = addOnKeyDownListener('KeyR', () => {
+            loadNewGame($CurrentGameId);
+        });
 
         const logBricksCallback = addOnKeyDownListener('KeyL', () => {
             $RendererInstance?.logBricks();
@@ -46,9 +49,11 @@
         stopGame();
 
         if (id in GamesList) {
-            GamesList[id].loader().then(_ => {
-                game = new _.default();
-            }).catch(() => console.error('Failed to load game.'));
+            GamesList[id].loader().then(Game => {
+                game = new Game();
+            }).catch(() => {
+                console.error('Failed to load game.');
+            });
         }
     }
 
@@ -56,7 +61,6 @@
         if (game?.update) {
             if (game?.state === 'stopped') {
                 stopGame();
-                game = new GameMenu();
             } else {
                 if (!$debugMode) {
                     game?.update();
@@ -67,13 +71,14 @@
         }
     }
 
-    function restartGame() {
-        loadNewGame($CurrentGameId);
-    }
-
     function stopGame() {
         if (game?.stop && game.state !== 'stopped') {
             game.stop();
+        }
+
+        if (!(game instanceof GameMenu)) {
+            game = new GameMenu();
+            $CurrentGameId = '';
         }
 
         // On unmount the instance exists but not the props,
