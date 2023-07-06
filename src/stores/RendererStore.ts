@@ -1,7 +1,14 @@
 import { writable } from 'svelte/store';
 import type Renderer from '../libs/Renderer.svelte';
 
-export const width = writable(10);
-export const height = writable(20);
+export const rendererWidthStore = writable(10);
+export let rendererWidth = 0;
+rendererWidthStore.subscribe((value) => (rendererWidth = value));
 
-export const RendererInstance = writable<Renderer | undefined>(undefined);
+export const rendererHeightStore = writable(20);
+export let rendererHeight = 0;
+rendererHeightStore.subscribe((value) => (rendererHeight = value));
+
+export const RendererInstanceStore = writable<Renderer | undefined>(undefined);
+export let RendererInstance: Renderer | undefined;
+RendererInstanceStore.subscribe((value) => (RendererInstance = value));

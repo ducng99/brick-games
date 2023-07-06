@@ -1,6 +1,5 @@
-import { get } from 'svelte/store';
 import AnimatedFrames from '../libs/AnimatedFrames';
-import { height, width } from '../../stores/RendererStore';
+import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
 import type { Sprite } from '../libs/Entity';
 
 const frames: Sprite[] = [
@@ -12,7 +11,7 @@ const frames: Sprite[] = [
 
 class MenuAnimation extends AnimatedFrames {
     constructor() {
-        super(0, 6, 720, frames, [0, 6, get(width) - 1, get(height) - 1], true);
+        super(0, 6, 720, frames, [0, 6, rendererWidth - 1, rendererHeight - 1], true);
     }
 }
 

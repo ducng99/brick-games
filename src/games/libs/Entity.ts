@@ -1,9 +1,6 @@
 import { RendererInstance } from '../../stores/RendererStore';
-import type Renderer from '../../libs/Renderer.svelte';
 
 export type Sprite = Array<[number, number]>;
-
-const entityCleaner = new FinalizationRegistry((cleanup: () => void) => cleanup);
 
 /**
  * A generic entity class that can be used for any game object.
@@ -15,7 +12,6 @@ class Entity {
     private _sprite: Sprite;
     private readonly _width?: number;
     private readonly _height?: number;
-    protected renderer?: Renderer;
 
     /**
      * @param x
@@ -30,14 +26,6 @@ class Entity {
         this._sprite = sprite;
         this._width = width;
         this._height = height;
-
-        const rendererUnsubscribe = RendererInstance.subscribe(instance => {
-            this.renderer = instance;
-        });
-
-        entityCleaner.register(this, () => {
-            rendererUnsubscribe();
-        });
 
         this.draw();
     }
@@ -55,7 +43,7 @@ class Entity {
      */
     draw(): void {
         this._sprite.forEach(([spriteX, spriteY]) => {
-            this.renderer?.setBlock(this.x + spriteX, this.y + spriteY, true);
+            RendererInstance?.setBlock(this.x + spriteX, this.y + spriteY, true);
         });
     }
 
@@ -64,7 +52,7 @@ class Entity {
      */
     clear(): void {
         this._sprite.forEach(([spriteX, spriteY]) => {
-            this.renderer?.setBlock(this.x + spriteX, this.y + spriteY, false);
+            RendererInstance?.setBlock(this.x + spriteX, this.y + spriteY, false);
         });
     }
 
@@ -95,11 +83,11 @@ class Entity {
         });
 
         bricksToUpdate.off.forEach((brick) => {
-            this.renderer?.setBlock(brick[0], brick[1], false);
+            RendererInstance?.setBlock(brick[0], brick[1], false);
         });
 
         bricksToUpdate.on.forEach((brick) => {
-            this.renderer?.setBlock(brick[0], brick[1], true);
+            RendererInstance?.setBlock(brick[0], brick[1], true);
         });
 
         this._sprite = newSprite;
@@ -135,11 +123,11 @@ class Entity {
         });
 
         bricksToUpdate.off.forEach((brick) => {
-            this.renderer?.setBlock(brick[0], brick[1], false);
+            RendererInstance?.setBlock(brick[0], brick[1], false);
         });
 
         bricksToUpdate.on.forEach((brick) => {
-            this.renderer?.setBlock(brick[0], brick[1], true);
+            RendererInstance?.setBlock(brick[0], brick[1], true);
         });
 
         this._x = x;

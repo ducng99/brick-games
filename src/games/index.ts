@@ -4,7 +4,7 @@ import GamesList, { CurrentGameId } from './GamesList';
 import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import { charToLetter } from './libs/special-animations/spinning-letters';
-import { width } from '../stores/RendererStore';
+import { rendererWidth } from '../stores/RendererStore';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -61,7 +61,7 @@ class GameMenu extends Brain {
     loadLetterAnimation = (index: number) => {
         charToLetter(String.fromCharCode(97 + index)).then(Letter => {
             if (Letter) {
-                const x = Math.floor(get(width) / 2 - 3);
+                const x = Math.floor(rendererWidth / 2 - 3);
                 this._letterAnimation = new Letter(x, 0);
             }
         }).catch(() => {

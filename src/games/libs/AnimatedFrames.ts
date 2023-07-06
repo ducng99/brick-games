@@ -1,3 +1,4 @@
+import { RendererInstance } from '../../stores/RendererStore';
 import AnimatedEntity from './AnimatedEntity';
 import type { Sprite } from './Entity';
 
@@ -37,7 +38,7 @@ class AnimatedFrames extends AnimatedEntity {
 
                 for (let row = sqY; row < sqY + sqHeight; row++) {
                     for (let col = sqX; col < sqX + sqWidth; col++) {
-                        this.renderer?.setBlock(col, row, false);
+                        RendererInstance?.setBlock(col, row, false);
                     }
                 }
 

@@ -1,16 +1,16 @@
-import { get } from 'svelte/store';
 import { isKeyDown, addOnKeyDownListener, removeOnKeyDownListener } from '../../libs/KeyboardHandler';
-import { height as screenHeight, width as screenWidth } from '../../stores/RendererStore';
+import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
 import Brain from '../libs/Brain';
 import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { randomInt } from '../../libs/Utils';
+import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 
 const carHeight = 4;
 const carWidth = 3;
-const playerCarY = get(screenHeight) - carHeight;
+const playerCarY = rendererHeight - carHeight;
 const maxSpeed = 170;
 
 class CarRacingBrain extends Brain {
@@ -35,7 +35,7 @@ class CarRacingBrain extends Brain {
 
         // Show health
         for (let i = 0; i < this._health; i++) {
-            this.rendererMini?.setBlock(i, 0, true);
+            RendererMiniInstance?.setBlock(i, 0, true);
         }
 
         this.restart();
@@ -97,7 +97,7 @@ class CarRacingBrain extends Brain {
                 this._walls.forEach((wall) => {
                     wall.moveRelative(0, 1 * steps);
 
-                    if (wall.y >= get(screenHeight)) {
+                    if (wall.y >= rendererHeight) {
                         wall.moveRelative(0, -25);
                     }
                 });
@@ -108,13 +108,13 @@ class CarRacingBrain extends Brain {
                     car.moveRelative(0, 1 * steps);
 
                     // Remove car if it's out of screen
-                    if (car.y >= get(screenHeight)) {
+                    if (car.y >= rendererHeight) {
                         this._otherCars.splice(i, 1);
                     } else {
                         // Checks collision with player
                         if (car.isCollidingBox(this.player)) {
                             this.health -= 1;
-                            this._explosion = new Explosion(car.x, car.y - 1);
+                            this.createExplosion(car.x, car.y);
                         } else if (car.y == playerCarY + 1) {
                             this._score.update(score => score + 100 + Math.floor(actualSpeed / 10));
 
@@ -128,7 +128,7 @@ class CarRacingBrain extends Brain {
                 // Generate new car if last car's Y is at least 5 blocks away from the top
                 const lastCarY = this._otherCars.at(-1)?.y ?? 0;
                 if (lastCarY >= 5) {
-                    const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
+                    const x = -1 + randomInt(1, Math.floor((rendererWidth - 4) / carWidth)) * carWidth;
                     this._otherCars.push(new Car(x, -carHeight + lastCarY - 5));
                 }
 
@@ -158,14 +158,14 @@ class CarRacingBrain extends Brain {
         this._transition = undefined;
 
         // Setup walls
-        for (let i = -2; i < get(screenHeight); i += 5) {
+        for (let i = -2; i < rendererHeight; i += 5) {
             this._walls.push(new Wall(0, i));
             this._walls.push(new Wall(9, i));
         }
 
         // Setup other cars
         // Randomly choose lane
-        const x = -1 + randomInt(1, Math.floor((get(screenWidth) - 4) / carWidth)) * carWidth;
+        const x = -1 + randomInt(1, Math.floor((rendererWidth - 4) / carWidth)) * carWidth;
         this._otherCars.push(new Car(x, -carHeight));
 
         // Setup player car
@@ -186,7 +186,7 @@ class CarRacingBrain extends Brain {
             this._otherCars.forEach((car) => {
                 if (car.isCollidingBox(this.player)) {
                     this.health -= 1;
-                    this._explosion = new Explosion(car.x, car.y - 1);
+                    this.createExplosion(car.x, car.y);
                 }
             });
         }
@@ -196,7 +196,7 @@ class CarRacingBrain extends Brain {
         if (!this._explosion && !this._transition && this.state === 'running') {
             const x = carWidth;
 
-            if (this.player.x + x <= get(screenWidth) - carWidth - 2) {
+            if (this.player.x + x <= rendererWidth - carWidth - 2) {
                 this.player.moveRelative(x, 0);
             }
 
@@ -204,10 +204,18 @@ class CarRacingBrain extends Brain {
             this._otherCars.forEach((car) => {
                 if (car.isCollidingBox(this.player)) {
                     this.health -= 1;
-                    this._explosion = new Explosion(car.x, car.y - 1);
+                    this.createExplosion(car.x, car.y);
                 }
             });
         }
+    };
+
+    createExplosion = (x: number, y: number) => {
+        y -= 1;
+
+        const eX = x + Math.min(0, rendererWidth - (x + 5)) + Math.max(0, -x);
+        const eY = y + Math.min(0, rendererHeight - (y + 5)) + Math.max(0, -y);
+        this._explosion = new Explosion(eX, eY);
     };
 
     get health(): number {
@@ -219,7 +227,7 @@ class CarRacingBrain extends Brain {
             const oldHealth = this._health;
             this._health = health;
 
-            this.rendererMini?.setBlock(Math.min(health, oldHealth), 0, health > oldHealth);
+            RendererMiniInstance?.setBlock(Math.min(health, oldHealth), 0, health > oldHealth);
         }
     }
 }

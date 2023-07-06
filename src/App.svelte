@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import Renderer from './libs/Renderer.svelte';
     import Sidebar from './libs/Sidebar.svelte';
-    import { RendererInstance, width, height } from './stores/RendererStore';
+    import { RendererInstanceStore, rendererWidthStore, rendererHeightStore } from './stores/RendererStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import GamesList, { CurrentGameId } from './games/GamesList';
@@ -30,11 +30,11 @@
         });
 
         const logBricksCallback = addOnKeyDownListener('KeyL', () => {
-            $RendererInstance?.logBricks();
+            $RendererInstanceStore?.logBricks();
         });
 
         const clearScreenCallback = addOnKeyDownListener('KeyC', () => {
-            $RendererInstance?.clearScreen();
+            $RendererInstanceStore?.clearScreen();
         });
 
         return () => {
@@ -83,15 +83,15 @@
 
         // On unmount the instance exists but not the props,
         // hence checking function exists
-        if ($RendererInstance?.clearScreen) {
-            $RendererInstance.clearScreen();
+        if ($RendererInstanceStore?.clearScreen) {
+            $RendererInstanceStore.clearScreen();
         }
     }
 </script>
 
 <main>
     <div>
-        <Renderer width={$width} height={$height} bind:this={$RendererInstance} />
+        <Renderer width={$rendererWidthStore} height={$rendererHeightStore} bind:this={$RendererInstanceStore} />
         <Sidebar score={$gameScore} />
     </div>
 </main>

@@ -1,7 +1,4 @@
-import { writable, type Unsubscriber } from 'svelte/store';
-import type Renderer from '../../libs/Renderer.svelte';
-import { RendererInstance } from '../../stores/RendererStore';
-import { RendererMiniInstance } from '../../stores/RendererMiniStore';
+import { writable } from 'svelte/store';
 
 type BrainState = 'created' | 'started' | 'running' | 'stopped';
 
@@ -26,17 +23,6 @@ abstract class Brain {
     state: BrainState = 'created';
     protected lastFrame = 0;
     protected _score = writable(0);
-    protected renderer?: Renderer;
-    protected rendererMini?: Renderer;
-    protected readonly unsubscribers: Unsubscriber[] = [];
-
-    constructor() {
-        this.unsubscribers.push(RendererInstance.subscribe(instance => {
-            this.renderer = instance;
-        }), RendererMiniInstance.subscribe(instance => {
-            this.rendererMini = instance;
-        }));
-    }
 
     get score() {
         return this._score;
@@ -57,7 +43,6 @@ abstract class Brain {
      */
     stop() {
         this.state = 'stopped';
-        this.unsubscribers.forEach(unsubscribe => { unsubscribe(); });
 
         return callStop;
     }
