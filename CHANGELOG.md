@@ -1,3 +1,30 @@
+## [0.2.0] - 2023-07-06
+
+### ⛰️  Features
+
+- *(AnimatedFrames)* Added infinite loop mode
+- Added debug mode
+- Added a Game Menu 🎉
+
+### 🐛 Bug Fixes
+
+- Fixed first frame of AnimatedFrame not showing after clearSquare
+
+### 🚜 Refactor
+
+- Refactored store/get renderer instance
+- Changed how Brain functions are called in subclass
+
+### 🎨 Styling
+
+- *(car-racing)* Slower wipe transition when has 0 health
+
+### ⚙️ Miscellaneous Tasks
+
+- *(action)* Added Check ESLint workflow
+- *(deps)* Bump dependencies
+- *(lint)* Only lint specified extensions
+
 ## [0.1.2] - 2023-07-01
 
 ### ⛰️  Features
