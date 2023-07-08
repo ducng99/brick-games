@@ -19,10 +19,10 @@
      * Set the state for a block using X and Y coordinates
      * @param x X-axis, starts from 0
      * @param y Y-axis, starts from 0
-     * @param state true as "on", false as "off"
+     * @param state true as "on", false as "off". If not provided, will invert the current state
      * @return true if successfully updated, false otherwise
      */
-    export function setBlock(x: number, y: number, state: boolean): boolean {
+    export function setBlock(x: number, y: number, state?: boolean): boolean {
         if (y >= 0 && y < bricks.length && x >= 0 && x < bricks[y].length) {
             bricks[y][x].toggle(state);
 

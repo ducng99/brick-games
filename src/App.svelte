@@ -8,11 +8,12 @@
     import GamesList, { CurrentGameId } from './games/GamesList';
     import GameMenu from './games/GameMenu';
     import { debugMode } from './stores/SettingsStore';
+    import SplashScreen from './games/SplashScreen';
 
     let game: Brain | null = null;
     $: gameScore = game?.score;
 
-    $: loadNewGame($CurrentGameId);
+    $: if ($CurrentGameId) loadNewGame($CurrentGameId);
 
     $: {
         game?.start();
@@ -23,7 +24,7 @@
     }
 
     onMount(() => {
-        game = new GameMenu();
+        game = new SplashScreen();
 
         const restartGame = addOnKeyDownListener('KeyR', () => {
             loadNewGame($CurrentGameId);
@@ -58,16 +59,16 @@
     }
 
     function processFrame() {
-        if (game?.update) {
-            if (game?.state === 'stopped') {
-                stopGame(!(game instanceof GameMenu));
-            } else {
+        if (game?.state === 'stopped') {
+            stopGame(!(game instanceof GameMenu));
+        } else {
+            if (game?.update) {
                 if (!$debugMode) {
                     game?.update();
                 }
-
-                requestAnimationFrame(processFrame);
             }
+
+            requestAnimationFrame(processFrame);
         }
     }
 
@@ -77,8 +78,8 @@
         }
 
         if (loadMenu) {
-            game = new GameMenu();
             $CurrentGameId = '';
+            game = new GameMenu();
         }
 
         // On unmount the instance exists but not the props,
