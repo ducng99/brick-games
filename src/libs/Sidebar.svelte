@@ -3,7 +3,7 @@
     import Renderer from './Renderer.svelte';
     import { rendererMiniWidthStore, rendererMiniHeightStore, RendererMiniInstanceStore } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
-    import { MenuCurrentSelectGameId } from '../games';
+    import { MenuCurrentSelectGameId } from '../games/GameMenu';
 
     export let score: number | undefined;
 

@@ -6,7 +6,7 @@
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import GamesList, { CurrentGameId } from './games/GamesList';
-    import GameMenu from './games';
+    import GameMenu from './games/GameMenu';
     import { debugMode } from './stores/SettingsStore';
 
     let game: Brain | null = null;
