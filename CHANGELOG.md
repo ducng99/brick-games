@@ -1,3 +1,13 @@
+## [0.2.2] - 2023-07-08
+
+### ⛰️  Features
+
+- Added splash screen animation
+
+### 🚜 Refactor
+
+- Moved GameMenu to its own file
+
 ## [0.2.1] - 2023-07-06
 
 ### 🐛 Bug Fixes
