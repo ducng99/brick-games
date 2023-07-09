@@ -4,6 +4,8 @@ export async function charToLetter(char: string): Promise<(new (x: number, y: nu
     switch (char.toLowerCase()) {
         case 'a':
             return (await import('./LetterA')).default;
+        case 'b':
+            return (await import('./LetterB')).default;
         default:
             break;
     }
