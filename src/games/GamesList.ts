@@ -21,6 +21,11 @@ const GamesList: Record<string, GameInfo> = {
         name: 'Car Racing',
         animation: async () => (await import('./car-racing/MenuAnimation')).default,
         loader: async () => (await import('./car-racing')).default
+    },
+    pong: {
+        name: 'Pong',
+        animation: async () => (await import('./pong/MenuAnimation')).default,
+        loader: async () => (await import('./pong')).default
     }
 };
 

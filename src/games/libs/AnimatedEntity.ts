@@ -28,6 +28,10 @@ abstract class AnimatedEntity extends Entity {
     }
 
     abstract update(): void;
+
+    stop() {
+        this.AnimationState = 'finished';
+    }
 }
 
 export default AnimatedEntity;
