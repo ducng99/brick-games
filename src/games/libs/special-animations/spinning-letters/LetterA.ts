@@ -110,7 +110,7 @@ const frames: Sprite[] = [
 
 class LetterA extends AnimatedFrames {
     constructor(x: number, y: number) {
-        super(x, y, 180, frames, undefined, true);
+        super(x, y, 180, frames, [x, y, 5, 5], true);
     }
 }
 
