@@ -34,8 +34,13 @@ class GameMenu extends Brain {
     };
 
     update = () => {
-        this._letterAnimation?.update();
-        this._gameAnimation?.update();
+        if (this._letterAnimation?.AnimationState !== 'finished') {
+            this._letterAnimation?.update();
+        }
+
+        if (this._gameAnimation?.AnimationState !== 'finished') {
+            this._gameAnimation?.update();
+        }
     };
 
     stop = () => {
@@ -59,21 +64,27 @@ class GameMenu extends Brain {
     };
 
     loadLetterAnimation = (index: number) => {
+        this._letterAnimation?.stop();
+
         charToLetter(String.fromCharCode(97 + index)).then(Letter => {
             if (Letter) {
                 const x = Math.floor(rendererWidth / 2 - 3);
                 this._letterAnimation = new Letter(x, 0);
             }
-        }).catch(() => {
+        }).catch((ex) => {
             console.error('Failed loading letter animation');
+            console.error(ex);
         });
     };
 
     loadGameAnimation = (index: number) => {
+        this._gameAnimation?.stop();
+
         GamesList[this._gamesArray[index]].animation().then((Animation) => {
             this._gameAnimation = new Animation();
-        }).catch(() => {
+        }).catch((ex) => {
             console.error('Failed loading game animation');
+            console.error(ex);
         });
     };
 }

@@ -20,8 +20,7 @@ class AnimatedFrames extends AnimatedEntity {
      * @param infiniteLoop If true, the animation will loop forever.
      */
     constructor(x: number, y: number, delay: number, frames: Sprite[], clearSquare?: [number, number, number, number], infiniteLoop: boolean = false) {
-        if (frames.length === 0) throw new Error('Frames not provided');
-        super(x, y, frames[0], delay);
+        super(x, y, frames.length > 0 ? frames[0] : [], delay);
 
         this._frames = frames;
         this._clearSquare = clearSquare;
@@ -46,7 +45,7 @@ class AnimatedFrames extends AnimatedEntity {
             }
         }
 
-        if (this.AnimationState === 'playing') {
+        if (this.AnimationState === 'playing' && this._frames.length > 0) {
             const delta = performance.now() - this.lastFrame;
 
             if (delta >= this._delay) {
