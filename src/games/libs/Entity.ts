@@ -161,9 +161,12 @@ class Entity {
     /**
      * Checks if this entity is colliding with another entity using their sprites
      * @param entity Another entity to check collision with.
+     * @param offsetX X offset of current entity to check collision
+     * @param offsetY Y offset of current entity to check collision
+     * @returns true if colliding, false otherwise.
      */
-    isColliding(entity: Entity): boolean {
-        const thisSprite = this._sprite.map(([spriteX, spriteY]) => [this._x + spriteX, this._y + spriteY]);
+    isColliding(entity: Entity, offsetX = 0, offsetY = 0): boolean {
+        const thisSprite = this._sprite.map(([spriteX, spriteY]) => [this._x + spriteX + offsetX, this._y + spriteY + offsetY]);
         const entitySprite = entity._sprite.map(([spriteX, spriteY]) => [entity._x + spriteX, entity._y + spriteY]);
 
         return thisSprite.some((thisBrick) => entitySprite.some((entityBrick) => thisBrick[0] === entityBrick[0] && thisBrick[1] === entityBrick[1]));
@@ -173,15 +176,17 @@ class Entity {
      * Checks if this entity is colliding with another entity using their boxes.
      * Both entities must have width and height.
      * @param entity Another entity to check collision with.
+     * @param offsetX X offset of current entity to check collision
+     * @param offsetY Y offset of current entity to check collision
      * @returns true if colliding, false otherwise. If one of the entities doesn't have width or height, returns false.
      */
-    isCollidingBox(entity: Entity): boolean {
+    isCollidingBox(entity: Entity, offsetX = 0, offsetY = 0): boolean {
         if (typeof this._boxX !== 'undefined' && typeof this._boxY !== 'undefined' && typeof this._boxWidth !== 'undefined' && typeof this._boxHeight !== 'undefined' &&
             typeof entity._boxX !== 'undefined' && typeof entity._boxY !== 'undefined' && typeof entity._boxWidth !== 'undefined' && typeof entity._boxHeight !== 'undefined'
         ) {
-            const thisLeft = this.x + this._boxX;
+            const thisLeft = this.x + this._boxX + offsetX;
             const thisRight = thisLeft + this._boxWidth;
-            const thisTop = this.y + this._boxY;
+            const thisTop = this.y + this._boxY + offsetY;
             const thisBottom = thisTop + this._boxHeight;
 
             const entityLeft = entity.x + entity._boxX;
