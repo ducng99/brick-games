@@ -22,12 +22,6 @@ class CarRacingBrain extends Brain {
     private _explosion?: Explosion;
     private _transition?: WipeBottomToTopTransition;
 
-    get player(): Car {
-        if (!this._player) this._player = new Car(2, playerCarY);
-
-        return this._player;
-    }
-
     start() {
         // Setup keyboard listeners
         addOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
@@ -217,6 +211,12 @@ class CarRacingBrain extends Brain {
         const eY = y + Math.min(0, rendererHeight - (y + 5)) + Math.max(0, -y);
         this._explosion = new Explosion(eX, eY);
     };
+
+    get player(): Car {
+        if (!this._player) this._player = new Car(2, playerCarY);
+
+        return this._player;
+    }
 
     get health(): number {
         return this._health;
