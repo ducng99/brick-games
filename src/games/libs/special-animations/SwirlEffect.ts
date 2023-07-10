@@ -13,14 +13,14 @@ class SwirlEffect extends AnimatedEntity {
         super(0, 0, [], 13.8);
     }
 
-    update() {
+    update(timestamp: DOMHighResTimeStamp): void {
         if (this.AnimationState === 'idle') {
             this.AnimationState = 'playing';
-            this.lastFrame = performance.now();
+            this.lastFrame = timestamp;
         }
 
         if (this.AnimationState === 'playing') {
-            const delta = performance.now() - this.lastFrame;
+            const delta = timestamp - this.lastFrame;
             if (delta >= this._delay) {
                 const steps = Math.floor(delta / this._delay);
 
@@ -46,7 +46,7 @@ class SwirlEffect extends AnimatedEntity {
                     }
                 }
 
-                this.lastFrame = performance.now();
+                this.lastFrame = timestamp;
             }
         }
     }

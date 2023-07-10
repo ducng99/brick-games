@@ -58,13 +58,13 @@
         }
     }
 
-    function processFrame() {
+    function processFrame(timestamp: DOMHighResTimeStamp) {
         if (game?.state === 'stopped') {
             stopGame(!(game instanceof GameMenu));
         } else {
             if (game?.update) {
                 if (!$debugMode) {
-                    game?.update();
+                    game?.update(timestamp);
                 }
             }
 

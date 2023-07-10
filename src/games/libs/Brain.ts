@@ -13,7 +13,7 @@ interface Brain {
     /**
      * (Optional) Update the brain logic each frame.
      */
-    update?: () => void;
+    update?: (timestamp: DOMHighResTimeStamp) => void;
 }
 
 /**

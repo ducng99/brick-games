@@ -20,14 +20,14 @@ class PongBrain extends Brain {
         return super.start();
     }
 
-    update = () => {
+    update = (timestamp: DOMHighResTimeStamp) => {
         if (this.state === 'started') {
             this.state = 'running';
-            this.lastFrame = performance.now();
+            this.lastFrame = timestamp;
         }
 
         if (this.state === 'running') {
-            const delta = performance.now() - this.lastFrame;
+            const delta = timestamp - this.lastFrame;
 
             if (delta >= paddleMoveDelay) {
                 const steps = Math.floor(delta / paddleMoveDelay);
@@ -44,7 +44,7 @@ class PongBrain extends Brain {
                     this._paddleBottom?.moveRight(steps);
                 }
 
-                this.lastFrame = performance.now();
+                this.lastFrame = timestamp;
             }
         }
     };

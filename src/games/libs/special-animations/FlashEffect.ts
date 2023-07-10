@@ -17,14 +17,14 @@ class FlashEffect extends AnimatedEntity {
         this._currentState = initialState;
     }
 
-    update(): void {
+    update(timestamp: DOMHighResTimeStamp): void {
         if (this.AnimationState === 'idle') {
             this.AnimationState = 'playing';
-            this.lastFrame = performance.now();
+            this.lastFrame = timestamp;
         }
 
         if (this.AnimationState === 'playing') {
-            const delay = performance.now() - this.lastFrame;
+            const delay = timestamp - this.lastFrame;
             if (delay >= this._delay) {
                 if (this._currentState) {
                     this.updateSprite([]);
@@ -40,7 +40,7 @@ class FlashEffect extends AnimatedEntity {
                     this.AnimationState = 'finished';
                 }
 
-                this.lastFrame = performance.now();
+                this.lastFrame = timestamp;
             }
         }
     }

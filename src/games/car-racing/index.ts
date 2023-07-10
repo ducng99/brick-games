@@ -28,7 +28,7 @@ class CarRacingBrain extends Brain {
         return this._player;
     }
 
-    start = () => {
+    start() {
         // Setup keyboard listeners
         addOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         addOnKeyDownListener('ArrowRight', this.playerMoveRight);
@@ -41,12 +41,12 @@ class CarRacingBrain extends Brain {
         this.restart();
 
         return super.start();
-    };
+    }
 
-    update = () => {
+    update = (timestamp: DOMHighResTimeStamp) => {
         if (this.state === 'started' && isKeyDown('Space')) {
             this.state = 'running';
-            this.lastFrame = performance.now();
+            this.lastFrame = timestamp;
         }
 
         if (this.state === 'running') {
@@ -56,7 +56,7 @@ class CarRacingBrain extends Brain {
                     this._explosion = undefined;
                     this._transition = new WipeBottomToTopTransition(this._health == 0 ? 100 : undefined);
                 } else {
-                    this._explosion.update();
+                    this._explosion.update(timestamp);
                 }
 
                 return;
@@ -72,7 +72,7 @@ class CarRacingBrain extends Brain {
                         this.stop();
                     }
                 } else {
-                    this._transition.update();
+                    this._transition.update(timestamp);
                 }
 
                 return;
@@ -88,7 +88,7 @@ class CarRacingBrain extends Brain {
                 }
             }
 
-            const delta = performance.now() - this.lastFrame;
+            const delta = timestamp - this.lastFrame;
             const shouldUpdateTime = 200 - actualSpeed * 1;
 
             if (delta >= shouldUpdateTime) {
@@ -132,12 +132,12 @@ class CarRacingBrain extends Brain {
                     this._otherCars.push(new Car(x, -carHeight + lastCarY - 5));
                 }
 
-                this.lastFrame = performance.now();
+                this.lastFrame = timestamp;
             }
         }
     };
 
-    stop = () => {
+    stop() {
         this._player = undefined;
         this._walls.length = 0;
         this._otherCars.length = 0;
@@ -148,7 +148,7 @@ class CarRacingBrain extends Brain {
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
 
         return super.stop();
-    };
+    }
 
     restart = () => {
         this._player = undefined;

@@ -27,10 +27,10 @@ class AnimatedFrames extends AnimatedEntity {
         this._infiniteLoop = infiniteLoop;
     }
 
-    update = () => {
+    update(timestamp: DOMHighResTimeStamp): void {
         if (this.AnimationState === 'idle') {
             this.AnimationState = 'playing';
-            this.lastFrame = performance.now();
+            this.lastFrame = timestamp;
 
             if (this._clearSquare) {
                 const [sqX, sqY, sqWidth, sqHeight] = this._clearSquare;
@@ -46,7 +46,7 @@ class AnimatedFrames extends AnimatedEntity {
         }
 
         if (this.AnimationState === 'playing' && this._frames.length > 0) {
-            const delta = performance.now() - this.lastFrame;
+            const delta = timestamp - this.lastFrame;
 
             if (delta >= this._delay) {
                 const steps = Math.floor(delta / this._delay);
@@ -64,7 +64,7 @@ class AnimatedFrames extends AnimatedEntity {
                     }
                 }
 
-                this.lastFrame = performance.now();
+                this.lastFrame = timestamp;
             }
         }
     };

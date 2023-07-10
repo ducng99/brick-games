@@ -22,10 +22,9 @@ class SplashScreen extends Brain {
         return super.start();
     }
 
-    update = () => {
+    update = (timestamp: DOMHighResTimeStamp) => {
         if (this.state === 'started') {
             this.state = 'running';
-            this.lastFrame = performance.now();
         }
 
         if (this.state === 'running') {
@@ -39,7 +38,7 @@ class SplashScreen extends Brain {
                         this._swirlAnimation = new SwirlEffect();
                     }
 
-                    this._swirlAnimation.update();
+                    this._swirlAnimation.update(timestamp);
 
                     if (this._swirlAnimation.AnimationState === 'finished') {
                         this._swirlAnimation = undefined;
@@ -51,7 +50,7 @@ class SplashScreen extends Brain {
                         this._flashAnimation = new FlashEffect(textSprite, 439, 9, true);
                     }
 
-                    this._flashAnimation.update();
+                    this._flashAnimation.update(timestamp);
 
                     if (this._flashAnimation.AnimationState === 'finished') {
                         this._flashAnimation = undefined;
@@ -63,7 +62,7 @@ class SplashScreen extends Brain {
                         this._swirlAnimation = new SwirlEffect();
                     }
 
-                    this._swirlAnimation.update();
+                    this._swirlAnimation.update(timestamp);
 
                     if (this._swirlAnimation.AnimationState === 'finished') {
                         this._swirlAnimation = undefined;
@@ -79,7 +78,7 @@ class SplashScreen extends Brain {
                         });
                     }
 
-                    this._flashAnimation.update();
+                    this._flashAnimation.update(timestamp);
 
                     if (this._flashAnimation.AnimationState === 'finished') {
                         this._flashAnimation = undefined;

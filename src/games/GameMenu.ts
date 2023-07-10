@@ -33,13 +33,13 @@ class GameMenu extends Brain {
         return super.start();
     };
 
-    update = () => {
+    update = (timestamp: DOMHighResTimeStamp) => {
         if (this._letterAnimation?.AnimationState !== 'finished') {
-            this._letterAnimation?.update();
+            this._letterAnimation?.update(timestamp);
         }
 
         if (this._gameAnimation?.AnimationState !== 'finished') {
-            this._gameAnimation?.update();
+            this._gameAnimation?.update(timestamp);
         }
     };
 

@@ -27,7 +27,7 @@ abstract class AnimatedEntity extends Entity {
         this._animationState = state;
     }
 
-    abstract update(): void;
+    abstract update(timestamp: DOMHighResTimeStamp): void;
 
     stop() {
         this.AnimationState = 'finished';
