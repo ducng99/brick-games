@@ -18,7 +18,7 @@ const carSprite: Sprite = [
 
 class Car extends Entity {
     constructor(x: number, y: number) {
-        super(x, y, carSprite, 3, 4);
+        super(x, y, carSprite, [0, 0, 3, 4]);
     }
 }
 

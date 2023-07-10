@@ -10,22 +10,28 @@ class Entity {
     private _x: number;
     private _y: number;
     private _sprite: Sprite;
-    private readonly _width?: number;
-    private readonly _height?: number;
+    private readonly _boxX?: number;
+    private readonly _boxY?: number;
+    private readonly _boxWidth?: number;
+    private readonly _boxHeight?: number;
 
     /**
-     * @param x
-     * @param y
+     * @param x X position of the entity.
+     * @param y Y position of the entity.
      * @param sprite An array of [x, y] coordinates that represents the sprite.
-     * @param width The width of entity. Used for box collision detection.
-     * @param height The height of entity. Used for box collision detection.
+     * @param collisionBox An array of [x, y, width, height] that represents the collision box. `x` and `y` are relative to the entity position.
      */
-    constructor(x: number, y: number, sprite: Sprite, width?: number, height?: number) {
+    constructor(x: number, y: number, sprite: Sprite, collisionBox?: [number, number, number, number]) {
         this._x = x;
         this._y = y;
         this._sprite = sprite;
-        this._width = width;
-        this._height = height;
+
+        if (collisionBox) {
+            this._boxX = collisionBox[0];
+            this._boxY = collisionBox[1];
+            this._boxWidth = collisionBox[2];
+            this._boxHeight = collisionBox[3];
+        }
 
         this.draw();
     }
@@ -164,19 +170,23 @@ class Entity {
      * @returns true if colliding, false otherwise. If one of the entities doesn't have width or height, returns false.
      */
     isCollidingBox(entity: Entity): boolean {
-        if (!this._width || !this._height || !entity._width || !entity._height) return false;
+        if (typeof this._boxX !== 'undefined' && typeof this._boxY !== 'undefined' && typeof this._boxWidth !== 'undefined' && typeof this._boxHeight !== 'undefined' &&
+            typeof entity._boxX !== 'undefined' && typeof entity._boxY !== 'undefined' && typeof entity._boxWidth !== 'undefined' && typeof entity._boxHeight !== 'undefined'
+        ) {
+            const thisLeft = this.x + this._boxX;
+            const thisRight = thisLeft + this._boxWidth;
+            const thisTop = this.y + this._boxY;
+            const thisBottom = thisTop + this._boxHeight;
 
-        const thisLeft = this.x;
-        const thisRight = this.x + this._width;
-        const thisTop = this.y;
-        const thisBottom = this.y + this._height;
+            const entityLeft = entity.x + entity._boxX;
+            const entityRight = entityLeft + entity._boxWidth;
+            const entityTop = entity.y + entity._boxY;
+            const entityBottom = entityTop + entity._boxHeight;
 
-        const entityLeft = entity.x;
-        const entityRight = entity.x + entity._width;
-        const entityTop = entity.y;
-        const entityBottom = entity.y + entity._height;
+            return thisLeft < entityRight && thisRight > entityLeft && thisTop < entityBottom && thisBottom > entityTop;
+        }
 
-        return thisLeft < entityRight && thisRight > entityLeft && thisTop < entityBottom && thisBottom > entityTop;
+        return false;
     }
 }
 
