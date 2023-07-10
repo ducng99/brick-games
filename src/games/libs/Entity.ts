@@ -1,4 +1,4 @@
-import { RendererInstance } from '../../stores/RendererStore';
+import { RendererInstance, rendererHeight, rendererWidth } from '../../stores/RendererStore';
 
 export type Sprite = Array<[number, number]>;
 
@@ -79,12 +79,15 @@ class Entity {
         // Get new sprite's bricks positions to enable. Remove from "off" list if exists (remains on).
         newSprite.forEach(([spriteX, spriteY]) => {
             const newSpritePosition: [number, number] = [this.x + spriteX, this.y + spriteY];
-            const offIndex = bricksToUpdate.off.findIndex((brick) => brick[0] === newSpritePosition[0] && brick[1] === newSpritePosition[1]);
 
-            if (offIndex !== -1) {
-                bricksToUpdate.off.splice(offIndex, 1);
-            } else {
-                bricksToUpdate.on.push(newSpritePosition);
+            if (newSpritePosition[0] >= 0 && newSpritePosition[0] < rendererWidth && newSpritePosition[1] >= 0 && newSpritePosition[1] < rendererHeight) {
+                const offIndex = bricksToUpdate.off.findIndex((brick) => brick[0] === newSpritePosition[0] && brick[1] === newSpritePosition[1]);
+
+                if (offIndex !== -1) {
+                    bricksToUpdate.off.splice(offIndex, 1);
+                } else {
+                    bricksToUpdate.on.push(newSpritePosition);
+                }
             }
         });
 
@@ -119,12 +122,15 @@ class Entity {
         // Get new sprite's bricks positions to enable. Remove from "off" list if exists (remains on).
         this._sprite.forEach(([spriteX, spriteY]) => {
             const newSpritePosition: [number, number] = [x + spriteX, y + spriteY];
-            const offIndex = bricksToUpdate.off.findIndex((brick) => brick[0] === newSpritePosition[0] && brick[1] === newSpritePosition[1]);
 
-            if (offIndex !== -1) {
-                bricksToUpdate.off.splice(offIndex, 1);
-            } else {
-                bricksToUpdate.on.push(newSpritePosition);
+            if (newSpritePosition[0] >= 0 && newSpritePosition[0] < rendererWidth && newSpritePosition[1] >= 0 && newSpritePosition[1] < rendererHeight) {
+                const offIndex = bricksToUpdate.off.findIndex((brick) => brick[0] === newSpritePosition[0] && brick[1] === newSpritePosition[1]);
+
+                if (offIndex !== -1) {
+                    bricksToUpdate.off.splice(offIndex, 1);
+                } else {
+                    bricksToUpdate.on.push(newSpritePosition);
+                }
             }
         });
 
