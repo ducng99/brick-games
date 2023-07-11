@@ -30,6 +30,10 @@
             loadNewGame($CurrentGameId);
         });
 
+        const escapeToGameMenu = addOnKeyDownListener('Escape', () => {
+            stopGame();
+        });
+
         const logBricksCallback = addOnKeyDownListener('KeyL', () => {
             $RendererInstanceStore?.logBricks();
         });
@@ -40,9 +44,10 @@
 
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
+            removeOnKeyDownListener('Escape', escapeToGameMenu);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
-            stopGame();
+            stopGame(false);
         };
     });
 
