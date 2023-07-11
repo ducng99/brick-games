@@ -13,7 +13,7 @@
     let game: Brain | null = null;
     $: gameScore = game?.score;
 
-    $: if ($CurrentGameId) loadNewGame($CurrentGameId);
+    $: loadNewGame($CurrentGameId);
 
     $: {
         game?.start();
@@ -52,9 +52,9 @@
     });
 
     function loadNewGame(id: string) {
-        stopGame(false);
-
         if (id in GamesList) {
+            stopGame(false);
+
             GamesList[id].loader().then(Game => {
                 game = new Game();
             }).catch(() => {
