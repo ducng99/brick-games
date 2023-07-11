@@ -22,7 +22,7 @@ interface Brain {
 abstract class Brain {
     state: BrainState = 'created';
     protected lastFrame = 0;
-    protected _score = writable(0);
+    protected _score = writable('000');
 
     get score() {
         return this._score;

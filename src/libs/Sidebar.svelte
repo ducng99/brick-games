@@ -1,17 +1,15 @@
 <script lang="ts">
-    import { clamp, pad } from './Utils';
     import Renderer from './Renderer.svelte';
     import { rendererMiniWidthStore, rendererMiniHeightStore, RendererMiniInstanceStore } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
     import { MenuCurrentSelectGameId } from '../games/GameMenu';
+    import { pad } from './utils';
 
-    export let score: number | undefined;
-
-    $: scoreText = pad(pad(clamp(score ?? 0, 0, 999999), 3), 6, '!');
+    export let score: string | undefined;
 </script>
 
 <div id="sidebar">
-    <div id="score">{scoreText}</div>
+    <div id="score">{pad(score ?? '000', 6, '!')}</div>
     <div id="scoreLabel" class="text">SCORE
         <span id="soundIcon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-music-note-beamed" viewBox="0 0 16 16">

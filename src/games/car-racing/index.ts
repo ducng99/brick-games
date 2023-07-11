@@ -5,7 +5,7 @@ import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
-import { randomInt } from '../../libs/Utils';
+import { clamp, pad, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 
 const carHeight = 4;
@@ -21,6 +21,7 @@ class CarRacingBrain extends Brain {
     private _speed: number = 0;
     private _explosion?: Explosion;
     private _transition?: WipeBottomToTopTransition;
+    private _currentScore: number = 0;
 
     start() {
         // Setup keyboard listeners
@@ -110,7 +111,7 @@ class CarRacingBrain extends Brain {
                             this.health -= 1;
                             this.createExplosion(car.x, car.y);
                         } else if (car.y == playerCarY + 1) {
-                            this._score.update(score => score + 100 + Math.floor(actualSpeed / 10));
+                            this.currentScore += 100 + Math.floor(actualSpeed / 10);
 
                             if (this._speed < maxSpeed) {
                                 this._speed++;
@@ -210,6 +211,15 @@ class CarRacingBrain extends Brain {
         const eX = x + Math.min(0, rendererWidth - (x + 5)) + Math.max(0, -x);
         const eY = y + Math.min(0, rendererHeight - (y + 5)) + Math.max(0, -y);
         this._explosion = new Explosion(eX, eY);
+    };
+
+    get currentScore() {
+        return this._currentScore;
+    }
+
+    set currentScore(score: number) {
+        this._currentScore = score;
+        this.score.set(pad(pad(clamp(score ?? 0, 0, 999999), 3), 6, '!'));
     };
 
     get player(): Car {
