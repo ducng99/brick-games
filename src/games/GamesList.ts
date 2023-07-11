@@ -1,8 +1,7 @@
 import { writable } from 'svelte/store';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import type Brain from './libs/Brain';
-
-type Callable<T, A = unknown> = new (...args: A[]) => T;
+import type { Callable } from '../libs/utils';
 
 interface GameInfo {
     name: string;

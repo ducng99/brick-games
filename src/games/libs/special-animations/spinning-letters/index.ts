@@ -1,6 +1,7 @@
+import type { Callable } from '../../../../libs/utils';
 import type AnimatedFrames from '../../AnimatedFrames';
 
-export async function charToLetter(char: string): Promise<(new (x: number, y: number) => AnimatedFrames) | undefined> {
+export async function charToLetter(char: string): Promise<Callable<AnimatedFrames, [ x: number, y: number ]> | undefined> {
     switch (char.toLowerCase()) {
         case 'a':
             return (await import('./LetterA')).default;

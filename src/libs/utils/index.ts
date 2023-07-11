@@ -31,3 +31,5 @@ export function pad(num: number | string, size: number, char: string = '0'): str
 export function clamp(num: number, min: number, max: number): number {
     return Math.min(Math.max(num, min), max);
 }
+
+export type Callable<T, A extends any[] = []> = new (...args: A) => T;

@@ -9,9 +9,13 @@
     import GameMenu from './games/GameMenu';
     import { debugMode } from './stores/SettingsStore';
     import SplashScreen from './games/SplashScreen';
+    import type { Callable } from './libs/utils';
+    import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
 
     let animationFrameNumber = 0;
     let game: Brain | null = null;
+    let gameLoadPromise: CancelablePromise<Callable<Brain>> | null = null;
+
     $: gameScore = game?.score;
 
     $: loadNewGame($CurrentGameId);
@@ -56,10 +60,13 @@
         if (id in GamesList) {
             stopGame(false);
 
-            GamesList[id].loader().then(Game => {
+            gameLoadPromise = cancelablePromise(GamesList[id].loader());
+            gameLoadPromise.promise.then(Game => {
                 game = new Game();
-            }).catch(() => {
-                console.error('Failed to load game.');
+            }).catch((ex) => {
+                if (!(ex instanceof CanceledPromiseError)) {
+                    console.error('Failed to load game.');
+                }
             });
         }
     }
@@ -79,6 +86,8 @@
     }
 
     function stopGame(loadMenu = true) {
+        gameLoadPromise?.cancel();
+
         if (game?.stop && game.state !== 'stopped') {
             cancelAnimationFrame(animationFrameNumber);
             game.stop();

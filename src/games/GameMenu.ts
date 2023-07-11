@@ -5,6 +5,8 @@ import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import { charToLetter } from './libs/special-animations/spinning-letters';
 import { rendererWidth } from '../stores/RendererStore';
+import { type Callable } from '../libs/utils';
+import { type CancelablePromise, cancelablePromise, CanceledPromiseError } from '../libs/utils/CancelablePromise';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -16,7 +18,9 @@ class GameMenu extends Brain {
     private readonly _currentGameIndex = writable(0);
     private readonly _gamesArray: string[] = Object.keys(GamesList);
     private _letterAnimation?: AnimatedFrames;
+    private _letterAnimationPromise?: CancelablePromise<Callable<AnimatedFrames, [x: number, y: number]> | undefined>;
     private _gameAnimation?: AnimatedFrames;
+    private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames>>;
 
     start = () => {
         addOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
@@ -44,6 +48,11 @@ class GameMenu extends Brain {
     };
 
     stop = () => {
+        this._letterAnimationPromise?.cancel();
+        this._letterAnimation = undefined;
+        this._gameAnimationPromise?.cancel();
+        this._gameAnimation = undefined;
+
         removeOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         removeOnKeyDownListener('ArrowRight', this.selectNextGame);
         removeOnKeyDownListener('Space', this.loadGame);
@@ -52,6 +61,8 @@ class GameMenu extends Brain {
     };
 
     loadGame = () => {
+        this._letterAnimationPromise?.cancel();
+        this._gameAnimationPromise?.cancel();
         CurrentGameId.set(get(MenuCurrentSelectGameId));
     };
 
@@ -66,25 +77,31 @@ class GameMenu extends Brain {
     loadLetterAnimation = (index: number) => {
         this._letterAnimation?.stop();
 
-        charToLetter(String.fromCharCode(97 + index)).then(Letter => {
+        this._letterAnimationPromise = cancelablePromise(charToLetter(String.fromCharCode(97 + index)));
+        this._letterAnimationPromise.promise.then(Letter => {
             if (Letter) {
                 const x = Math.floor(rendererWidth / 2 - 3);
                 this._letterAnimation = new Letter(x, 0);
             }
         }).catch((ex) => {
-            console.error('Failed loading letter animation');
-            console.error(ex);
+            if (!(ex instanceof CanceledPromiseError)) {
+                console.error('Failed loading letter animation');
+                console.error(ex);
+            }
         });
     };
 
     loadGameAnimation = (index: number) => {
         this._gameAnimation?.stop();
 
-        GamesList[this._gamesArray[index]].animation().then((Animation) => {
+        this._gameAnimationPromise = cancelablePromise(GamesList[this._gamesArray[index]].animation());
+        this._gameAnimationPromise.promise.then((Animation) => {
             this._gameAnimation = new Animation();
         }).catch((ex) => {
-            console.error('Failed loading game animation');
-            console.error(ex);
+            if (!(ex instanceof CanceledPromiseError)) {
+                console.error('Failed loading game animation');
+                console.error(ex);
+            }
         });
     };
 }
