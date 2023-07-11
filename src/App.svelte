@@ -10,6 +10,7 @@
     import { debugMode } from './stores/SettingsStore';
     import SplashScreen from './games/SplashScreen';
 
+    let animationFrameNumber = 0;
     let game: Brain | null = null;
     $: gameScore = game?.score;
 
@@ -19,7 +20,7 @@
         game?.start();
 
         if (game?.update) {
-            requestAnimationFrame(processFrame);
+            animationFrameNumber = requestAnimationFrame(processFrame);
         }
     }
 
@@ -73,12 +74,13 @@
                 }
             }
 
-            requestAnimationFrame(processFrame);
+            animationFrameNumber = requestAnimationFrame(processFrame);
         }
     }
 
     function stopGame(loadMenu = true) {
         if (game?.stop && game.state !== 'stopped') {
+            cancelAnimationFrame(animationFrameNumber);
             game.stop();
         }
 
