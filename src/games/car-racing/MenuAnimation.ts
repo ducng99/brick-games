@@ -1,5 +1,5 @@
 import AnimatedFrames from '../libs/AnimatedFrames';
-import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
+import { rendererWidth } from '../../stores/RendererStore';
 import type { Sprite } from '../libs/Entity';
 
 const frames: Sprite[] = [
@@ -11,7 +11,7 @@ const frames: Sprite[] = [
 
 class MenuAnimation extends AnimatedFrames {
     constructor() {
-        super(0, 6, 720, frames, [0, 6, rendererWidth, rendererHeight], true);
+        super(0, 6, 720, frames, [0, 6, rendererWidth, 8], true);
     }
 }
 
