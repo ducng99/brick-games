@@ -3,6 +3,7 @@
     import Renderer from './libs/Renderer.svelte';
     import Sidebar from './libs/Sidebar.svelte';
     import { RendererInstanceStore, rendererWidthStore, rendererHeightStore } from './stores/RendererStore';
+    import { RendererMiniInstanceStore } from './stores/RendererMiniStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
     import GamesList, { CurrentGameId } from './games/GamesList';
@@ -102,6 +103,10 @@
         // hence checking function exists
         if ($RendererInstanceStore?.clearScreen) {
             $RendererInstanceStore.clearScreen();
+        }
+
+        if ($RendererMiniInstanceStore?.clearScreen) {
+            $RendererMiniInstanceStore.clearScreen();
         }
     }
 </script>
