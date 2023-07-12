@@ -1,3 +1,44 @@
+## [0.3.0] - 2023-07-12
+
+### ⛰️  Features
+
+- *(pong)* Released Pong game 🎉
+- Added LetterB animmation
+- [**breaking**] Added X, Y offset to collision box
+- Added entity predict collision using offset
+- Added "Escape" key to return to game menu
+
+### 🐛 Bug Fixes
+
+- *(car-racing)* Fixed MenuAnimation not clearing all blocks
+- Fixed negative game index in GameMenu
+- Fixed reload on GameMenu destroys its instance
+- Fixed restart game might load both game and menu
+- Fixed animation runs after game started
+
+### 🚜 Refactor
+
+- [**breaking**] Frame timestamp now comes from `requestAnimationFrame`
+- Score is now a string, updatable per game
+
+### ⚡ Performance
+
+- Improved entity move & sprite update logic
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deps)* Bump svelte from 4.0.4 to 4.0.5
+- *(deps)* Bump svelte from 4.0.4 to 4.0.5
+- *(deps)* Bump semver from 6.3.0 to 6.3.1
+- *(deps)* Bump svelte-check from 3.4.4 to 3.4.5
+- *(deps)* Bump semver from 6.3.0 to 6.3.1
+- *(deps)* Bump svelte-check from 3.4.4 to 3.4.5
+- *(deps)* Bump vite from 4.3.9 to 4.4.2
+- *(deps)* Bump vite from 4.3.9 to 4.4.2
+- *(deps)* Bump @typescript-eslint/eslint-plugin from 5.61.0 to 5.62.0
+- *(eslint)* Disable enum undefined
+- Allow provide empty frames array in `AnimatedFrames`
+
 ## [0.2.2] - 2023-07-08
 
 ### ⛰️  Features
