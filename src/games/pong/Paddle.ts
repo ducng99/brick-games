@@ -1,6 +1,5 @@
 import { rendererWidth } from '../../stores/RendererStore';
 import Entity, { type Sprite } from '../libs/Entity';
-import Ball from './Ball';
 
 const sprite: Sprite = [
     [0, 0], [1, 0], [2, 0]
