@@ -47,7 +47,7 @@ try {
 // Run git-cliff to generate CHANGELOG.md
 spinner = createSpinner("Generating CHANGELOG.md").start();
 try {
-    execSync(`git cliff -u -t v${version} -s all -p CHANGELOG.md`);
+    execSync(`git cliff -u -t v${version} -p CHANGELOG.md`);
     spinner.success({ text: "CHANGELOG.md generated" });
 } catch (err) {
     spinner.error({ text: "Failed to generate CHANGELOG.md" });
