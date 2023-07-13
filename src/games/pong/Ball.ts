@@ -1,13 +1,35 @@
+import { randomInt } from '../../libs/utils';
 import Entity from '../libs/Entity';
 import Paddle from './Paddle';
 
 type BallDirection = 'up-left' | 'up-right' | 'up-straight' | 'down-left' | 'down-right' | 'down-straight';
 
 class Ball extends Entity {
-    direction: BallDirection = 'up-left';
+    direction: BallDirection;
 
     constructor(x: number, y: number) {
         super(x, y, [[0, 0]], [0, 0, 1, 1]);
+
+        const rand = randomInt(0, 5);
+        switch (rand) {
+            case 0:
+                this.direction = 'up-left';
+                break;
+            case 1:
+                this.direction = 'up-right';
+                break;
+            case 2:
+                this.direction = 'up-straight';
+                break;
+            case 3:
+                this.direction = 'down-left';
+                break;
+            case 4:
+                this.direction = 'down-right';
+                break;
+            case 5:
+                this.direction = 'down-straight';
+        }
     }
 
     update() {
