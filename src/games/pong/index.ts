@@ -19,7 +19,8 @@ class PongBrain extends Brain {
     private _playerBottomScore = 0;
 
     private _canBallMove = false;
-    private _ballMoveDelay = ballMoveDelayDefault;
+    // Initial speed is slower as it starts from middle screen
+    private _ballMoveDelay = ballMoveDelayDefault + 50;
 
     start() {
         // Initialise paddles once on game start
@@ -190,13 +191,14 @@ class PongBrain extends Brain {
         this.ball.moveRelative(0, 0);
 
         this._canBallMove = false;
+        this._ballMoveDelay = ballMoveDelayDefault + 50;
 
         this.state = 'started';
     }
 
     onBallCollideWithPaddle() {
         // Random chance of ball speed change
-        if (this._ballMoveDelay < ballMoveDelayDefault) {
+        if (this._ballMoveDelay != ballMoveDelayDefault) {
             this._ballMoveDelay = ballMoveDelayDefault;
         } else if (Math.random() <= 0.2) {
             this._ballMoveDelay -= 50;
