@@ -1,3 +1,18 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.3.2] - 2023-07-13
+
+### ⛰️  Features
+
+- *(pong)* Ball randomly go faster & can go straight
+
+### ⚙️ Miscellaneous Tasks
+
+- *(pong)* Increase default speed of ball
+- Added headers and footer to CHANGELOG.md
+
 ## [0.3.1] - 2023-07-12
 
 ### 🐛 Bug Fixes
