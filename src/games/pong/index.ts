@@ -7,7 +7,7 @@ import Paddle from './Paddle';
 
 const paddleWidth = 3;
 const paddleMoveDelay = 50;
-const ballMoveDelayDefault = 120;
+const ballMoveDelayDefault = 100;
 
 class PongBrain extends Brain {
     private _paddleTop?: Paddle;
