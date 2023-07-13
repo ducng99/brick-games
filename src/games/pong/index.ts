@@ -7,7 +7,7 @@ import Paddle from './Paddle';
 
 const paddleWidth = 3;
 const paddleMoveDelay = 50;
-const ballMoveDelay = 150;
+const ballMoveDelayDefault = 120;
 
 class PongBrain extends Brain {
     private _paddleTop?: Paddle;
@@ -19,6 +19,7 @@ class PongBrain extends Brain {
     private _playerBottomScore = 0;
 
     private _canBallMove = false;
+    private _ballMoveDelay = ballMoveDelayDefault;
 
     start() {
         // Initialise paddles once on game start
@@ -41,6 +42,7 @@ class PongBrain extends Brain {
         }
 
         if (this.state === 'running') {
+            let ballCollidedWithPaddle = false;
             const delta = timestamp - this.lastFrame;
 
             if (delta >= paddleMoveDelay) {
@@ -60,8 +62,10 @@ class PongBrain extends Brain {
 
                     if (paddleBottomMoved > 0) {
                         this.ball.direction = 'up-right';
+                        ballCollidedWithPaddle = true;
                     } else {
                         this.ball.direction = 'up-left';
+                        ballCollidedWithPaddle = true;
                     }
                 }
 
@@ -78,8 +82,10 @@ class PongBrain extends Brain {
 
                     if (paddleTopMoved > 0) {
                         this.ball.direction = 'down-right';
+                        ballCollidedWithPaddle = true;
                     } else {
                         this.ball.direction = 'down-left';
+                        ballCollidedWithPaddle = true;
                     }
                 }
 
@@ -89,16 +95,16 @@ class PongBrain extends Brain {
             // Ball move in different speed compared to paddles
             const ballDelta = timestamp - this._lastBallMoveFrame;
 
-            if (ballDelta >= ballMoveDelay) {
+            if (ballDelta >= this._ballMoveDelay) {
                 if (!this._canBallMove && isKeyDown('Space')) {
                     this._canBallMove = true;
                 }
 
                 if (this._canBallMove) {
-                    const steps = Math.floor(ballDelta / ballMoveDelay);
+                    const steps = Math.floor(ballDelta / this._ballMoveDelay);
 
                     for (let i = 0; i < steps; i++) {
-                    // Checks collision with side-walls
+                        // Checks collision with side-walls
                         if (this.ball.x === 0) {
                             if (this.ball.direction === 'up-left') {
                                 this.ball.direction = 'up-right';
@@ -117,17 +123,40 @@ class PongBrain extends Brain {
                         const [ballFutureX, ballFutureY] = this.ball.getFuturePosition();
 
                         if (this.ball.isCollidingBox(this.paddleBottom, ballFutureX, ballFutureY)) {
-                            if (this.ball.direction === 'down-left') {
-                                this.ball.direction = 'up-left';
-                            } else if (this.ball.direction === 'down-right') {
-                                this.ball.direction = 'up-right';
+                            switch (this.ball.direction) {
+                                case 'down-left':
+                                    this.ball.direction = 'up-left';
+                                    ballCollidedWithPaddle = true;
+                                    break;
+                                case 'down-right':
+                                    this.ball.direction = 'up-right';
+                                    ballCollidedWithPaddle = true;
+                                    break;
+                                case 'down-straight':
+                                    this.ball.direction = Math.random() > 0.5 ? 'up-left' : 'up-right';
+                                    ballCollidedWithPaddle = true;
+                                    break;
                             }
                         } else if (this.ball.isCollidingBox(this.paddleTop, ballFutureX, ballFutureY)) {
-                            if (this.ball.direction === 'up-left') {
-                                this.ball.direction = 'down-left';
-                            } else if (this.ball.direction === 'up-right') {
-                                this.ball.direction = 'down-right';
+                            switch (this.ball.direction) {
+                                case 'up-left':
+                                    this.ball.direction = 'down-left';
+                                    ballCollidedWithPaddle = true;
+                                    break;
+                                case 'up-right':
+                                    this.ball.direction = 'down-right';
+                                    ballCollidedWithPaddle = true;
+                                    break;
+                                case 'up-straight':
+                                    this.ball.direction = Math.random() > 0.5 ? 'down-left' : 'down-right';
+                                    ballCollidedWithPaddle = true;
+                                    break;
                             }
+                        }
+
+                        if (ballCollidedWithPaddle) {
+                            this.onBallCollideWithPaddle();
+                            ballCollidedWithPaddle = false;
                         }
 
                         this.ball.update();
@@ -163,6 +192,24 @@ class PongBrain extends Brain {
         this._canBallMove = false;
 
         this.state = 'started';
+    }
+
+    onBallCollideWithPaddle() {
+        // Random chance of ball speed change
+        if (this._ballMoveDelay < ballMoveDelayDefault) {
+            this._ballMoveDelay = ballMoveDelayDefault;
+        } else if (Math.random() <= 0.2) {
+            this._ballMoveDelay -= 50;
+        }
+
+        // Random chance of ball direction go straight
+        if (this.ball.x != 0 && this.ball.x != rendererWidth - 1 && Math.random() <= 0.3) {
+            if (this.ball.direction === 'down-left' || this.ball.direction === 'down-right') {
+                this.ball.direction = 'down-straight';
+            } else if (this.ball.direction === 'up-left' || this.ball.direction === 'up-right') {
+                this.ball.direction = 'up-straight';
+            }
+        }
     }
 
     get paddleTop(): Paddle {
