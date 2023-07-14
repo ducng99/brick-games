@@ -2,10 +2,10 @@ import { rendererWidth } from '../../stores/RendererStore';
 import Entity, { type Sprite } from '../libs/Entity';
 
 const sprite: Sprite = [
-    [0, 0], [1, 0], [2, 0]
+    [0, 0], [1, 0]
 ];
 
-const paddleWidth = 3;
+const paddleWidth = 2;
 
 class Paddle extends Entity {
     constructor(x: number, y: number) {

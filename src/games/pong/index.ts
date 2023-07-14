@@ -5,7 +5,7 @@ import Brain from '../libs/Brain';
 import Ball from './Ball';
 import Paddle from './Paddle';
 
-const paddleWidth = 3;
+const paddleWidth = 2;
 const paddleMoveDelay = 50;
 const ballMoveDelayDefault = 100;
 
@@ -23,7 +23,7 @@ class PongBrain extends Brain {
     private _ballMoveDelay = ballMoveDelayDefault + 50;
 
     setRendererWidthHeight(): [width: number, height: number] {
-        return [30, 30];
+        return [10, 20];
     }
 
     start() {
