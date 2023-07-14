@@ -23,6 +23,10 @@ class CarRacingBrain extends Brain {
     private _transition?: WipeBottomToTopTransition;
     private _currentScore: number = 0;
 
+    setRendererWidthHeight(): [width: number, height: number] {
+        return [10, 20];
+    }
+
     start() {
         // Setup keyboard listeners
         addOnKeyDownListener('ArrowLeft', this.playerMoveLeft);

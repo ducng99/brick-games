@@ -9,6 +9,17 @@ export function randomInt(min: number, max: number) {
 }
 
 /**
+ * UUIDv4 generator
+ */
+export function uuidv4(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+/**
  * Paddding a number with specified char
  * @param num Number to pad
  * @param size Size of the padded string

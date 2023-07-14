@@ -22,6 +22,10 @@ class PongBrain extends Brain {
     // Initial speed is slower as it starts from middle screen
     private _ballMoveDelay = ballMoveDelayDefault + 50;
 
+    setRendererWidthHeight(): [width: number, height: number] {
+        return [30, 30];
+    }
+
     start() {
         // Initialise paddles once on game start
         this.paddleTop.moveRelative(0, 0);

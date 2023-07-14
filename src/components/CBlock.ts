@@ -1,7 +1,13 @@
 import { writable } from 'svelte/store';
+import { uuidv4 } from '../libs/utils';
 
 class CBlock {
+    private readonly _id = uuidv4();
     private readonly _on = writable(false);
+
+    get id() {
+        return this._id;
+    }
 
     get on() {
         return this._on;

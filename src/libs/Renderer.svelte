@@ -3,15 +3,19 @@
     import Block from '../components/Block.svelte';
     import { get } from 'svelte/store';
 
-    const bricks: CBlock[][] = [];
+    let bricks: CBlock[][] = [];
     export let width: number;
     export let height: number;
     export let border: boolean = true;
 
-    for (let row = 0; row < height; row++) {
-        bricks[row] = [];
-        for (let col = 0; col < width; col++) {
-            bricks[row][col] = new CBlock();
+    $: {
+        bricks = [];
+
+        for (let row = 0; row < height; row++) {
+            bricks[row] = [];
+            for (let col = 0; col < width; col++) {
+                bricks[row][col] = new CBlock();
+            }
         }
     }
 

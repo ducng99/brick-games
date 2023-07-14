@@ -14,6 +14,10 @@ class SplashScreen extends Brain {
     private _flashAnimation?: FlashEffect;
     private _effectState: 'swirl1' | 'flash1' | 'swirl2' | 'flash2' = 'swirl1';
 
+    setRendererWidthHeight(): [width: number, height: number] {
+        return [10, 20];
+    }
+
     start() {
         textSprite.forEach(([x, y]) => {
             RendererInstance?.setBlock(x, y, true);

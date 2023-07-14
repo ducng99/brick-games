@@ -22,7 +22,11 @@ class GameMenu extends Brain {
     private _gameAnimation?: AnimatedFrames;
     private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames>>;
 
-    start = () => {
+    setRendererWidthHeight(): [number, number] {
+        return [10, 20];
+    }
+
+    start() {
         addOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         addOnKeyDownListener('ArrowRight', this.selectNextGame);
         addOnKeyDownListener('Space', this.loadGame);
@@ -35,7 +39,7 @@ class GameMenu extends Brain {
         });
 
         return super.start();
-    };
+    }
 
     update = (timestamp: DOMHighResTimeStamp) => {
         if (this._letterAnimation?.AnimationState !== 'finished') {
@@ -47,7 +51,7 @@ class GameMenu extends Brain {
         }
     };
 
-    stop = () => {
+    stop() {
         this._letterAnimationPromise?.cancel();
         this._letterAnimation = undefined;
         this._gameAnimationPromise?.cancel();
@@ -58,7 +62,7 @@ class GameMenu extends Brain {
         removeOnKeyDownListener('Space', this.loadGame);
 
         return super.stop();
-    };
+    }
 
     loadGame = () => {
         this._letterAnimationPromise?.cancel();
