@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2023-07-14
+
+### ⛰️  Features
+
+- *(pong)* Random ball start direction
+- [**breaking**] Allow games to specify renderer width & height
+
+### 🚜 Refactor
+
+- [**breaking**] Reworked how renderer sizing works
+
+### ⚙️ Miscellaneous Tasks
+
+- *(pong)* Ball initial speed is now slower
+- *(pong)* Makes paddle smaller
+- [**breaking**] RendererMini cannot be resized for magic reasons 🧝‍♀️
+
 ## [0.3.2] - 2023-07-13
 
 ### ⛰️  Features
