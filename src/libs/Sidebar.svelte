@@ -1,6 +1,6 @@
 <script lang="ts">
     import Renderer from './Renderer.svelte';
-    import { rendererMiniWidthStore, rendererMiniHeightStore, RendererMiniInstanceStore } from '../stores/RendererMiniStore';
+    import { RendererMiniInstanceStore, rendererMiniHeight, rendererMiniWidth } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
     import { MenuCurrentSelectGameId } from '../games/GameMenu';
     import { pad } from './utils';
@@ -26,7 +26,7 @@
     </div>
     <div id="rendererMini">
         <div>
-            <Renderer width={$rendererMiniWidthStore} height={$rendererMiniHeightStore} border={false} bind:this={$RendererMiniInstanceStore} />
+            <Renderer width={rendererMiniWidth} height={rendererMiniHeight} border={false} bind:this={$RendererMiniInstanceStore} />
         </div>
     </div>
     <div id="currentGameName" class="text">
