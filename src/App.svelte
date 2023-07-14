@@ -13,6 +13,8 @@
     import type { Callable } from './libs/utils';
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
 
+    let sidebar: Sidebar;
+    let additionalCSS = '';
     let animationFrameNumber = 0;
     let game: Brain | null = null;
     let gameLoadPromise: CancelablePromise<Callable<Brain>> | null = null;
@@ -26,6 +28,12 @@
 
         if (game?.update) {
             animationFrameNumber = requestAnimationFrame(processFrame);
+        }
+    }
+
+    $: {
+        if ($rendererWidthStore && $rendererHeightStore && sidebar) {
+            updateAdditionalCSS();
         }
     }
 
@@ -48,11 +56,14 @@
             $RendererInstanceStore?.clearScreen();
         });
 
+        window.addEventListener('resize', updateAdditionalCSS);
+
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
             removeOnKeyDownListener('Escape', escapeToGameMenu);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
+            window.removeEventListener('resize', () => updateAdditionalCSS);
             stopGame(false);
         };
     });
@@ -109,16 +120,24 @@
             $RendererMiniInstanceStore.clearScreen();
         }
     }
+
+    function updateAdditionalCSS() {
+        if (sidebar) {
+            const padding = sidebar.getWidth();
+            const rendererRatio = $rendererWidthStore / $rendererHeightStore;
+            additionalCSS = (window.innerWidth - padding) / window.innerHeight <= rendererRatio ? 'height: auto; width: 90%; font-size: 1vw' : 'font-size: 1.4vmin;';
+        }
+    }
 </script>
 
 <main>
-    <div>
+    <div style={additionalCSS}>
         <Renderer width={$rendererWidthStore} height={$rendererHeightStore} bind:this={$RendererInstanceStore} />
-        <Sidebar score={$gameScore} />
+        <Sidebar score={$gameScore} bind:this={sidebar} />
     </div>
 </main>
 
-<style>
+<style lang="scss">
     main {
         display: flex;
         justify-content: center;
@@ -131,5 +150,10 @@
         background-color: var(--game-bg);
         padding: 1em;
         box-shadow: inset 0 0 0.2em 0 black;
+
+        height: 90%;
+        width: auto;
+        max-height: 90%;
+        max-width: 90%;
     }
 </style>

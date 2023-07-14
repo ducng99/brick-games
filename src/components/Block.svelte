@@ -23,11 +23,8 @@
         --game-block-on-transition-time: 48ms;
         --game-block-off-transition-time: 66ms;
 
-        width: var(--game-block-size);
-        height: var(--game-block-size);
         background: black;
         opacity: var(--game-block-min-opacity);
-        border: 0.2em solid var(--game-bg);
         box-shadow: inset 0 0 0 0.2em black,
             inset 0 0 0 0.5em var(--game-bg);
         transition: opacity var(--game-block-off-transition-time) ease-out;

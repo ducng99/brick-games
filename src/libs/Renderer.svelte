@@ -66,26 +66,31 @@
     }
 </script>
 
-<div class="container" class:border>
+<div class="container" class:border style="--game-renderer-width: {width}; --game-renderer-height: {height}">
     {#each bricks as rows}
-        <div class="row">
-            {#each rows as blockInfo}
-                <Block {blockInfo} />
-            {/each}
-        </div>
+        {#each rows as blockInfo (blockInfo.id)}
+            <Block {blockInfo} />
+        {/each}
     {/each}
 </div>
 
 <style lang="scss">
     .container {
+        display: grid;
+        grid-template-columns: repeat(var(--game-renderer-width), 1fr);
+        grid-template-rows: repeat(var(--game-renderer-height), 1fr);
+        column-gap: 0.2em;
+        row-gap: 0.2em;
+
+        // Exclude padding from parent
+        height: calc(100% - 1em);
+        width: 100%;
+
+        aspect-ratio: var(--game-renderer-width) / var(--game-renderer-height);
         padding: 0.4em 0.2em;
 
         &.border {
             box-shadow: 0 0 0.05em 0.1em black;
         }
-    }
-
-    .row {
-        display: flex;
     }
 </style>

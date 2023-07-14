@@ -6,9 +6,14 @@
     import { pad } from './utils';
 
     export let score: string | undefined;
+    let width: number;
+
+    export function getWidth() {
+        return width;
+    }
 </script>
 
-<div id="sidebar">
+<div id="sidebar" bind:clientWidth={width}>
     <div id="score">{pad(score ?? '000', 6, '!')}</div>
     <div id="scoreLabel" class="text">SCORE
         <span id="soundIcon">
@@ -20,7 +25,9 @@
         </span>
     </div>
     <div id="rendererMini">
-        <Renderer width={$rendererMiniWidthStore} height={$rendererMiniHeightStore} border={false} bind:this={$RendererMiniInstanceStore} />
+        <div>
+            <Renderer width={$rendererMiniWidthStore} height={$rendererMiniHeightStore} border={false} bind:this={$RendererMiniInstanceStore} />
+        </div>
     </div>
     <div id="currentGameName" class="text">
         {#if $MenuCurrentSelectGameId in GamesList}
@@ -35,12 +42,12 @@
     #sidebar {
         display: flex;
         flex-direction: column;
-        padding-left: calc(var(--game-block-size) / 2);
+        padding-left: 1.5em;
     }
 
     #score {
         font-family: 'DSEG';
-        font-size: calc(var(--game-block-size) * 1.4);
+        font-size: 4.2em;
         text-align: right;
         width: 100%;
     }
@@ -67,6 +74,10 @@
     #rendererMini {
         display: flex;
         justify-content: center;
+
+        div {
+            width: 12em;
+        }
     }
 
     #currentGameName {
