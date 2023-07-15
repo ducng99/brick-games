@@ -85,9 +85,9 @@ class Entity {
 
                 if (offIndex !== -1) {
                     bricksToUpdate.off.splice(offIndex, 1);
-                } else {
-                    bricksToUpdate.on.push(newSpritePosition);
                 }
+
+                bricksToUpdate.on.push(newSpritePosition);
             }
         });
 
@@ -128,9 +128,9 @@ class Entity {
 
                 if (offIndex !== -1) {
                     bricksToUpdate.off.splice(offIndex, 1);
-                } else {
-                    bricksToUpdate.on.push(newSpritePosition);
                 }
+
+                bricksToUpdate.on.push(newSpritePosition);
             }
         });
 

@@ -63,7 +63,7 @@
             removeOnKeyDownListener('Escape', escapeToGameMenu);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
-            window.removeEventListener('resize', () => updateAdditionalCSS);
+            window.removeEventListener('resize', updateAdditionalCSS);
             stopGame(false);
         };
     });
