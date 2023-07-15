@@ -1,12 +1,12 @@
 const keysDown = new Set<string>();
 
-const keyDownCallbacks = new Map<string, Set<() => void>>();
-const keyUpCallbacks = new Map<string, Set<() => void>>();
+const keyDownCallbacks: Record<string, Set<() => void>> = {};
+const keyUpCallbacks: Record<string, Set<() => void>> = {};
 
 window.addEventListener('keydown', (event) => {
     if (!isKeyDown(event.code)) {
-        if (keyDownCallbacks.has(event.code)) {
-            keyDownCallbacks.get(event.code)?.forEach((callback) => { callback(); });
+        if (event.code in keyDownCallbacks) {
+            keyDownCallbacks[event.code].forEach((callback) => { callback(); });
         }
 
         keysDown.add(event.code);
@@ -14,8 +14,8 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('keyup', (event) => {
-    if (keyUpCallbacks.has(event.code)) {
-        keyUpCallbacks.get(event.code)?.forEach((callback) => { callback(); });
+    if (event.code in keyUpCallbacks) {
+        keyUpCallbacks[event.code].forEach((callback) => { callback(); });
     }
 
     keysDown.delete(event.code);
@@ -41,11 +41,11 @@ export function isKeyDown(key?: string): boolean {
  * @returns `callback` function reference.
  */
 export function addOnKeyDownListener(key: string, callback: () => void) {
-    if (!keyDownCallbacks.has(key)) {
-        keyDownCallbacks.set(key, new Set());
+    if (!(key in keyDownCallbacks)) {
+        keyDownCallbacks[key] = new Set();
     }
 
-    keyDownCallbacks.get(key)?.add(callback);
+    keyDownCallbacks[key].add(callback);
 
     return callback;
 }
@@ -58,11 +58,11 @@ export function addOnKeyDownListener(key: string, callback: () => void) {
  * @see {@link removeOnKeyUpListener}
  */
 export function addOnKeyUpListener(key: string, callback: () => void) {
-    if (!keyUpCallbacks.has(key)) {
-        keyUpCallbacks.set(key, new Set());
+    if (!(key in keyUpCallbacks)) {
+        keyUpCallbacks[key] = new Set();
     }
 
-    keyUpCallbacks.get(key)?.add(callback);
+    keyUpCallbacks[key].add(callback);
 
     return callback;
 }
@@ -73,8 +73,8 @@ export function addOnKeyUpListener(key: string, callback: () => void) {
  * @param callback
  */
 export function removeOnKeyDownListener(key: string, callback: () => void) {
-    if (keyDownCallbacks.has(key)) {
-        keyDownCallbacks.get(key)?.delete(callback);
+    if (key in keyDownCallbacks) {
+        keyDownCallbacks[key].delete(callback);
     }
 }
 
@@ -84,7 +84,7 @@ export function removeOnKeyDownListener(key: string, callback: () => void) {
  * @param callback
  */
 export function removeOnKeyUpListener(key: string, callback: () => void) {
-    if (keyUpCallbacks.has(key)) {
-        keyUpCallbacks.get(key)?.delete(callback);
+    if (key in keyUpCallbacks) {
+        keyUpCallbacks[key].delete(callback);
     }
 }
