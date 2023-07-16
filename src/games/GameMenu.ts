@@ -1,26 +1,45 @@
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
-import GamesList, { CurrentGameId } from './GamesList';
+import GamesList, { CurrentGameId, CurrentGameVariant } from './GamesList';
 import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import { charToLetter } from './libs/special-animations/spinning-letters';
-import { rendererWidth } from '../stores/RendererStore';
+import { rendererHeight, rendererWidth } from '../stores/RendererStore';
 import { type Callable } from '../libs/utils';
 import { type CancelablePromise, cancelablePromise, CanceledPromiseError } from '../libs/utils/CancelablePromise';
+import type Entity from './libs/Entity';
+import { numberToEntity } from './libs/common-entities/numbers';
 
 /**
  * Used to detect which game is currently selected in the menu.
  * NOT the current game that is running.
  */
-export const MenuCurrentSelectGameId = writable('');
+export const MenuCurrentGameIdStore = writable('');
+let MenuCurrentGameId = '';
+MenuCurrentGameIdStore.subscribe((value) => {
+    MenuCurrentGameId = value;
+});
+
+const MenuCurrentGameIndexStore = writable(0);
+let MenuCurrentGameIndex = 0;
+MenuCurrentGameIndexStore.subscribe((value) => {
+    MenuCurrentGameIndex = value;
+});
+
+export const MenuCurrentGameVariantStore = writable(0);
+let MenuCurrentGameVariant = 0;
+MenuCurrentGameVariantStore.subscribe((value) => {
+    MenuCurrentGameVariant = value;
+});
 
 class GameMenu extends Brain {
-    private readonly _currentGameIndex = writable(0);
     private readonly _gamesArray: string[] = Object.keys(GamesList);
     private _letterAnimation?: AnimatedFrames;
     private _letterAnimationPromise?: CancelablePromise<Callable<AnimatedFrames, [x: number, y: number]> | undefined>;
     private _gameAnimation?: AnimatedFrames;
-    private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames>>;
+    private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames, [x: number, y: number]>>;
+    private _gameVariantNumber?: Entity;
+    private _gameVariantNumberPromise?: CancelablePromise<Callable<Entity, [x: number, y: number]> | undefined>;
 
     setRendererWidthHeight(): [number, number] {
         return [10, 20];
@@ -29,13 +48,25 @@ class GameMenu extends Brain {
     start() {
         addOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         addOnKeyDownListener('ArrowRight', this.selectNextGame);
+        addOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
+        addOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
         addOnKeyDownListener('Space', this.loadGame);
 
-        this._currentGameIndex.subscribe((index) => {
-            MenuCurrentSelectGameId.set(this._gamesArray[index]);
+        // On game change
+        MenuCurrentGameIndexStore.subscribe((index) => {
+            MenuCurrentGameIdStore.set(this._gamesArray[index]);
+            MenuCurrentGameVariantStore.set(0);
 
             this.loadLetterAnimation(index);
-            this.loadGameAnimation(index);
+            this.loadGameAnimation(index, 0);
+            this.loadGameVariantNumber(0);
+        });
+
+        // On variant change
+        MenuCurrentGameVariantStore.subscribe((variant) => {
+            this.loadLetterAnimation(MenuCurrentGameIndex);
+            this.loadGameAnimation(MenuCurrentGameIndex, variant);
+            this.loadGameVariantNumber(variant);
         });
 
         return super.start();
@@ -56,26 +87,39 @@ class GameMenu extends Brain {
         this._letterAnimation = undefined;
         this._gameAnimationPromise?.cancel();
         this._gameAnimation = undefined;
+        this._gameVariantNumberPromise?.cancel();
+        this._gameVariantNumber = undefined;
 
         removeOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         removeOnKeyDownListener('ArrowRight', this.selectNextGame);
+        removeOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
+        removeOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
         removeOnKeyDownListener('Space', this.loadGame);
 
         return super.stop();
     }
 
     loadGame = () => {
-        this._letterAnimationPromise?.cancel();
-        this._gameAnimationPromise?.cancel();
-        CurrentGameId.set(get(MenuCurrentSelectGameId));
+        CurrentGameId.set(MenuCurrentGameId);
+        CurrentGameVariant.set(MenuCurrentGameVariant);
     };
 
     selectPreviousGame = () => {
-        this._currentGameIndex.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
+        MenuCurrentGameIndexStore.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
     };
 
     selectNextGame = () => {
-        this._currentGameIndex.update(index => (index + 1) % this._gamesArray.length);
+        MenuCurrentGameIndexStore.update(index => (index + 1) % this._gamesArray.length);
+    };
+
+    selectPreviousGameVariant = () => {
+        const variants = GamesList[this._gamesArray[MenuCurrentGameIndex]].length;
+        MenuCurrentGameVariantStore.update(variant => (((variant - 1) % variants) + variants) % variants);
+    };
+
+    selectNextGameVariant = () => {
+        const variants = GamesList[this._gamesArray[MenuCurrentGameIndex]].length;
+        MenuCurrentGameVariantStore.update(variant => (variant + 1) % variants);
     };
 
     loadLetterAnimation = (index: number) => {
@@ -95,15 +139,31 @@ class GameMenu extends Brain {
         });
     };
 
-    loadGameAnimation = (index: number) => {
+    loadGameAnimation = (index: number, variant: number) => {
         this._gameAnimation?.stop();
 
-        this._gameAnimationPromise = cancelablePromise(GamesList[this._gamesArray[index]].animation());
+        this._gameAnimationPromise = cancelablePromise(GamesList[this._gamesArray[index]][variant].animation());
         this._gameAnimationPromise.promise.then((Animation) => {
-            this._gameAnimation = new Animation();
+            this._gameAnimation = new Animation(0, 6);
         }).catch((ex) => {
             if (!(ex instanceof CanceledPromiseError)) {
                 console.error('Failed loading game animation');
+                console.error(ex);
+            }
+        });
+    };
+
+    loadGameVariantNumber = (index: number) => {
+        this._gameVariantNumber?.clear();
+
+        this._gameVariantNumberPromise = cancelablePromise(numberToEntity(++index));
+        this._gameVariantNumberPromise.promise.then((NumberEntity) => {
+            if (NumberEntity) {
+                this._gameVariantNumber = new NumberEntity(0, rendererHeight - 5);
+            }
+        }).catch((ex) => {
+            if (!(ex instanceof CanceledPromiseError)) {
+                console.error('Failed loading game variant number');
                 console.error(ex);
             }
         });

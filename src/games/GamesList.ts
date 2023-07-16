@@ -5,27 +5,28 @@ import type { Callable } from '../libs/utils';
 
 interface GameInfo {
     name: string;
-    animation: () => Promise<Callable<AnimatedFrames>>;
+    animation: () => Promise<Callable<AnimatedFrames, [x: number, y: number]>>;
     loader: () => Promise<Callable<Brain>>;
 }
 
 export const CurrentGameId = writable('');
+export const CurrentGameVariant = writable(0);
 
 /**
  * Games metadata.
  * Each key is the game id.
  */
-const GamesList: Record<string, GameInfo> = {
-    'car-racing': {
+const GamesList: Record<string, GameInfo[]> = {
+    'car-racing': [{
         name: 'Car Racing',
         animation: async () => (await import('./car-racing/MenuAnimation')).default,
         loader: async () => (await import('./car-racing')).default
-    },
-    pong: {
+    }],
+    pong: [{
         name: 'Pong',
         animation: async () => (await import('./pong/MenuAnimation')).default,
         loader: async () => (await import('./pong')).default
-    }
+    }]
 };
 
 export default GamesList;

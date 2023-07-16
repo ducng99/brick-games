@@ -6,7 +6,7 @@
     import { RendererMiniInstanceStore } from './stores/RendererMiniStore';
     import type Brain from './games/libs/Brain';
     import { addOnKeyDownListener, removeOnKeyDownListener } from './libs/KeyboardHandler';
-    import GamesList, { CurrentGameId } from './games/GamesList';
+    import GamesList, { CurrentGameId, CurrentGameVariant } from './games/GamesList';
     import GameMenu from './games/GameMenu';
     import { debugMode } from './stores/SettingsStore';
     import SplashScreen from './games/SplashScreen';
@@ -21,7 +21,7 @@
 
     $: gameScore = game?.score;
 
-    $: loadNewGame($CurrentGameId);
+    $: loadNewGame($CurrentGameId, $CurrentGameVariant);
 
     $: {
         game?.start();
@@ -41,7 +41,7 @@
         game = new SplashScreen();
 
         const restartGame = addOnKeyDownListener('KeyR', () => {
-            loadNewGame($CurrentGameId);
+            loadNewGame($CurrentGameId, $CurrentGameVariant);
         });
 
         const escapeToGameMenu = addOnKeyDownListener('Escape', () => {
@@ -68,11 +68,11 @@
         };
     });
 
-    function loadNewGame(id: string) {
-        if (id in GamesList) {
+    function loadNewGame(id: string, variant: number) {
+        if (id in GamesList && GamesList[id].length > variant && variant >= 0) {
             stopGame(false);
 
-            gameLoadPromise = cancelablePromise(GamesList[id].loader());
+            gameLoadPromise = cancelablePromise(GamesList[id][variant].loader());
             gameLoadPromise.promise.then(Game => {
                 game = new Game();
             }).catch((ex) => {

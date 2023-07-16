@@ -10,8 +10,8 @@ const frames: Sprite[] = [
 ];
 
 class MenuAnimation extends AnimatedFrames {
-    constructor() {
-        super(0, 6, 720, frames, [0, 6, rendererWidth, 8], true);
+    constructor(x: number, y: number) {
+        super(x, y, 720, frames, [x, y, rendererWidth, 8], true);
     }
 }
 
