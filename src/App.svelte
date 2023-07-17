@@ -21,7 +21,12 @@
 
     $: gameScore = game?.score;
 
-    $: loadNewGame($CurrentGameId, $CurrentGameVariant);
+    // Restart game when width & height change as game starts before new size is applied
+    $: {
+        if ($rendererWidthStore && $rendererHeightStore) {
+            loadNewGame($CurrentGameId, $CurrentGameVariant);
+        }
+    }
 
     $: {
         game?.start();

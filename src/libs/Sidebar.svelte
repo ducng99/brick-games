@@ -2,7 +2,7 @@
     import Renderer from './Renderer.svelte';
     import { RendererMiniInstanceStore, rendererMiniHeight, rendererMiniWidth } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
-    import { MenuCurrentGameIdStore, MenuCurrentGameVariantStore } from '../games/GameMenu';
+    import { menuCurrentGameIdStore, menuCurrentGameVariantStore } from '../games/GameMenu';
     import { pad } from './utils';
 
     export let score: string | undefined;
@@ -30,8 +30,8 @@
         </div>
     </div>
     <div id="currentGameName" class="text">
-        {#if $MenuCurrentGameIdStore in GamesList}
-            {GamesList[$MenuCurrentGameIdStore][$MenuCurrentGameVariantStore].name}
+        {#if $menuCurrentGameIdStore in GamesList && $menuCurrentGameVariantStore >= 0 && $menuCurrentGameVariantStore < GamesList[$menuCurrentGameIdStore].length}
+            {GamesList[$menuCurrentGameIdStore][$menuCurrentGameVariantStore].name}
         {:else}
             Game over
         {/if}

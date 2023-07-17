@@ -14,22 +14,22 @@ import { numberToEntity } from './libs/common-entities/numbers';
  * Used to detect which game is currently selected in the menu.
  * NOT the current game that is running.
  */
-export const MenuCurrentGameIdStore = writable('');
-let MenuCurrentGameId = '';
-MenuCurrentGameIdStore.subscribe((value) => {
-    MenuCurrentGameId = value;
+export const menuCurrentGameIdStore = writable('');
+let menuCurrentGameId = '';
+menuCurrentGameIdStore.subscribe((value) => {
+    menuCurrentGameId = value;
 });
 
-const MenuCurrentGameIndexStore = writable(0);
-let MenuCurrentGameIndex = 0;
-MenuCurrentGameIndexStore.subscribe((value) => {
-    MenuCurrentGameIndex = value;
+const menuCurrentGameIndexStore = writable(0);
+let menuCurrentGameIndex = 0;
+menuCurrentGameIndexStore.subscribe((value) => {
+    menuCurrentGameIndex = value;
 });
 
-export const MenuCurrentGameVariantStore = writable(0);
-let MenuCurrentGameVariant = 0;
-MenuCurrentGameVariantStore.subscribe((value) => {
-    MenuCurrentGameVariant = value;
+export const menuCurrentGameVariantStore = writable(0);
+let menuCurrentGameVariant = 0;
+menuCurrentGameVariantStore.subscribe((value) => {
+    menuCurrentGameVariant = value;
 });
 
 class GameMenu extends Brain {
@@ -54,9 +54,9 @@ class GameMenu extends Brain {
         addOnKeyDownListener('Space', this.loadGame);
 
         // On game change
-        this._unsubscribers.push(MenuCurrentGameIndexStore.subscribe((index) => {
-            MenuCurrentGameIdStore.set(this._gamesArray[index]);
-            MenuCurrentGameVariantStore.set(0);
+        this._unsubscribers.push(menuCurrentGameIndexStore.subscribe((index) => {
+            menuCurrentGameIdStore.set(this._gamesArray[index]);
+            menuCurrentGameVariantStore.set(0);
 
             this.loadLetterAnimation(index);
             this.loadGameAnimation(index, 0);
@@ -64,9 +64,8 @@ class GameMenu extends Brain {
         }));
 
         // On variant change
-        this._unsubscribers.push(MenuCurrentGameVariantStore.subscribe((variant) => {
-            this.loadLetterAnimation(MenuCurrentGameIndex);
-            this.loadGameAnimation(MenuCurrentGameIndex, variant);
+        this._unsubscribers.push(menuCurrentGameVariantStore.subscribe((variant) => {
+            this.loadGameAnimation(menuCurrentGameIndex, variant);
             this.loadGameVariantNumber(variant);
         }));
 
@@ -103,26 +102,26 @@ class GameMenu extends Brain {
     }
 
     loadGame = () => {
-        CurrentGameId.set(MenuCurrentGameId);
-        CurrentGameVariant.set(MenuCurrentGameVariant);
+        CurrentGameId.set(menuCurrentGameId);
+        CurrentGameVariant.set(menuCurrentGameVariant);
     };
 
     selectPreviousGame = () => {
-        MenuCurrentGameIndexStore.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
+        menuCurrentGameIndexStore.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
     };
 
     selectNextGame = () => {
-        MenuCurrentGameIndexStore.update(index => (index + 1) % this._gamesArray.length);
+        menuCurrentGameIndexStore.update(index => (index + 1) % this._gamesArray.length);
     };
 
     selectPreviousGameVariant = () => {
-        const variants = GamesList[this._gamesArray[MenuCurrentGameIndex]].length;
-        MenuCurrentGameVariantStore.update(variant => (((variant - 1) % variants) + variants) % variants);
+        const variants = GamesList[menuCurrentGameId].length;
+        menuCurrentGameVariantStore.update(variant => (((variant - 1) % variants) + variants) % variants);
     };
 
     selectNextGameVariant = () => {
-        const variants = GamesList[this._gamesArray[MenuCurrentGameIndex]].length;
-        MenuCurrentGameVariantStore.update(variant => (variant + 1) % variants);
+        const variants = GamesList[menuCurrentGameId].length;
+        menuCurrentGameVariantStore.update(variant => (variant + 1) % variants);
     };
 
     loadLetterAnimation = (index: number) => {
@@ -159,7 +158,7 @@ class GameMenu extends Brain {
     loadGameVariantNumber = (index: number) => {
         this._gameVariantNumber?.clear();
 
-        this._gameVariantNumberPromise = cancelablePromise(numberToEntity(++index));
+        this._gameVariantNumberPromise = cancelablePromise(numberToEntity(index + 1));
         this._gameVariantNumberPromise.promise.then((NumberEntity) => {
             if (NumberEntity) {
                 this._gameVariantNumber = new NumberEntity(0, rendererHeight - 5);
