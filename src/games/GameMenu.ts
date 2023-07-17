@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, type Unsubscriber } from 'svelte/store';
 import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
 import GamesList, { CurrentGameId, CurrentGameVariant } from './GamesList';
 import Brain from './libs/Brain';
@@ -40,6 +40,7 @@ class GameMenu extends Brain {
     private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames, [x: number, y: number]>>;
     private _gameVariantNumber?: Entity;
     private _gameVariantNumberPromise?: CancelablePromise<Callable<Entity, [x: number, y: number]> | undefined>;
+    private readonly _unsubscribers: Unsubscriber[] = [];
 
     setRendererWidthHeight(): [number, number] {
         return [10, 20];
@@ -53,21 +54,21 @@ class GameMenu extends Brain {
         addOnKeyDownListener('Space', this.loadGame);
 
         // On game change
-        MenuCurrentGameIndexStore.subscribe((index) => {
+        this._unsubscribers.push(MenuCurrentGameIndexStore.subscribe((index) => {
             MenuCurrentGameIdStore.set(this._gamesArray[index]);
             MenuCurrentGameVariantStore.set(0);
 
             this.loadLetterAnimation(index);
             this.loadGameAnimation(index, 0);
             this.loadGameVariantNumber(0);
-        });
+        }));
 
         // On variant change
-        MenuCurrentGameVariantStore.subscribe((variant) => {
+        this._unsubscribers.push(MenuCurrentGameVariantStore.subscribe((variant) => {
             this.loadLetterAnimation(MenuCurrentGameIndex);
             this.loadGameAnimation(MenuCurrentGameIndex, variant);
             this.loadGameVariantNumber(variant);
-        });
+        }));
 
         return super.start();
     }
@@ -95,6 +96,8 @@ class GameMenu extends Brain {
         removeOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
         removeOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
         removeOnKeyDownListener('Space', this.loadGame);
+
+        this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
 
         return super.stop();
     }
@@ -128,7 +131,7 @@ class GameMenu extends Brain {
         this._letterAnimationPromise = cancelablePromise(charToLetter(String.fromCharCode(97 + index)));
         this._letterAnimationPromise.promise.then(Letter => {
             if (Letter) {
-                const x = Math.floor(rendererWidth / 2 - 3);
+                const x = Math.floor(rendererWidth * 0.5 - 3);
                 this._letterAnimation = new Letter(x, 0);
             }
         }).catch((ex) => {

@@ -49,7 +49,7 @@
 
     /**
      * Logs an array of blocks that are currently on
-    */
+     */
     export function logBricks(): void {
         // Get blocks that are on, store as array of [x, y] using index
         const onBlocks: Array<[number, number]> = [];

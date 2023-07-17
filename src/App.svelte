@@ -69,7 +69,7 @@
     });
 
     function loadNewGame(id: string, variant: number) {
-        if (id in GamesList && GamesList[id].length > variant && variant >= 0) {
+        if (id in GamesList && variant >= 0 && variant < GamesList[id].length) {
             stopGame(false);
 
             gameLoadPromise = cancelablePromise(GamesList[id][variant].loader());

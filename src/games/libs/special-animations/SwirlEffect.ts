@@ -27,7 +27,7 @@ class SwirlEffect extends AnimatedEntity {
                 for (let i = 0; i < steps; i++) {
                     RendererInstance?.setBlock(this._currentX, this._currentY);
 
-                    if (this._currentLayer == Math.floor(Math.min(rendererWidth / 2, rendererHeight / 2))) {
+                    if (this._currentLayer == Math.floor(Math.min(rendererWidth * 0.5, rendererHeight * 0.5))) {
                         this.AnimationState = 'finished';
                     }
 
