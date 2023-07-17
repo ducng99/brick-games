@@ -137,7 +137,7 @@ class PongBrain extends Brain {
                                     this.ball.direction = 'up-right';
                                     ballCollidedWithPaddle = true;
                                     break;
-                                case 'down-straight':
+                                default:
                                     this.ball.direction = Math.random() > 0.5 ? 'up-left' : 'up-right';
                                     ballCollidedWithPaddle = true;
                                     break;
@@ -152,7 +152,7 @@ class PongBrain extends Brain {
                                     this.ball.direction = 'down-right';
                                     ballCollidedWithPaddle = true;
                                     break;
-                                case 'up-straight':
+                                default:
                                     this.ball.direction = Math.random() > 0.5 ? 'down-left' : 'down-right';
                                     ballCollidedWithPaddle = true;
                                     break;
@@ -210,10 +210,15 @@ class PongBrain extends Brain {
 
         // Random chance of ball direction go straight
         if (this.ball.x != 0 && this.ball.x != rendererWidth - 1 && Math.random() <= 0.3) {
-            if (this.ball.direction === 'down-left' || this.ball.direction === 'down-right') {
-                this.ball.direction = 'down-straight';
-            } else if (this.ball.direction === 'up-left' || this.ball.direction === 'up-right') {
-                this.ball.direction = 'up-straight';
+            switch (this.ball.direction) {
+                case 'down-left':
+                case 'down-right':
+                    this.ball.direction = 'down-straight';
+                    break;
+                case 'up-left':
+                case 'up-right':
+                    this.ball.direction = 'up-straight';
+                    break;
             }
         }
     }

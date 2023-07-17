@@ -29,6 +29,7 @@ class Ball extends Entity {
                 break;
             case 5:
                 this.direction = 'down-straight';
+                break;
         }
     }
 
@@ -62,10 +63,13 @@ class Ball extends Entity {
      */
     isCollidingBox(entity: Entity, offsetX = 0, offsetY = 0): boolean {
         if (entity instanceof Paddle) {
-            if (this.direction === 'up-left' || this.direction === 'down-left') {
-                return super.isCollidingBox(entity, offsetX, offsetY) || super.isCollidingBox(entity, offsetX + 1, offsetY);
-            } else if (this.direction === 'up-right' || this.direction === 'down-right') {
-                return super.isCollidingBox(entity, offsetX, offsetY) || super.isCollidingBox(entity, offsetX - 1, offsetY);
+            switch (this.direction) {
+                case 'up-left':
+                case 'down-left':
+                    return super.isCollidingBox(entity, offsetX, offsetY) || super.isCollidingBox(entity, offsetX + 1, offsetY);
+                case 'up-right':
+                case 'down-right':
+                    return super.isCollidingBox(entity, offsetX, offsetY) || super.isCollidingBox(entity, offsetX - 1, offsetY);
             }
         }
 
