@@ -22,11 +22,18 @@ const GamesList: Record<string, GameInfo[]> = {
         animation: async () => (await import('./car-racing/MenuAnimation')).default,
         loader: async () => (await import('./car-racing')).default
     }],
-    pong: [{
-        name: 'Pong',
-        animation: async () => (await import('./pong/MenuAnimation')).default,
-        loader: async () => (await import('./pong')).default
-    }]
+    pong: [
+        {
+            name: 'Pong',
+            animation: async () => (await import('./pong/MenuAnimation')).default,
+            loader: async () => (await import('./pong')).default
+        },
+        {
+            name: 'Pong 2',
+            animation: async () => (await import('./pong/v2/MenuAnimation')).default,
+            loader: async () => (await import('./pong/v2')).default
+        }
+    ]
 };
 
 export default GamesList;
