@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2023-07-17
+
+### ⛰️  Features
+
+- *(pong)* Added second variant of Pong 🎉
+- [**breaking**] Added support for multiple game variants
+
+### 🐛 Bug Fixes
+
+- Fixed resizing renderer cause game to not render on start
+
+### 🚜 Refactor
+
+- *(KeyboardHandler)* Changed `Map` to `Object` to store callbacks
+
 ## [0.4.0] - 2023-07-14
 
 ### ⛰️  Features
