@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1] - 2023-07-20
+
+### ⛰️  Features
+
+- Added Hi-score persistant storage for each game
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deps)* Bump svelte-check from 3.4.5 to 3.4.6
+- *(deps)* Bump vite from 4.4.2 to 4.4.4
+- *(deps-dev)* Bump eslint from 8.44.0 to 8.45.0
+- *(deps-dev)* Bump eslint-config-standard-with-typescript
+- *(deps-dev)* Bump eslint-plugin-n from 15.7.0 to 16.0.1
+
 ## [0.5.0] - 2023-07-17
 
 ### ⛰️  Features
