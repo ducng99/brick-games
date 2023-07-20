@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 import { rendererHeightStore, rendererWidthStore } from '../../stores/RendererStore';
+import { getHiScoreStore } from '../../stores/HighscoresStore';
+import type { PersistentStore } from '../../stores/PersistentStore';
 
 type BrainState = 'created' | 'started' | 'running' | 'stopped';
 
@@ -21,11 +23,16 @@ interface Brain {
  * A generic brain class that is used for any game logic.
  */
 abstract class Brain {
+    private readonly _id: string;
     state: BrainState = 'created';
     protected lastFrame = 0;
     protected _score = writable('000');
+    protected hiScoreStore: PersistentStore<number>;
 
-    constructor() {
+    constructor(gameID: string) {
+        this._id = gameID;
+        this.hiScoreStore = getHiScoreStore(gameID);
+
         const [width, height] = this.setRendererWidthHeight();
         rendererWidthStore.set(width);
         rendererHeightStore.set(height);

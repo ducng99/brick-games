@@ -6,7 +6,7 @@ import type { Callable } from '../libs/utils';
 interface GameInfo {
     name: string;
     animation: () => Promise<Callable<AnimatedFrames, [x: number, y: number]>>;
-    loader: () => Promise<Callable<Brain>>;
+    loader: () => Promise<Callable<Brain, [gameID: string]>>;
 }
 
 export const CurrentGameId = writable('');

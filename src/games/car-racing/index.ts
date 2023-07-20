@@ -223,7 +223,8 @@ class CarRacingBrain extends Brain {
 
     set currentScore(score: number) {
         this._currentScore = score;
-        this.score.set(pad(pad(clamp(score ?? 0, 0, 999999), 3), 6, '!'));
+        this.hiScoreStore.set(score);
+        this.score.set(pad(clamp(score ?? 0, 0, 999999), 3));
     };
 
     get player(): Car {

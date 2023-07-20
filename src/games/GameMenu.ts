@@ -5,10 +5,12 @@ import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import { charToLetter } from './libs/special-animations/spinning-letters';
 import { rendererHeight, rendererWidth } from '../stores/RendererStore';
-import { type Callable } from '../libs/utils';
+import { pad, type Callable } from '../libs/utils';
 import { type CancelablePromise, cancelablePromise, CanceledPromiseError } from '../libs/utils/CancelablePromise';
 import type Entity from './libs/Entity';
 import { numberToEntity } from './libs/common-entities/numbers';
+import { getHiScoreStore } from '../stores/HighscoresStore';
+import { showHighScore } from '../stores/SettingsStore';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -53,6 +55,9 @@ class GameMenu extends Brain {
         addOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
         addOnKeyDownListener('Space', this.loadGame);
 
+        // Show high score
+        showHighScore.set(true);
+
         // On game change
         this._unsubscribers.push(menuCurrentGameIndexStore.subscribe((index) => {
             menuCurrentGameIdStore.set(this._gamesArray[index]);
@@ -61,6 +66,9 @@ class GameMenu extends Brain {
             this.loadLetterAnimation(index);
             this.loadGameAnimation(index, 0);
             this.loadGameVariantNumber(0);
+
+            const highScore = getHiScoreStore(this._gamesArray[index]);
+            this.score.set(pad(highScore.value, 3));
         }));
 
         // On variant change
@@ -104,6 +112,7 @@ class GameMenu extends Brain {
     loadGame = () => {
         CurrentGameId.set(menuCurrentGameId);
         CurrentGameVariant.set(menuCurrentGameVariant);
+        showHighScore.set(false);
     };
 
     selectPreviousGame = () => {

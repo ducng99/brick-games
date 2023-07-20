@@ -17,7 +17,7 @@
     let additionalCSS = '';
     let animationFrameNumber = 0;
     let game: Brain | null = null;
-    let gameLoadPromise: CancelablePromise<Callable<Brain>> | null = null;
+    let gameLoadPromise: CancelablePromise<Callable<Brain, [gameID: string]>> | null = null;
 
     $: gameScore = game?.score;
 
@@ -43,7 +43,7 @@
     }
 
     onMount(() => {
-        game = new SplashScreen();
+        game = new SplashScreen('splash-screen');
 
         const restartGame = addOnKeyDownListener('KeyR', () => {
             loadNewGame($CurrentGameId, $CurrentGameVariant);
@@ -79,7 +79,7 @@
 
             gameLoadPromise = cancelablePromise(GamesList[id][variant].loader());
             gameLoadPromise.promise.then(Game => {
-                game = new Game();
+                game = new Game(id);
             }).catch((ex) => {
                 if (!(ex instanceof CanceledPromiseError)) {
                     console.error('Failed to load game.');
@@ -112,7 +112,7 @@
 
         if (loadMenu) {
             $CurrentGameId = '';
-            game = new GameMenu();
+            game = new GameMenu('game-menu');
         }
 
         // On unmount the instance exists but not the props,
