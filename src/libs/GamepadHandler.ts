@@ -5,7 +5,7 @@ interface GamepadInfo {
     buttonUpListeners: Map<number, Set<() => void>>;
 }
 
-type GamepadConnectedCallback = (gamepadIndex: number) => void;
+type GamepadConnectedCallback = (gamepadIndex: number, gamepadId: string) => void;
 
 const gamepads: Record<number, GamepadInfo> = {};
 const gamepadConnectedCallbacks = new Set<GamepadConnectedCallback>();
@@ -17,7 +17,7 @@ window.addEventListener('gamepadconnected', function (e) {
     setupGamepad(e.gamepad);
 
     gamepadConnectedCallbacks.forEach((callback) => {
-        callback(e.gamepad.index);
+        callback(e.gamepad.index, e.gamepad.id);
     });
 });
 
@@ -27,7 +27,7 @@ window.addEventListener('gamepaddisconnected', function (e) {
         delete gamepads[e.gamepad.index];
 
         gamepadDisconnectedCallbacks.forEach((callback) => {
-            callback(e.gamepad.index);
+            callback(e.gamepad.index, e.gamepad.id);
         });
     }
 });
@@ -95,8 +95,8 @@ function setupGamepad(gamepad: Gamepad) {
  */
 export function addGamepadConnectedListener(callback: GamepadConnectedCallback, initialCall = true) {
     if (initialCall) {
-        Object.keys(gamepads).forEach((gamepadIndex) => {
-            callback(Number.parseInt(gamepadIndex));
+        Object.values(gamepads).forEach((gamepad) => {
+            callback(gamepad.controller.index, gamepad.controller.id);
         });
     }
 
@@ -160,7 +160,7 @@ export function addGamepadButtonDownListener(button: number, callback: () => voi
  * Remove a previously added callback to be called when a gamepad button is pressed.
  * @param button Button index
  * @param callback Callback was added with {@link addGamepadButtonDownListener}.
- * @param gamepadIndex Gamepad index. If not provided, remove callback for all gamepads.
+ * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
 export function removeGamepadButtonDownListener(button: number, callback: () => void, gamepadIndex?: number) {
     if (gamepadIndex) {
@@ -202,7 +202,7 @@ export function addGamepadButtonUpListener(button: number, callback: () => void,
  * Remove a previously added callback to be called when a gamepad button is released.
  * @param button Button index
  * @param callback Callback was added with {@link addGamepadButtonUpListener}.
- * @param gamepadIndex Gamepad index. If not provided, remove callback for all gamepads.
+ * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
 export function removeGamepadButtonUpListener(button: number, callback: () => void, gamepadIndex?: number) {
     if (gamepadIndex) {
