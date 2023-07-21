@@ -12,6 +12,7 @@
     import SplashScreen from './games/SplashScreen';
     import type { Callable } from './libs/utils';
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
+    import { updateGamepads } from './libs/GamepadHandler';
 
     let sidebar: Sidebar;
     let additionalCSS = '';
@@ -92,6 +93,8 @@
         if (game?.state === 'stopped') {
             stopGame(!(game instanceof GameMenu));
         } else {
+            updateGamepads();
+
             if (game?.update) {
                 if (!$debugMode) {
                     game?.update(timestamp);

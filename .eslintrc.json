@@ -18,7 +18,7 @@
             }
         },
         {
-            "files": [ "*.ts", "*.tsx" ],
+            "files": [ "*.ts" ],
             "rules": {
                 "no-unused-vars": "off"
             }
