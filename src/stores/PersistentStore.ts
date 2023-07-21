@@ -4,7 +4,7 @@ export class PersistentStore<T> implements Writable<T> {
     private readonly _key: string;
     private _value: T;
 
-    private readonly _subscriptions: Array<(value: T) => void> = [];
+    private readonly _subscriptions: Array<Subscriber<T>> = [];
 
     constructor(key: string, value: T) {
         this._key = key;
