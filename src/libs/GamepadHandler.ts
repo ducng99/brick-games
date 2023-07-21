@@ -5,11 +5,11 @@ interface GamepadInfo {
     buttonUpListeners: Map<number, Set<() => void>>;
 }
 
-type GamepadConnectedCallback = (gamepadIndex: number, gamepadId: string) => void;
+type GamepadConnectionCallback = (gamepadIndex: number, gamepadId: string) => void;
 
 const gamepads: Record<number, GamepadInfo> = {};
-const gamepadConnectedCallbacks = new Set<GamepadConnectedCallback>();
-const gamepadDisconnectedCallbacks = new Set<GamepadConnectedCallback>();
+const gamepadConnectedCallbacks = new Set<GamepadConnectionCallback>();
+const gamepadDisconnectedCallbacks = new Set<GamepadConnectionCallback>();
 const gamepadButtonDownCallbacks = new Map<number, Set<() => void>>();
 const gamepadButtonUpCallbacks = new Map<number, Set<() => void>>();
 
@@ -93,7 +93,7 @@ function setupGamepad(gamepad: Gamepad) {
  * @param callback Callback to be called when a new gamepad is connected.
  * @param initialCall If `true`, the callback will be called for all currently connected gamepads.
  */
-export function addGamepadConnectedListener(callback: GamepadConnectedCallback, initialCall = true) {
+export function addGamepadConnectedListener(callback: GamepadConnectionCallback, initialCall = true) {
     if (initialCall) {
         Object.values(gamepads).forEach((gamepad) => {
             callback(gamepad.controller.index, gamepad.controller.id);
@@ -107,7 +107,7 @@ export function addGamepadConnectedListener(callback: GamepadConnectedCallback, 
  * Remove a previously added callback to be called when a new gamepad is connected.
  * @param callback Callback was added with {@link addGamepadConnectedListener}.
  */
-export function removeGamepadConnectedListener(callback: GamepadConnectedCallback) {
+export function removeGamepadConnectedListener(callback: GamepadConnectionCallback) {
     gamepadConnectedCallbacks.delete(callback);
 }
 
@@ -115,7 +115,7 @@ export function removeGamepadConnectedListener(callback: GamepadConnectedCallbac
  * Add a callback to be called when a gamepad is disconnected.
  * @param callback Callback to be called when a gamepad is disconnected.
  */
-export function addGamepadDisconnectedListener(callback: GamepadConnectedCallback) {
+export function addGamepadDisconnectedListener(callback: GamepadConnectionCallback) {
     gamepadDisconnectedCallbacks.add(callback);
 }
 
@@ -123,7 +123,7 @@ export function addGamepadDisconnectedListener(callback: GamepadConnectedCallbac
  * Remove a previously added callback to be called when a gamepad is disconnected.
  * @param callback Callback was added with {@link addGamepadDisconnectedListener}.
  */
-export function removeGamepadDisconnectedListener(callback: GamepadConnectedCallback) {
+export function removeGamepadDisconnectedListener(callback: GamepadConnectionCallback) {
     gamepadDisconnectedCallbacks.delete(callback);
 }
 
