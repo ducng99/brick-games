@@ -14,6 +14,9 @@
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener, updateGamepads } from './libs/GamepadHandler';
 
+    let windowWidth = 0;
+    let windowHeight = 0;
+
     let sidebar: Sidebar;
     let additionalCSS = '';
     let animationFrameNumber = 0;
@@ -38,8 +41,10 @@
     }
 
     $: {
-        if ($rendererWidthStore && $rendererHeightStore && sidebar) {
-            updateAdditionalCSS();
+        if (sidebar) {
+            const padding = sidebar.getWidth();
+            const rendererRatio = $rendererWidthStore / $rendererHeightStore;
+            additionalCSS = (windowWidth - padding) / windowHeight <= rendererRatio ? 'height: auto; width: 90%; font-size: 1vw' : 'font-size: 1.4vmin;';
         }
     }
 
@@ -66,15 +71,12 @@
             $RendererInstanceStore?.clearScreen();
         });
 
-        window.addEventListener('resize', updateAdditionalCSS);
-
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
             removeOnKeyDownListener('Escape', escapeToGameMenu);
             removeGamepadButtonDownListener(GamepadStandardButton.Start, escapeToGameMenuGamepad);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
-            window.removeEventListener('resize', updateAdditionalCSS);
             stopGame(false);
         };
     });
@@ -133,15 +135,9 @@
             $RendererMiniInstanceStore.clearScreen();
         }
     }
-
-    function updateAdditionalCSS() {
-        if (sidebar) {
-            const padding = sidebar.getWidth();
-            const rendererRatio = $rendererWidthStore / $rendererHeightStore;
-            additionalCSS = (window.innerWidth - padding) / window.innerHeight <= rendererRatio ? 'height: auto; width: 90%; font-size: 1vw' : 'font-size: 1.4vmin;';
-        }
-    }
 </script>
+
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
 <main>
     <div style={additionalCSS}>
