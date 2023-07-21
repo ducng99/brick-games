@@ -1,3 +1,4 @@
+import { isGamepadButtonDown } from '../libs/GamepadHandler';
 import { isKeyDown } from '../libs/KeyboardHandler';
 import { RendererInstance } from '../stores/RendererStore';
 import Brain from './libs/Brain';
@@ -32,7 +33,7 @@ class SplashScreen extends Brain {
         }
 
         if (this.state === 'running') {
-            if (isKeyDown()) {
+            if (isKeyDown() || isGamepadButtonDown()) {
                 this.stop();
             }
 

@@ -7,6 +7,7 @@ import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { clamp, pad, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
+import { GamepadStandardButton, addGamepadButtonDownListener, isGamepadButtonDown, removeGamepadButtonDownListener } from '../../libs/GamepadHandler';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -31,6 +32,8 @@ class CarRacingBrain extends Brain {
         // Setup keyboard listeners
         addOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         addOnKeyDownListener('ArrowRight', this.playerMoveRight);
+        addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.playerMoveLeft);
+        addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.playerMoveRight);
 
         // Show health
         for (let i = 0; i < this._health; i++) {
@@ -43,7 +46,7 @@ class CarRacingBrain extends Brain {
     }
 
     update = (timestamp: DOMHighResTimeStamp) => {
-        if (this.state === 'started' && isKeyDown('Space')) {
+        if (this.state === 'started' && (isKeyDown('Space') || isGamepadButtonDown(GamepadStandardButton.A))) {
             this.state = 'running';
             this.lastFrame = timestamp;
         }
@@ -79,7 +82,7 @@ class CarRacingBrain extends Brain {
 
             let actualSpeed = this._speed;
 
-            if (isKeyDown('Space')) {
+            if ((isKeyDown('Space') || isGamepadButtonDown(GamepadStandardButton.A))) {
                 if (this._speed + 150 < maxSpeed) {
                     actualSpeed += 150;
                 } else {
@@ -145,6 +148,8 @@ class CarRacingBrain extends Brain {
 
         removeOnKeyDownListener('ArrowLeft', this.playerMoveLeft);
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.playerMoveLeft);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.playerMoveRight);
 
         return super.stop();
     }

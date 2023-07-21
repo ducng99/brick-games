@@ -11,6 +11,7 @@ import type Entity from './libs/Entity';
 import { numberToEntity } from './libs/common-entities/numbers';
 import { getHiScoreStore } from '../stores/HighscoresStore';
 import { showHighScore } from '../stores/SettingsStore';
+import { addGamepadButtonDownListener, GamepadStandardButton, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -51,9 +52,15 @@ class GameMenu extends Brain {
     start() {
         addOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         addOnKeyDownListener('ArrowRight', this.selectNextGame);
-        addOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
-        addOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
+        addOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
+        addOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
         addOnKeyDownListener('Space', this.loadGame);
+
+        addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
+        addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
+        addGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
+        addGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
+        addGamepadButtonDownListener(GamepadStandardButton.A, this.loadGame);
 
         // Show high score
         showHighScore.set(true);
@@ -103,6 +110,12 @@ class GameMenu extends Brain {
         removeOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
         removeOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
         removeOnKeyDownListener('Space', this.loadGame);
+
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectPreviousGameVariant);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectNextGameVariant);
+        removeGamepadButtonDownListener(GamepadStandardButton.A, this.loadGame);
 
         this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
 

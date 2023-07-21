@@ -12,7 +12,7 @@
     import SplashScreen from './games/SplashScreen';
     import type { Callable } from './libs/utils';
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
-    import { updateGamepads } from './libs/GamepadHandler';
+    import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener, updateGamepads } from './libs/GamepadHandler';
 
     let sidebar: Sidebar;
     let additionalCSS = '';
@@ -54,6 +54,10 @@
             stopGame();
         });
 
+        const escapeToGameMenuGamepad = addGamepadButtonDownListener(GamepadStandardButton.Start, () => {
+            stopGame();
+        });
+
         const logBricksCallback = addOnKeyDownListener('KeyL', () => {
             $RendererInstanceStore?.logBricks();
         });
@@ -67,6 +71,7 @@
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
             removeOnKeyDownListener('Escape', escapeToGameMenu);
+            removeGamepadButtonDownListener(GamepadStandardButton.Start, escapeToGameMenuGamepad);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
             window.removeEventListener('resize', updateAdditionalCSS);
