@@ -107,14 +107,14 @@ class GameMenu extends Brain {
 
         removeOnKeyDownListener('ArrowLeft', this.selectPreviousGame);
         removeOnKeyDownListener('ArrowRight', this.selectNextGame);
-        removeOnKeyDownListener('ArrowUp', this.selectPreviousGameVariant);
-        removeOnKeyDownListener('ArrowDown', this.selectNextGameVariant);
+        removeOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
+        removeOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
         removeOnKeyDownListener('Space', this.loadGame);
 
         removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
-        removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectPreviousGameVariant);
-        removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectNextGameVariant);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
+        removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
         removeGamepadButtonDownListener(GamepadStandardButton.A, this.loadGame);
 
         this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
