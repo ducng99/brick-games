@@ -135,7 +135,7 @@ export function removeGamepadDisconnectedListener(callback: GamepadConnectionCal
  * @returns `true` if the button is down or if any button is down.
  */
 export function addGamepadButtonDownListener(button: number, callback: () => void, gamepadIndex?: number) {
-    if (gamepadIndex) {
+    if (typeof gamepadIndex !== 'undefined') {
         if (gamepadIndex in gamepads) {
             const gamepadInfo = gamepads[gamepadIndex];
 
@@ -163,7 +163,7 @@ export function addGamepadButtonDownListener(button: number, callback: () => voi
  * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
 export function removeGamepadButtonDownListener(button: number, callback: () => void, gamepadIndex?: number) {
-    if (gamepadIndex) {
+    if (typeof gamepadIndex !== 'undefined') {
         if (gamepadIndex in gamepads) {
             gamepads[gamepadIndex].buttonDownListeners.get(button)?.delete(callback);
         }
@@ -179,7 +179,7 @@ export function removeGamepadButtonDownListener(button: number, callback: () => 
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
  */
 export function addGamepadButtonUpListener(button: number, callback: () => void, gamepadIndex?: number) {
-    if (gamepadIndex) {
+    if (typeof gamepadIndex !== 'undefined') {
         if (gamepadIndex in gamepads) {
             const gamepadInfo = gamepads[gamepadIndex];
 
@@ -205,7 +205,7 @@ export function addGamepadButtonUpListener(button: number, callback: () => void,
  * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
 export function removeGamepadButtonUpListener(button: number, callback: () => void, gamepadIndex?: number) {
-    if (gamepadIndex) {
+    if (typeof gamepadIndex !== 'undefined') {
         if (gamepadIndex in gamepads) {
             gamepads[gamepadIndex].buttonUpListeners.get(button)?.delete(callback);
         }
@@ -221,7 +221,7 @@ export function removeGamepadButtonUpListener(button: number, callback: () => vo
  * @returns `true` if the button is down or if any button is down.
  */
 export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boolean {
-    if (gamepadIndex) {
+    if (typeof gamepadIndex !== 'undefined') {
         if (gamepadIndex in gamepads) {
             const buttonsPressed = gamepads[gamepadIndex]?.buttonsDown;
 
