@@ -12,7 +12,7 @@
     import SplashScreen from './games/SplashScreen';
     import type { Callable } from './libs/utils';
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
-    import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener, updateGamepads } from './libs/GamepadHandler';
+    import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from './libs/GamepadHandler';
 
     let windowWidth = 0;
     let windowHeight = 0;
@@ -100,8 +100,6 @@
         if (game?.state === 'stopped') {
             stopGame(!(game instanceof GameMenu));
         } else {
-            updateGamepads();
-
             if (game?.update) {
                 if (!$debugMode) {
                     game?.update(timestamp);

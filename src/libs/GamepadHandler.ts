@@ -34,15 +34,17 @@ window.addEventListener('gamepaddisconnected', function (e) {
 
 /**
  * Get all connected gamepads and update their state. Add new gamepads to the list if they are not already in it.
- * This function should be called every frame.
+ * This function is called every frame.
  */
-export function updateGamepads() {
+function updateGamepads() {
     if ('getGamepads' in navigator) {
         navigator.getGamepads().forEach((newGamepad) => {
             if (newGamepad) {
                 setupGamepad(newGamepad);
             }
         });
+
+        requestAnimationFrame(updateGamepads);
     } else if ('webkitGetGamepads' in navigator) {
         // @ts-expect-error - webkitGetGamepads is not in the Gamepad API
         navigator.webkitGetGamepads().forEach((newGamepad: Gamepad | null) => {
@@ -50,8 +52,12 @@ export function updateGamepads() {
                 setupGamepad(newGamepad);
             }
         });
+
+        requestAnimationFrame(updateGamepads);
     }
 }
+
+requestAnimationFrame(updateGamepads);
 
 /**
  * Setup a new Gamepad object or update an existing one.
@@ -72,9 +78,11 @@ function setupGamepad(gamepad: Gamepad) {
                         gamepadButtonDownCallbacks.get(index)?.forEach((callback) => { callback(); });
                     }
                 } else {
-                    gamepadInfo.buttonsDown.delete(index);
-                    gamepadInfo.buttonUpListeners.get(index)?.forEach((callback) => { callback(); });
-                    gamepadButtonUpCallbacks.get(index)?.forEach((callback) => { callback(); });
+                    if (gamepadInfo.buttonsDown.has(index)) {
+                        gamepadInfo.buttonsDown.delete(index);
+                        gamepadInfo.buttonUpListeners.get(index)?.forEach((callback) => { callback(); });
+                        gamepadButtonUpCallbacks.get(index)?.forEach((callback) => { callback(); });
+                    }
                 }
             });
         }
@@ -85,6 +93,10 @@ function setupGamepad(gamepad: Gamepad) {
             buttonDownListeners: new Map(),
             buttonUpListeners: new Map()
         };
+
+        gamepads[gamepad.index].buttonsDown.forEach((button) => {
+            gamepadButtonDownCallbacks.get(button)?.forEach((callback) => { callback(); });
+        });
     }
 }
 
