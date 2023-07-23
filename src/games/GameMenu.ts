@@ -35,6 +35,12 @@ menuCurrentGameVariantStore.subscribe((value) => {
     menuCurrentGameVariant = value;
 });
 
+function loadGame() {
+    CurrentGameId.set(menuCurrentGameId);
+    CurrentGameVariant.set(menuCurrentGameVariant);
+    showHighScore.set(false);
+}
+
 class GameMenu extends Brain {
     private readonly _gamesArray: string[] = Object.keys(GamesList);
     private _letterAnimation?: AnimatedFrames;
@@ -54,13 +60,13 @@ class GameMenu extends Brain {
         addOnKeyDownListener('ArrowRight', this.selectNextGame);
         addOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
         addOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
-        addOnKeyDownListener('Space', this.loadGame);
+        addOnKeyDownListener('Space', loadGame);
 
         addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         addGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         addGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        addGamepadButtonDownListener(GamepadStandardButton.A, this.loadGame);
+        addGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
 
         // Show high score
         showHighScore.set(true);
@@ -109,24 +115,18 @@ class GameMenu extends Brain {
         removeOnKeyDownListener('ArrowRight', this.selectNextGame);
         removeOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
         removeOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
-        removeOnKeyDownListener('Space', this.loadGame);
+        removeOnKeyDownListener('Space', loadGame);
 
         removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        removeGamepadButtonDownListener(GamepadStandardButton.A, this.loadGame);
+        removeGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
 
         this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
 
         return super.stop();
     }
-
-    loadGame = () => {
-        CurrentGameId.set(menuCurrentGameId);
-        CurrentGameVariant.set(menuCurrentGameVariant);
-        showHighScore.set(false);
-    };
 
     selectPreviousGame = () => {
         menuCurrentGameIndexStore.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
