@@ -129,7 +129,7 @@ class GameMenu extends Brain {
     }
 
     selectPreviousGame = () => {
-        menuCurrentGameIndexStore.update(index => (((index - 1) % this._gamesArray.length) + this._gamesArray.length) % this._gamesArray.length);
+        menuCurrentGameIndexStore.update(index => (index - 1 + this._gamesArray.length) % this._gamesArray.length);
     };
 
     selectNextGame = () => {
