@@ -13,6 +13,8 @@
     import type { Callable } from './libs/utils';
     import { cancelablePromise, CanceledPromiseError, type CancelablePromise } from './libs/utils/CancelablePromise';
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from './libs/GamepadHandler';
+    import Modals from './components/Modals.svelte';
+    import { ModalsInstanceStore } from './stores/ModalStore';
 
     let windowWidth = 0;
     let windowHeight = 0;
@@ -52,29 +54,35 @@
         game = new SplashScreen();
 
         const restartGame = addOnKeyDownListener('KeyR', () => {
-            loadNewGame($CurrentGameId, $CurrentGameVariant);
+            if (!$ModalsInstanceStore?.isModalOpen()) {
+                loadNewGame($CurrentGameId, $CurrentGameVariant);
+            }
         });
 
         const escapeToGameMenu = addOnKeyDownListener('Escape', () => {
-            stopGame();
+            if (!$ModalsInstanceStore?.isModalOpen()) {
+                stopGame();
+            }
         });
 
-        const escapeToGameMenuGamepad = addGamepadButtonDownListener(GamepadStandardButton.Start, () => {
-            stopGame();
-        });
+        addGamepadButtonDownListener(GamepadStandardButton.Start, escapeToGameMenu);
 
         const logBricksCallback = addOnKeyDownListener('KeyL', () => {
-            $RendererInstanceStore?.logBricks();
+            if ($debugMode) {
+                $RendererInstanceStore?.logBricks();
+            }
         });
 
         const clearScreenCallback = addOnKeyDownListener('KeyC', () => {
-            $RendererInstanceStore?.clearScreen();
+            if ($debugMode) {
+                $RendererInstanceStore?.clearScreen();
+            }
         });
 
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
             removeOnKeyDownListener('Escape', escapeToGameMenu);
-            removeGamepadButtonDownListener(GamepadStandardButton.Start, escapeToGameMenuGamepad);
+            removeGamepadButtonDownListener(GamepadStandardButton.Start, escapeToGameMenu);
             removeOnKeyDownListener('KeyL', logBricksCallback);
             removeOnKeyDownListener('KeyC', clearScreenCallback);
             stopGame(false);
@@ -100,10 +108,8 @@
         if (game?.state === 'stopped') {
             stopGame(!(game instanceof GameMenu));
         } else {
-            if (game?.update) {
-                if (!$debugMode) {
-                    game?.update(timestamp);
-                }
+            if (game?.update && !$debugMode) {
+                game?.update(timestamp);
             }
 
             animationFrameNumber = requestAnimationFrame(processFrame);
@@ -141,6 +147,8 @@
     <div style={additionalCSS}>
         <Renderer width={$rendererWidthStore} height={$rendererHeightStore} bind:this={$RendererInstanceStore} />
         <Sidebar score={$gameScore} bind:this={sidebar} />
+
+        <Modals bind:this={$ModalsInstanceStore} />
     </div>
 </main>
 
