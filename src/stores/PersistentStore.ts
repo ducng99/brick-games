@@ -6,6 +6,12 @@ export class PersistentStore<T> implements Writable<T> {
 
     private readonly _subscriptions: Array<Subscriber<T>> = [];
 
+    /**
+     * Creates a writable store that persists its value in the local storage
+     * @param key Key for the local storage
+     * @param value Default value. This value will be overwritten by the value in the local storage if it exists
+     * @returns A writable store that persists its value in the local storage
+     */
     constructor(key: string, value: T) {
         this._key = key;
 
@@ -47,14 +53,4 @@ export class PersistentStore<T> implements Writable<T> {
     public update(updater: Updater<T>) {
         this.value = updater(this.value);
     }
-}
-
-/**
- * Creates a writable store that persists its value in the local storage
- * @param key Key for the local storage
- * @param value Default value. The value will be overwritten by the value in the local storage if it exists
- * @returns A writable store that persists its value in the local storage
- */
-export function persistentWritable(key: string, value: any) {
-    return new PersistentStore(key, value);
 }

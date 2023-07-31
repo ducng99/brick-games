@@ -51,6 +51,10 @@ class GameMenu extends Brain {
     private _gameVariantNumberPromise?: CancelablePromise<Callable<Entity, [x: number, y: number]> | undefined>;
     private readonly _unsubscribers: Unsubscriber[] = [];
 
+    constructor() {
+        super('game-menu');
+    }
+
     setRendererWidthHeight(): [number, number] {
         return [10, 20];
     }

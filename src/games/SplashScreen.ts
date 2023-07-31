@@ -15,6 +15,10 @@ class SplashScreen extends Brain {
     private _flashAnimation?: FlashEffect;
     private _effectState: 'swirl1' | 'flash1' | 'swirl2' | 'flash2' = 'swirl1';
 
+    constructor() {
+        super('splash-screen');
+    }
+
     setRendererWidthHeight(): [width: number, height: number] {
         return [10, 20];
     }

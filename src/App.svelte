@@ -49,7 +49,7 @@
     }
 
     onMount(() => {
-        game = new SplashScreen('splash-screen');
+        game = new SplashScreen();
 
         const restartGame = addOnKeyDownListener('KeyR', () => {
             loadNewGame($CurrentGameId, $CurrentGameVariant);
@@ -120,7 +120,7 @@
 
         if (loadMenu) {
             $CurrentGameId = '';
-            game = new GameMenu('game-menu');
+            game = new GameMenu();
         }
 
         // On unmount the instance exists but not the props,
