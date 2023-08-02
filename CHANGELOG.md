@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.2] - 2023-08-02
+
+### ⛰️  Features
+
+- *(gamepad)* Added gamepad events in GameMenu, SplashScreen and car-racing
+- Added Gamepad API support 🎮
+- Added Modal 🎉 (beta)
+
+### 🐛 Bug Fixes
+
+- Fixed GameMenu incorrect button order to change game variant
+- Fixed game load fails once when renderer size change
+
+### 🚜 Refactor
+
+- *(GameMenu)* Move `loadGame` outside of class
+- Cleaner renderer size update code
+
+### ⚙️ Miscellaneous Tasks
+
+- *(dep)* Bump some deps
+- *(deps)* Bump vite from 4.4.4 to 4.4.6
+- *(deps)* Bump sass from 1.63.6 to 1.64.1
+- *(deps)* Bump svelte from 4.0.5 to 4.1.1
+- *(deps-dev)* Bump eslint-plugin-svelte from 2.32.2 to 2.32.4
+- *(deps-dev)* Bump eslint from 8.45.0 to 8.46.0
+
 ## [0.5.1] - 2023-07-20
 
 ### ⛰️  Features
