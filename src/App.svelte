@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import Renderer from './libs/Renderer.svelte';
     import Sidebar from './libs/Sidebar.svelte';
     import { RendererInstanceStore, rendererWidthStore, rendererHeightStore } from './stores/RendererStore';
@@ -27,18 +27,18 @@
 
     $: gameScore = game?.score;
 
-    // Restart game when width & height change as game starts before new size is applied
     $: {
-        if ($rendererWidthStore && $rendererHeightStore) {
-            loadNewGame($CurrentGameId, $CurrentGameVariant);
-        }
+        loadNewGame($CurrentGameId, $CurrentGameVariant);
     }
 
     $: {
-        game?.start();
+        if (game && game.width === $rendererWidthStore && game.height === $rendererHeightStore) {
+            (async () => {
+                await tick();
+                game.start();
 
-        if (game?.update) {
-            animationFrameNumber = requestAnimationFrame(processFrame);
+                animationFrameNumber = requestAnimationFrame(processFrame);
+            })();
         }
     }
 
@@ -108,18 +108,24 @@
         if (game?.state === 'stopped') {
             stopGame(!(game instanceof GameMenu));
         } else {
-            if (game?.update && !$debugMode) {
-                game?.update(timestamp);
-            }
+            if (game) {
+                if (!$debugMode) {
+                    if ($ModalsInstanceStore?.isModalOpen()) {
+                        game.updateWhenModalOpen(timestamp);
+                    } else {
+                        game.update?.(timestamp);
+                    }
 
-            animationFrameNumber = requestAnimationFrame(processFrame);
+                    animationFrameNumber = requestAnimationFrame(processFrame);
+                }
+            }
         }
     }
 
     function stopGame(loadMenu = true) {
         gameLoadPromise?.cancel();
 
-        if (game?.stop && game.state !== 'stopped') {
+        if (game && game.state !== 'stopped') {
             cancelAnimationFrame(animationFrameNumber);
             game.stop();
         }

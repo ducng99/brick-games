@@ -23,23 +23,50 @@ interface Brain {
  * A generic brain class that is used for any game logic.
  */
 abstract class Brain {
-    private readonly _id: string;
-    state: BrainState = 'created';
+    private readonly id: string;
+    private _state: BrainState = 'created';
     protected lastFrame = 0;
-    protected _score = writable('000');
-    protected hiScoreStore: PersistentStore<number>;
+    private readonly _score = writable('000');
+    private readonly _hiScoreStore: PersistentStore<number>;
+
+    // Width and height the brains wants to set the renderer to
+    private readonly _width: number;
+    private readonly _height: number;
 
     constructor(gameID: string) {
-        this._id = gameID;
-        this.hiScoreStore = getHiScoreStore(gameID);
+        this.id = gameID;
+        this._hiScoreStore = getHiScoreStore(gameID);
 
         const [width, height] = this.setRendererWidthHeight();
+        this._width = width;
+        this._height = height;
+
         rendererWidthStore.set(width);
         rendererHeightStore.set(height);
     }
 
+    get state() {
+        return this._state;
+    }
+
+    protected set state(value: BrainState) {
+        this._state = value;
+    }
+
     get score() {
         return this._score;
+    }
+
+    get hiScoreStore() {
+        return this._hiScoreStore;
+    }
+
+    get width() {
+        return this._width;
+    }
+
+    get height() {
+        return this._height;
     }
 
     /**
@@ -49,6 +76,15 @@ abstract class Brain {
         this.state = 'started';
 
         return callStart;
+    }
+
+    /**
+     * This function is called instead of `update()` when the modal is open. Avoids processing main logic.
+     * Mainly used to update `lastFrame`.
+     * @param timestamp
+     */
+    updateWhenModalOpen(timestamp: DOMHighResTimeStamp) {
+        this.lastFrame = timestamp;
     }
 
     /**
