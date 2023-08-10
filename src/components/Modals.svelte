@@ -84,13 +84,13 @@
         const content = _content ?? '';
         const buttons = _buttons ?? [];
 
-        modalsQueue = { ...modalsQueue, ...{ [id]: { title, content, buttons } } };
+        modalsQueue = { ...modalsQueue, [id]: { title, content, buttons } };
 
         return id;
     }
 
     export function closeModal(index: string) {
-        const { [index]: modal, ...rest } = modalsQueue;
+        const { [index]: _, ...rest } = modalsQueue;
         modalsQueue = rest;
     }
 
