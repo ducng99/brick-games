@@ -1,3 +1,4 @@
+import { compress, decompress } from 'lz-string';
 import type { Subscriber, Unsubscriber, Updater, Writable } from 'svelte/store';
 
 export class PersistentStore<T> implements Writable<T> {
@@ -17,7 +18,11 @@ export class PersistentStore<T> implements Writable<T> {
 
         const storedValue = localStorage.getItem(key);
         if (storedValue) {
-            this.value = JSON.parse(storedValue);
+            try {
+                this._value = JSON.parse(decompress(storedValue));
+            } catch {
+                this.value = value;
+            }
         } else {
             this.value = value;
         }
@@ -30,7 +35,7 @@ export class PersistentStore<T> implements Writable<T> {
     private set value(value: T) {
         this._value = value;
         this._subscriptions.forEach(subscription => { subscription(value); });
-        localStorage.setItem(this._key, JSON.stringify(value));
+        localStorage.setItem(this._key, compress(JSON.stringify(value)));
     }
 
     public subscribe(subscription: Subscriber<T>): Unsubscriber {
