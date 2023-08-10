@@ -2,11 +2,12 @@
     import { onMount } from 'svelte';
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
     import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
+    import { uuidv4 } from '../libs/utils';
 
     interface ModalButton {
         text: string;
-        onClick?: (e: MouseEvent) => void;
-        isClose?: boolean;
+        onClick?: () => void;
+        closeAfterClick?: boolean;
     }
 
     interface Modal {
@@ -16,9 +17,12 @@
     }
 
     let modalElement: HTMLDialogElement;
-    let modalsQueue: Modal[] = [];
+    let modalsQueue: Record<string, Modal> = {};
     let currentButtonIndex = 0;
-    $: modal = modalsQueue.length > 0 ? modalsQueue[0] : undefined;
+    $: modal = (() => {
+        const modals = Object.values(modalsQueue);
+        return modals.length > 0 ? modals[0] : undefined;
+    })();
 
     $: {
         if (modalElement && !modalElement.open) {
@@ -44,15 +48,28 @@
 
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, highlightNextButton);
 
+        const selectButton = addOnKeyDownListener('Enter', () => {
+            if (modal) {
+                modal.buttons[currentButtonIndex].onClick?.();
+                modal.buttons[currentButtonIndex].closeAfterClick && closeCurrentModal();
+            }
+        });
+
+        addGamepadButtonDownListener(GamepadStandardButton.A, selectButton);
+
         return () => {
             removeOnKeyDownListener('ArrowLeft', highlightPreviousButton);
             removeOnKeyDownListener('ArrowRight', highlightNextButton);
+            removeOnKeyDownListener('Enter', selectButton);
             removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, highlightPreviousButton);
             removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, highlightNextButton);
+            removeGamepadButtonDownListener(GamepadStandardButton.A, selectButton);
         };
     });
 
-    export const isModalOpen = () => modalElement?.open ?? false;
+    export function isModalOpen(id?: string) {
+        return (id ? (modal === modalsQueue[id]) : true) && (modalElement?.open ?? false);
+    }
 
     /**
      * Add a modal to the queue and returns its index
@@ -61,23 +78,26 @@
      * @param _buttons Buttons of the modal
      * @returns The index of the modal in the queue
      */
-    export function showModal(_title?: string, _content?: string, _buttons?: ModalButton[]): number {
+    export function showModal(_title?: string, _content?: string, _buttons?: ModalButton[]): string {
+        const id = uuidv4();
         const title = _title ?? '';
         const content = _content ?? '';
         const buttons = _buttons ?? [];
 
-        modalsQueue = [...modalsQueue, { title, content, buttons }];
+        modalsQueue = { ...modalsQueue, ...{ [id]: { title, content, buttons } } };
 
-        return modalsQueue.length - 1;
+        return id;
     }
 
-    export function closeModal(index: number) {
-        modalsQueue = modalsQueue.filter((_, i) => i !== index);
+    export function closeModal(index: string) {
+        const { [index]: modal, ...rest } = modalsQueue;
+        modalsQueue = rest;
     }
 
-    export function closeCurrentModal() {
-        if (modalsQueue.length > 0) {
-            modalsQueue = modalsQueue.slice(1);
+    export function closeCurrentModal(): void {
+        const modals = Object.keys(modalsQueue);
+        if (modals.length > 0) {
+            closeModal(modals[0]);
         }
     }
 </script>
@@ -91,14 +111,9 @@
         </div>
         <div class="buttons">
             {#each modal.buttons as button, buttonIndex}
-                <button class:active={buttonIndex === currentButtonIndex} on:click={(e) => {
-                    if (button.onClick) {
-                        button.onClick(e);
-                    }
-
-                    if (button.isClose) {
-                        closeCurrentModal();
-                    }
+                <button class:active={buttonIndex === currentButtonIndex} on:click={() => {
+                    button.onClick?.();
+                    button.closeAfterClick && closeCurrentModal();
                 }}>{button.text}</button>
             {/each}
         </div>
