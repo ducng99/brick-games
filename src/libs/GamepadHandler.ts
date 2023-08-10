@@ -36,7 +36,7 @@ window.addEventListener('gamepaddisconnected', function (e) {
  * Get all connected gamepads and update their state. Add new gamepads to the list if they are not already in it.
  * This function is called every frame.
  */
-function updateGamepads() {
+(function updateGamepads() {
     if ('getGamepads' in navigator) {
         navigator.getGamepads().forEach((newGamepad) => {
             if (newGamepad) {
@@ -55,9 +55,7 @@ function updateGamepads() {
 
         requestAnimationFrame(updateGamepads);
     }
-}
-
-requestAnimationFrame(updateGamepads);
+})();
 
 /**
  * Setup a new Gamepad object or update an existing one.
@@ -261,6 +259,40 @@ export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boo
         }
 
         return isDown;
+    }
+
+    return false;
+}
+
+/**
+ * Vibrates a gamepad with specified intensity and duration. Returns after the vibration(s) finish.
+ * @param gamepadIndex Gamepad to vibrate
+ * @param intensity Intensity of the vibration (0.0 - 1.0)
+ * @param duration Duration of the vibration in milliseconds
+ * @returns `true` if the gamepad supports vibration and the vibration has completed.
+ */
+export async function vibrateGamepad(gamepadIndex: number, intensity: number, duration: number) {
+    if (gamepadIndex in gamepads) {
+        if ('hapticActuators' in gamepads[gamepadIndex].controller) {
+            const actuators = gamepads[gamepadIndex].controller.hapticActuators;
+
+            // @ts-expect-error - experimental GamepadAPI feature
+            await Promise.all(actuators.map<boolean>(actuator => actuator.pulse(intensity, duration)));
+
+            return true;
+        } else if ('vibrationActuator' in gamepads[gamepadIndex].controller) {
+            // @ts-expect-error - only in Chromium
+            const actuator = gamepads[gamepadIndex].controller.vibrationActuator;
+
+            await actuator.playEffect(actuator.type, {
+                startDelay: 0,
+                duration,
+                weakMagnitude: intensity,
+                strongMagnitude: intensity
+            });
+
+            return true;
+        }
     }
 
     return false;
