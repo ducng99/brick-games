@@ -273,23 +273,31 @@ export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boo
  */
 export async function vibrateGamepad(gamepadIndex: number, intensity: number, duration: number) {
     if (gamepadIndex in gamepads) {
-        if ('hapticActuators' in gamepads[gamepadIndex].controller) {
-            const actuators = gamepads[gamepadIndex].controller.hapticActuators;
+        const controller = gamepads[gamepadIndex].controller;
 
-            // @ts-expect-error - experimental GamepadAPI feature
-            await Promise.all(actuators.map<boolean>(actuator => actuator.pulse(intensity, duration)));
+        if ('hapticActuators' in controller) {
+            const actuators = controller.hapticActuators;
 
-            return true;
-        } else if ('vibrationActuator' in gamepads[gamepadIndex].controller) {
-            // @ts-expect-error - only in Chromium
-            const actuator = gamepads[gamepadIndex].controller.vibrationActuator;
+            if (actuators && actuators.length > 0) {
+                // @ts-expect-error - experimental GamepadAPI feature
+                await Promise.all(actuators.map(actuator => actuator.pulse(intensity, duration)));
 
-            await actuator.playEffect(actuator.type, {
-                startDelay: 0,
-                duration,
-                weakMagnitude: intensity,
-                strongMagnitude: intensity
-            });
+                return true;
+            }
+
+            return false;
+        } else if ('vibrationActuator' in controller) {
+            // @ts-expect-error - only in Chromium (unofficial feature)
+            const actuator = controller.vibrationActuator;
+
+            if (actuator) {
+                await actuator.playEffect(actuator.type, {
+                    startDelay: 0,
+                    duration,
+                    weakMagnitude: intensity,
+                    strongMagnitude: intensity
+                });
+            }
 
             return true;
         }
