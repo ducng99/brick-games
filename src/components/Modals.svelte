@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
     import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
-    import { uuidv4 } from '../libs/utils';
+    import { removeKeyFromObject, uuidv4 } from '../libs/utils';
 
     interface ModalButton {
         text: string;
@@ -27,7 +27,10 @@
     $: {
         if (modalElement && !modalElement.open) {
             modalElement.showModal();
-            modalElement.addEventListener('close', closeCurrentModal);
+            modalElement.addEventListener('cancel', (e) => {
+                e.preventDefault();
+                closeCurrentModal();
+            });
         }
     }
 
@@ -90,8 +93,7 @@
     }
 
     export function closeModal(index: string) {
-        const { [index]: _, ...rest } = modalsQueue;
-        modalsQueue = rest;
+        modalsQueue = removeKeyFromObject(modalsQueue, index);
     }
 
     export function closeCurrentModal(): void {
