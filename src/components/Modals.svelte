@@ -14,6 +14,8 @@
         title: string;
         content: string;
         buttons: ModalButton[];
+        onOpen?: () => void;
+        onClose?: () => void;
     }
 
     let modalElement: HTMLDialogElement;
@@ -21,7 +23,12 @@
     let currentButtonIndex = 0;
     $: modal = (() => {
         const modals = Object.values(modalsQueue);
-        return modals.length > 0 ? modals[0] : undefined;
+        if (modals.length > 0) {
+            modals[0].onOpen?.();
+            return modals[0];
+        }
+
+        return undefined;
     })();
 
     $: {
@@ -81,13 +88,13 @@
      * @param _buttons Buttons of the modal
      * @returns The index of the modal in the queue
      */
-    export function showModal(_title?: string, _content?: string, _buttons?: ModalButton[]): string {
+    export function showModal(_title?: string, _content?: string, _buttons?: ModalButton[], onOpen?: () => void, onClose?: () => void): string {
         const id = uuidv4();
         const title = _title ?? '';
         const content = _content ?? '';
         const buttons = _buttons ?? [];
 
-        modalsQueue = { ...modalsQueue, [id]: { title, content, buttons } };
+        modalsQueue = { ...modalsQueue, [id]: { title, content, buttons, onOpen, onClose } };
 
         return id;
     }
@@ -97,9 +104,10 @@
     }
 
     export function closeCurrentModal(): void {
-        const modals = Object.keys(modalsQueue);
-        if (modals.length > 0) {
-            closeModal(modals[0]);
+        const modalID = Object.keys(modalsQueue).find((key) => modalsQueue[key] === modal);
+        if (modalID) {
+            modalsQueue[modalID].onClose?.();
+            closeModal(modalID);
         }
     }
 </script>
