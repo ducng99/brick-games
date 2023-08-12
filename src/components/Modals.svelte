@@ -1,4 +1,5 @@
 <script lang="ts">
+    import DOMPurify from 'dompurify';
     import { onMount } from 'svelte';
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
     import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
@@ -83,16 +84,18 @@
 
     /**
      * Add a modal to the queue and returns its index
-     * @param _title Title of the modal
-     * @param _content Content of the modal. HTML is allowed
-     * @param _buttons Buttons of the modal
+     * @param title Title of the modal, displayed as header
+     * @param content Content of the modal. HTML is allowed
+     * @param buttons Buttons of the modal
+     * @param onOpen Function to call when the modal is opened
+     * @param onClose Function to call when the modal is closed
      * @returns The index of the modal in the queue
      */
-    export function showModal(_title?: string, _content?: string, _buttons?: ModalButton[], onOpen?: () => void, onClose?: () => void): string {
+    export function showModal(title?: string, content?: string, buttons?: ModalButton[], onOpen?: () => void, onClose?: () => void): string {
         const id = uuidv4();
-        const title = _title ?? '';
-        const content = _content ?? '';
-        const buttons = _buttons ?? [];
+        title = title ?? '';
+        content = content ?? '';
+        buttons = buttons ?? [];
 
         modalsQueue = { ...modalsQueue, [id]: { title, content, buttons, onOpen, onClose } };
 
@@ -117,7 +120,7 @@
         <h2 class="title">{modal.title}</h2>
         <div class="content">
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html modal.content}
+            {@html DOMPurify.sanitize(modal.content)}
         </div>
         <div class="buttons">
             {#each modal.buttons as button, buttonIndex}
