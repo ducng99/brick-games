@@ -5,7 +5,9 @@ on:
     branches:
       - main
     paths:
-      - "src/**/*.{js,ts,svelte}"
+      - "src/**/*.js"
+      - "src/**/*.ts"
+      - "src/**/*.svelte"
       - ".eslintrc.json"
       - "tsconfig.json"
       - "package.json"
