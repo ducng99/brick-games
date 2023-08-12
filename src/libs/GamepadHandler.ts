@@ -13,7 +13,7 @@ const gamepadDisconnectedCallbacks = new Set<GamepadConnectionCallback>();
 const gamepadButtonDownCallbacks = new Map<number, Set<() => void>>();
 const gamepadButtonUpCallbacks = new Map<number, Set<() => void>>();
 
-window.addEventListener('gamepadconnected', function (e) {
+addEventListener('gamepadconnected', function (e) {
     setupGamepad(e.gamepad);
 
     gamepadConnectedCallbacks.forEach((callback) => {
@@ -21,7 +21,7 @@ window.addEventListener('gamepadconnected', function (e) {
     });
 });
 
-window.addEventListener('gamepaddisconnected', function (e) {
+addEventListener('gamepaddisconnected', function (e) {
     if (e.gamepad.index in gamepads) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete gamepads[e.gamepad.index];

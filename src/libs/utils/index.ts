@@ -12,8 +12,8 @@ export function randomInt(min: number, max: number) {
  * UUIDv4 generator
  */
 export function uuidv4(): string {
-    if (window.isSecureContext && 'randomUUID' in window.crypto) {
-        return window.crypto.randomUUID();
+    if (isSecureContext && 'randomUUID' in crypto) {
+        return crypto.randomUUID();
     } else {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             const r = Math.random() * 16 | 0;

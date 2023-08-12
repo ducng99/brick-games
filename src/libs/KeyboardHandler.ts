@@ -3,7 +3,7 @@ const keysDown = new Set<string>();
 const keyDownCallbacks: Record<string, Set<() => void>> = {};
 const keyUpCallbacks: Record<string, Set<() => void>> = {};
 
-window.addEventListener('keydown', (event) => {
+addEventListener('keydown', (event) => {
     if (!isKeyDown(event.code)) {
         if (event.code in keyDownCallbacks) {
             keyDownCallbacks[event.code].forEach((callback) => { callback(); });
@@ -13,7 +13,7 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-window.addEventListener('keyup', (event) => {
+addEventListener('keyup', (event) => {
     if (event.code in keyUpCallbacks) {
         keyUpCallbacks[event.code].forEach((callback) => { callback(); });
     }
