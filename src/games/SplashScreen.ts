@@ -1,4 +1,4 @@
-import { isGamepadButtonDown } from '../libs/GamepadHandler';
+import { isGamepadButtonDown, isGamepadStickDown } from '../libs/GamepadHandler';
 import { isKeyDown } from '../libs/KeyboardHandler';
 import { RendererInstance } from '../stores/RendererStore';
 import Brain from './libs/Brain';
@@ -37,7 +37,8 @@ class SplashScreen extends Brain {
         }
 
         if (this.state === 'running') {
-            if (isKeyDown() || isGamepadButtonDown()) {
+            // Stick range not 1.0 as some gamepad sticks are not standard can cause skip the splash screen instantly
+            if (isKeyDown() || isGamepadButtonDown() || isGamepadStickDown([0.6, 0.9]) || isGamepadStickDown([-0.9, -0.6])) {
                 this.stop();
             }
 

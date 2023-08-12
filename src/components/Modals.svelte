@@ -1,7 +1,7 @@
 <script lang="ts">
     import DOMPurify from 'dompurify';
     import { onMount } from 'svelte';
-    import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
+    import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, removeGamepadAxisInRangeListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
     import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
     import { removeKeyFromObject, uuidv4 } from '../libs/utils';
 
@@ -50,6 +50,7 @@
         });
 
         addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, highlightPreviousButton);
+        const stickHighlightPreviousButtonListener = addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickX, highlightPreviousButton);
 
         const highlightNextButton = addOnKeyDownListener('ArrowRight', () => {
             if (modal) {
@@ -58,6 +59,7 @@
         });
 
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, highlightNextButton);
+        const stickHighlightNextButtonListener = addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickX, highlightNextButton);
 
         const selectButton = addOnKeyDownListener('Enter', () => {
             if (modal) {
@@ -74,6 +76,8 @@
             removeOnKeyDownListener('Enter', selectButton);
             removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, highlightPreviousButton);
             removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, highlightNextButton);
+            removeGamepadAxisInRangeListener(GamepadStandardAxis.LeftStickX, stickHighlightPreviousButtonListener);
+            removeGamepadAxisInRangeListener(GamepadStandardAxis.LeftStickX, stickHighlightNextButtonListener);
             removeGamepadButtonDownListener(GamepadStandardButton.A, selectButton);
         };
     });
