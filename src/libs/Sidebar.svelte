@@ -3,7 +3,7 @@
     import { RendererMiniInstanceStore, rendererMiniHeight, rendererMiniWidth } from '../stores/RendererMiniStore';
     import GamesList from '../games/GamesList';
     import { menuCurrentGameIdStore, menuCurrentGameVariantStore } from '../games/GameMenu';
-    import { pad } from './utils';
+    import { padLeft } from './utils';
     import { showHighScore } from '../stores/SettingsStore';
 
     export let score: string | undefined;
@@ -15,7 +15,7 @@
 </script>
 
 <div id="sidebar" bind:clientWidth={width}>
-    <div id="score">{pad(score ?? '000', 6, '!')}</div>
+    <div id="score">{padLeft(score ?? '000', 6, '!')}</div>
     <div id="scoreLabel" class="text">{$showHighScore ? 'HI-' : ''}SCORE
         <span id="soundIcon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-music-note-beamed" viewBox="0 0 16 16">

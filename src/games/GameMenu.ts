@@ -5,7 +5,7 @@ import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
 import { charToLetter } from './libs/special-animations/spinning-letters';
 import { rendererHeight, rendererWidth } from '../stores/RendererStore';
-import { pad, type Callable } from '../libs/utils';
+import { padLeft, type Callable } from '../libs/utils';
 import { type CancelablePromise, cancelablePromise, CanceledPromiseError } from '../libs/utils/CancelablePromise';
 import type Entity from './libs/Entity';
 import { numberToEntity } from './libs/common-entities/numbers';
@@ -85,7 +85,7 @@ class GameMenu extends Brain {
             this.loadGameVariantNumber(0);
 
             const highScore = getHiScoreStore(this._gamesArray[index]);
-            this.score.set(pad(highScore.value, 3));
+            this.score.set(padLeft(highScore.value, 3));
         }));
 
         // On variant change

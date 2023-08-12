@@ -1,5 +1,5 @@
 import { isKeyDown } from '../../libs/KeyboardHandler';
-import { pad } from '../../libs/utils';
+import { padLeft } from '../../libs/utils';
 import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
 import Brain from '../libs/Brain';
 import Ball from './Ball';
@@ -248,7 +248,7 @@ class PongBrain extends Brain {
     set playerTopScore(score: number) {
         this._playerTopScore = score;
 
-        this.score.set(pad(score, 3, '!') + pad(this._playerBottomScore, 3, '!'));
+        this.score.set(padLeft(score, 3, '!') + padLeft(this._playerBottomScore, 3, '!'));
     }
 
     get playerBottomScore() {
@@ -258,7 +258,7 @@ class PongBrain extends Brain {
     set playerBottomScore(score: number) {
         this._playerBottomScore = score;
 
-        this.score.set(pad(this._playerTopScore, 3, '!') + pad(score, 3, '!'));
+        this.score.set(padLeft(this._playerTopScore, 3, '!') + padLeft(score, 3, '!'));
     }
 }
 

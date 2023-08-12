@@ -5,7 +5,7 @@ import Wall from './Wall';
 import Car from './Car';
 import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
-import { clamp, pad, randomInt } from '../../libs/utils';
+import { clamp, padLeft, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 import { GamepadStandardButton, addGamepadButtonDownListener, isGamepadButtonDown, removeGamepadButtonDownListener } from '../../libs/GamepadHandler';
 
@@ -229,7 +229,7 @@ class CarRacingBrain extends Brain {
     set currentScore(score: number) {
         this._currentScore = score;
         this.hiScoreStore.set(score);
-        this.score.set(pad(clamp(score ?? 0, 0, 999999), 3));
+        this.score.set(padLeft(clamp(score ?? 0, 0, 999999), 3));
     };
 
     get player(): Car {

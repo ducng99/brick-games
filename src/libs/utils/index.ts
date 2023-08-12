@@ -30,7 +30,7 @@ export function uuidv4(): string {
  * @param char Char to pad with. Default is '0'
  * @returns Padded string
  */
-export function pad(num: number | string, size: number, char: string = '0'): string {
+export function padLeft(num: number | string, size: number, char: string = '0'): string {
     let s = num.toString();
     while (s.length < size) s = char + s;
     return s;
