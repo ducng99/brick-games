@@ -12,22 +12,18 @@ on:
       - "yarn.lock"
 
   pull_request:
-    paths:
-      - "src/**/*.{js,ts,svelte}"
-      - ".eslintrc.json"
-      - "tsconfig.json"
-      - "package.json"
-      - "yarn.lock"
+    types: [opened, synchronize, reopened, ready_for_review]
 
   workflow_dispatch:
 
 jobs:
   linting:
+    name: Lint
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
     permissions:
       contents: read
 
-    name: Lint
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -38,7 +34,10 @@ jobs:
           cache: yarn
 
       - name: Run install
-        run: yarn install --frozen-lockfile
+        run: yarn --frozen-lockfile
+
+      - name: Run svelte-check
+        run: yarn check
 
       - name: Lint check
         run: yarn lint
