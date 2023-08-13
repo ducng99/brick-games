@@ -147,6 +147,14 @@ function setupGamepad(gamepad: Gamepad) {
 }
 
 /**
+ * Get all gamepads' indexes that are currently connected.
+ * @returns All connected gamepads' indexes
+ */
+export function getAllGamepadIndexes(): number[] {
+    return Object.keys(gamepads).map((index) => Number.parseInt(index));
+}
+
+/**
  * Add a callback to be called when a new gamepad is connected.
  * @param callback Callback to be called when a new gamepad is connected.
  * @param initialCall If `true`, the callback will be called for all currently connected gamepads.
@@ -591,9 +599,9 @@ export async function vibrateGamepad(gamepadIndex: number, intensity: number, du
                     weakMagnitude: intensity,
                     strongMagnitude: intensity
                 });
-            }
 
-            return true;
+                return true;
+            }
         }
     }
 

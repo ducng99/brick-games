@@ -73,3 +73,12 @@ export function filterObject<K extends string | number | symbol, V>(obj: Record<
     // @ts-expect-error it's an empty object bruh
     }, {}) as Omit<Record<K, V>, K>;
 }
+
+/**
+ * Sleep for the specified time
+ * @param ms Miliseconds to sleep
+ * @returns Promise that resolves after the specified time
+ */
+export function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

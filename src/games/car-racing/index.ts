@@ -7,7 +7,7 @@ import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { clamp, padLeft, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
-import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, isGamepadButtonDown, removeGamepadButtonDownListener } from '../../libs/GamepadHandler';
+import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, canGamepadVibrate, getAllGamepadIndexes, isGamepadButtonDown, removeGamepadButtonDownListener, vibrateGamepad } from '../../libs/GamepadHandler';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -46,7 +46,26 @@ class CarRacingBrain extends Brain {
 
         this.restart();
 
-        return super.start();
+        // Don't return super.start() because we don't want to set state to 'started'
+        const ret = super.start();
+        this.state = 'created';
+
+        // Vibrate all gamepads
+        (async () => {
+            await Promise.all(getAllGamepadIndexes().map(async index => {
+                if (canGamepadVibrate(index)) {
+                    await vibrateGamepad(index, 0.1, 1000);
+                    await vibrateGamepad(index, 0.6, 500);
+                    await vibrateGamepad(index, 0.2, 500);
+                    await vibrateGamepad(index, 1.0, 800);
+                    await vibrateGamepad(index, 0.2, 1500);
+                }
+            }));
+
+            this.state = 'started';
+        })();
+
+        return ret;
     }
 
     update = (timestamp: DOMHighResTimeStamp) => {
