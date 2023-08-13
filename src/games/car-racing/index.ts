@@ -7,7 +7,7 @@ import Explosion from '../libs/common-entities/Explosion';
 import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTransition';
 import { clamp, padLeft, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
-import { GamepadStandardButton, addGamepadButtonDownListener, isGamepadButtonDown, removeGamepadButtonDownListener } from '../../libs/GamepadHandler';
+import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, isGamepadButtonDown, removeGamepadButtonDownListener } from '../../libs/GamepadHandler';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -23,6 +23,7 @@ class CarRacingBrain extends Brain {
     private _explosion?: Explosion;
     private _transition?: WipeBottomToTopTransition;
     private _currentScore: number = 0;
+    private readonly _gamepadAxisInRangeUnsubscribers: Array<() => void> = [];
 
     setRendererWidthHeight(): [width: number, height: number] {
         return [10, 20];
@@ -34,6 +35,10 @@ class CarRacingBrain extends Brain {
         addOnKeyDownListener('ArrowRight', this.playerMoveRight);
         addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.playerMoveLeft);
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.playerMoveRight);
+        this._gamepadAxisInRangeUnsubscribers.push(
+            addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickX, this.playerMoveLeft),
+            addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickX, this.playerMoveRight)
+        );
 
         // Show health
         for (let i = 0; i < this._health; i++) {
@@ -150,6 +155,8 @@ class CarRacingBrain extends Brain {
         removeOnKeyDownListener('ArrowRight', this.playerMoveRight);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.playerMoveLeft);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.playerMoveRight);
+        this._gamepadAxisInRangeUnsubscribers.forEach(unsubscribe => { unsubscribe(); });
+        this._gamepadAxisInRangeUnsubscribers.length = 0;
 
         return super.stop();
     }
