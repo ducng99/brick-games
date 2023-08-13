@@ -83,7 +83,7 @@ abstract class Brain {
      * @param defaultValue Default gamepads settings
      * @returns PersistentStore of gamepads settings
      */
-    gamepadHelper<T>(defaultValue: GamepadSettingsType<T> = {}) {
+    gamepadHelper<T>(defaultValue: GamepadSettingsType<T> = {}): GamepadSettingsHelper<T> {
         if (!this._gamepadHelper) {
             this._gamepadHelper = new GamepadSettingsHelper(this.id, defaultValue);
         }

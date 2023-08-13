@@ -1,9 +1,16 @@
+import { addGamepadConnectedListener, canGamepadVibrate, vibrateGamepad, isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive } from '../../../libs/GamepadHandler';
 import { isKeyDown } from '../../../libs/KeyboardHandler';
 import { padLeft } from '../../../libs/utils';
+import { ModalsInstance } from '../../../stores/ModalStore';
 import { rendererHeight, rendererWidth } from '../../../stores/RendererStore';
 import Brain from '../../libs/Brain';
 import Ball from './Ball';
 import Paddle, { paddleHeight } from './Paddle';
+
+const gamepadSettingsVersion = 1;
+
+const playerLeftID = 1;
+const playerRightID = 2;
 
 const paddleMoveDelay = 30;
 const ballMoveDelayDefault = 80;
@@ -34,6 +41,9 @@ class PongBrain extends Brain {
         this.playerRightScore = 0;
         this.playerLeftScore = 0;
 
+        // Setup gamepad controls
+        addGamepadConnectedListener(this.onGamepadConnected);
+
         this.restart();
         return super.start();
     }
@@ -55,9 +65,9 @@ class PongBrain extends Brain {
 
                 let paddleRightMoved = 0;
 
-                if (isKeyDown('ArrowUp')) {
+                if (this.shouldPlayerRightMoveUp()) {
                     paddleRightMoved = this.paddleRight.moveUp(steps);
-                } else if (isKeyDown('ArrowDown')) {
+                } else if (this.shouldPlayerRightMoveDown()) {
                     paddleRightMoved = this.paddleRight.moveDown(steps);
                 }
 
@@ -75,9 +85,9 @@ class PongBrain extends Brain {
 
                 let paddleLeftMoved = 0;
 
-                if (isKeyDown('KeyW')) {
+                if (this.shouldPlayerLeftMoveUp()) {
                     paddleLeftMoved = this.paddleLeft.moveUp(steps);
-                } else if (isKeyDown('KeyS')) {
+                } else if (this.shouldPlayerLeftMoveDown()) {
                     paddleLeftMoved = this.paddleLeft.moveDown(steps);
                 }
 
@@ -100,7 +110,7 @@ class PongBrain extends Brain {
             const ballDelta = timestamp - this._lastBallMoveFrame;
 
             if (ballDelta >= this._ballMoveDelay) {
-                if (!this._canBallMove && isKeyDown('Space')) {
+                if (!this._canBallMove && (isKeyDown('Space') || isGamepadButtonDown(GamepadStandardButton.A))) {
                     this._canBallMove = true;
                 }
 
@@ -226,6 +236,75 @@ class PongBrain extends Brain {
                     break;
             }
         }
+    }
+
+    onGamepadConnected = (gamepadIndex: number, gamepadId: string) => {
+        const gamepadSettings = this.gamepadHelper().settings;
+
+        if (gamepadIndex in gamepadSettings &&
+            gamepadSettings[gamepadIndex]._version >= gamepadSettingsVersion &&
+            gamepadSettings[gamepadIndex].gamepadId === gamepadId) {
+            return;
+        }
+
+        if (ModalsInstance) {
+            let pulseGamepadInterval = 0;
+            const canVibrate = canGamepadVibrate(gamepadIndex);
+
+            ModalsInstance.showModal('Gamepad connected!', `[${gamepadIndex}] ${gamepadId}<br/><br/>Use it for:`, [
+                {
+                    text: 'Player Left',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, playerLeftID, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                },
+                {
+                    text: 'Player Right',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, playerRightID, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                },
+                {
+                    text: 'None',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, 0, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                }
+            ],
+            canVibrate ? () => (pulseGamepadInterval = setInterval(() => vibrateGamepad(gamepadIndex, 0.5, 500).catch(() => {}), 1000)) : undefined,
+            canVibrate ? () => { clearInterval(pulseGamepadInterval); } : undefined);
+        }
+    };
+
+    shouldPlayerLeftMoveUp() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerLeftID);
+        return isKeyDown('KeyW') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadUp, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickNegative(GamepadStandardAxis.LeftStickY, gamepadIndex));
+    }
+
+    shouldPlayerLeftMoveDown() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerLeftID);
+        return isKeyDown('KeyS') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadDown, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickPositive(GamepadStandardAxis.LeftStickY, gamepadIndex));
+    }
+
+    shouldPlayerRightMoveUp() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerRightID);
+        return isKeyDown('ArrowUp') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadUp, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickNegative(GamepadStandardAxis.LeftStickY, gamepadIndex));
+    }
+
+    shouldPlayerRightMoveDown() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerRightID);
+        return isKeyDown('ArrowDown') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadDown, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickPositive(GamepadStandardAxis.LeftStickY, gamepadIndex));
     }
 
     get paddleLeft(): Paddle {
