@@ -243,6 +243,10 @@ class CarRacingBrain extends Brain {
         const eX = x + Math.min(0, rendererWidth - (x + 5)) + Math.max(0, -x);
         const eY = y + Math.min(0, rendererHeight - (y + 5)) + Math.max(0, -y);
         this._explosion = new Explosion(eX, eY);
+
+        getAllGamepadIndexes().forEach(index => {
+            vibrateGamepad(index, 1.0, 1000).catch(() => {});
+        });
     };
 
     get currentScore() {
