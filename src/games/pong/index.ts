@@ -5,14 +5,13 @@ import { ModalsInstance } from '../../stores/ModalStore';
 import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
 import Brain from '../libs/Brain';
 import Ball from './Ball';
-import Paddle from './Paddle';
+import Paddle, { paddleWidth } from './Paddle';
 
 const gamepadSettingsVersion = 1;
 
 const playerBottomID = 1;
 const playerTopID = 2;
 
-const paddleWidth = 2;
 const paddleMoveDelay = 50;
 const ballMoveDelayDefault = 100;
 

@@ -5,7 +5,7 @@ const sprite: Sprite = [
     [0, 0], [1, 0]
 ];
 
-const paddleWidth = 2;
+export const paddleWidth = 2;
 
 class Paddle extends Entity {
     constructor(x: number, y: number) {
