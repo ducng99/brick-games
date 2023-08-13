@@ -1,7 +1,8 @@
 import { writable } from 'svelte/store';
 import { rendererHeightStore, rendererWidthStore } from '../../stores/RendererStore';
 import { getHiScoreStore } from '../../stores/HighscoresStore';
-import type { PersistentStore } from '../../stores/PersistentStore';
+import { type PersistentStore } from '../../stores/PersistentStore';
+import { GamepadSettingsHelper, type GamepadSettingsType } from './GamepadSettingsHelper';
 
 type BrainState = 'created' | 'started' | 'running' | 'stopped';
 
@@ -28,6 +29,7 @@ abstract class Brain {
     protected lastFrame = 0;
     private readonly _score = writable('000');
     private readonly _hiScoreStore: PersistentStore<number>;
+    private _gamepadHelper?: GamepadSettingsHelper<any>;
 
     // Width and height the brains wants to set the renderer to
     private readonly _width: number;
@@ -67,6 +69,19 @@ abstract class Brain {
 
     get height() {
         return this._height;
+    }
+
+    /**
+     * Get storage containing gamepads settings
+     * @param defaultValue Default gamepads settings
+     * @returns PersistentStore of gamepads settings
+     */
+    gamepadHelper<T>(defaultValue: GamepadSettingsType<T> = {}) {
+        if (!this._gamepadHelper) {
+            this._gamepadHelper = new GamepadSettingsHelper(this.id, defaultValue);
+        }
+
+        return this._gamepadHelper as GamepadSettingsHelper<T>;
     }
 
     /**
