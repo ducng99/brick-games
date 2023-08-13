@@ -28,17 +28,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: yarn
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Run install
-        run: yarn install --frozen-lockfile --prod
+        run: bun install --frozen-lockfile --production
 
       - name: Build static files
-        run: yarn build:prod
+        run: bun run build:prod
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1

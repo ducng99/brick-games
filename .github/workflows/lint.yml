@@ -29,17 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Run install
-        run: yarn --frozen-lockfile
+        run: bun install
 
       - name: Run svelte-check
-        run: yarn check
+        run: bun run check
 
       - name: Lint check
-        run: yarn lint
+        run: bun run lint
