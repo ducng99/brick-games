@@ -1,9 +1,16 @@
+import { GamepadStandardAxis, GamepadStandardButton, addGamepadConnectedListener, canGamepadVibrate, isGamepadButtonDown, isGamepadStickNegative, isGamepadStickPositive, removeGamepadConnectedListener, vibrateGamepad } from '../../libs/GamepadHandler';
 import { isKeyDown } from '../../libs/KeyboardHandler';
 import { padLeft } from '../../libs/utils';
+import { ModalsInstance } from '../../stores/ModalStore';
 import { rendererHeight, rendererWidth } from '../../stores/RendererStore';
 import Brain from '../libs/Brain';
 import Ball from './Ball';
 import Paddle from './Paddle';
+
+const gamepadSettingsVersion = 1;
+
+const playerBottomID = 1;
+const playerTopID = 2;
 
 const paddleWidth = 2;
 const paddleMoveDelay = 50;
@@ -35,6 +42,9 @@ class PongBrain extends Brain {
         this.playerBottomScore = 0;
         this.playerTopScore = 0;
 
+        // Setup gamepad controls
+        addGamepadConnectedListener(this.onGamepadConnected);
+
         this.restart();
         return super.start();
     }
@@ -56,9 +66,9 @@ class PongBrain extends Brain {
 
                 let paddleBottomMoved = 0;
 
-                if (isKeyDown('ArrowLeft')) {
+                if (this.shouldPlayerBottomMoveLeft()) {
                     paddleBottomMoved = this.paddleBottom.moveLeft(steps);
-                } else if (isKeyDown('ArrowRight')) {
+                } else if (this.shouldPlayerBottomMoveRight()) {
                     paddleBottomMoved = this.paddleBottom.moveRight(steps);
                 }
 
@@ -76,9 +86,9 @@ class PongBrain extends Brain {
 
                 let paddleTopMoved = 0;
 
-                if (isKeyDown('KeyA')) {
+                if (this.shouldPlayerTopMoveLeft()) {
                     paddleTopMoved = this.paddleTop.moveLeft(steps);
-                } else if (isKeyDown('KeyD')) {
+                } else if (this.shouldPlayerTopMoveRight()) {
                     paddleTopMoved = this.paddleTop.moveRight(steps);
                 }
 
@@ -101,7 +111,7 @@ class PongBrain extends Brain {
             const ballDelta = timestamp - this._lastBallMoveFrame;
 
             if (ballDelta >= this._ballMoveDelay) {
-                if (!this._canBallMove && isKeyDown('Space')) {
+                if (!this._canBallMove && (isKeyDown('Space') || isGamepadButtonDown(GamepadStandardButton.A))) {
                     this._canBallMove = true;
                 }
 
@@ -187,6 +197,8 @@ class PongBrain extends Brain {
         this._paddleBottom = undefined;
         this._ball = undefined;
 
+        removeGamepadConnectedListener(this.onGamepadConnected);
+
         return super.stop();
     }
 
@@ -221,6 +233,75 @@ class PongBrain extends Brain {
                     break;
             }
         }
+    }
+
+    onGamepadConnected = (gamepadIndex: number, gamepadId: string) => {
+        const gamepadSettings = this.gamepadHelper().settings;
+
+        if (gamepadIndex in gamepadSettings &&
+            gamepadSettings[gamepadIndex]._version >= gamepadSettingsVersion &&
+            gamepadSettings[gamepadIndex].gamepadId === gamepadId) {
+            return;
+        }
+
+        if (ModalsInstance) {
+            let pulseGamepadInterval = 0;
+            const canVibrate = canGamepadVibrate(gamepadIndex);
+
+            ModalsInstance.showModal('Gamepad connected!', `[${gamepadIndex}] ${gamepadId}<br/><br/>Use it for:`, [
+                {
+                    text: 'Player Bottom',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, playerBottomID, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                },
+                {
+                    text: 'Player Top',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, playerTopID, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                },
+                {
+                    text: 'None',
+                    onClick: () => {
+                        this.gamepadHelper().pairGamepad(gamepadIndex, gamepadId, 0, undefined, gamepadSettingsVersion);
+                    },
+                    closeAfterClick: true
+                }
+            ],
+            canVibrate ? () => (pulseGamepadInterval = setInterval(() => vibrateGamepad(gamepadIndex, 0.5, 500).catch(() => {}), 1000)) : undefined,
+            canVibrate ? () => { clearInterval(pulseGamepadInterval); } : undefined);
+        }
+    };
+
+    shouldPlayerBottomMoveLeft() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerBottomID);
+        return isKeyDown('ArrowLeft') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadLeft, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickNegative(GamepadStandardAxis.LeftStickX, gamepadIndex));
+    }
+
+    shouldPlayerBottomMoveRight() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerBottomID);
+        return isKeyDown('ArrowRight') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadRight, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickPositive(GamepadStandardAxis.LeftStickX, gamepadIndex));
+    }
+
+    shouldPlayerTopMoveLeft() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerTopID);
+        return isKeyDown('KeyA') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadLeft, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickNegative(GamepadStandardAxis.LeftStickX, gamepadIndex));
+    }
+
+    shouldPlayerTopMoveRight() {
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerTopID);
+        return isKeyDown('KeyD') ||
+            (gamepadIndex >= 0 && isGamepadButtonDown(GamepadStandardButton.DPadRight, gamepadIndex)) ||
+            (gamepadIndex >= 0 && isGamepadStickPositive(GamepadStandardAxis.LeftStickX, gamepadIndex));
     }
 
     get paddleTop(): Paddle {
