@@ -33,7 +33,7 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Run install
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Run svelte-check
         run: bun run check
