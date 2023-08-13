@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1] - 2023-08-13
+
+### ⛰️  Features
+
+- *(car-racing)* Added joystick support
+- *(pong)* Added gamepad support for Pong 2
+
+### 🐛 Bug Fixes
+
+- Fixed variant games share storage with main game
+
+### 🚜 Refactor
+
+- *(gamepad)* Simplify unsubscribing axis listeners
+
 ## [0.6.0] - 2023-08-13
 
 ### ⛰️  Features
