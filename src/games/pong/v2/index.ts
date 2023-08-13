@@ -209,6 +209,7 @@ class PongBrain extends Brain {
 
         this._canBallMove = false;
         this._ballMoveDelay = ballMoveDelayDefault + 50;
+        this._ballCollidedWithPaddle = 0;
 
         this.state = 'started';
     }
