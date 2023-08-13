@@ -1,4 +1,4 @@
-import { writable, type Unsubscriber } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
 import GamesList, { CurrentGameId, CurrentGameVariant } from './GamesList';
 import Brain from './libs/Brain';
@@ -49,8 +49,6 @@ class GameMenu extends Brain {
     private _gameAnimationPromise?: CancelablePromise<Callable<AnimatedFrames, [x: number, y: number]>>;
     private _gameVariantNumber?: Entity;
     private _gameVariantNumberPromise?: CancelablePromise<Callable<Entity, [x: number, y: number]> | undefined>;
-    private readonly _unsubscribers: Unsubscriber[] = [];
-    private readonly _gamepadAxisInRangeUnsubscribers: Array<() => void> = [];
 
     constructor() {
         super('game-menu');
@@ -71,7 +69,7 @@ class GameMenu extends Brain {
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         addGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         addGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        this._gamepadAxisInRangeUnsubscribers.push(
+        this.unsubscribers.push(
             addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickX, this.selectPreviousGame),
             addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickX, this.selectNextGame),
             addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickY, this.selectNextGameVariant),
@@ -83,7 +81,7 @@ class GameMenu extends Brain {
         showHighScore.set(true);
 
         // On game change
-        this._unsubscribers.push(menuCurrentGameIndexStore.subscribe((index) => {
+        this.unsubscribers.push(menuCurrentGameIndexStore.subscribe((index) => {
             menuCurrentGameIdStore.set(this._gamesArray[index]);
             menuCurrentGameVariantStore.set(0);
 
@@ -96,7 +94,7 @@ class GameMenu extends Brain {
         }));
 
         // On variant change
-        this._unsubscribers.push(menuCurrentGameVariantStore.subscribe((variant) => {
+        this.unsubscribers.push(menuCurrentGameVariantStore.subscribe((variant) => {
             this.loadGameAnimation(menuCurrentGameIndex, variant);
             this.loadGameVariantNumber(variant);
         }));
@@ -132,12 +130,7 @@ class GameMenu extends Brain {
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        this._gamepadAxisInRangeUnsubscribers.forEach(unsubscribe => { unsubscribe(); });
-        this._gamepadAxisInRangeUnsubscribers.length = 0;
         removeGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
-
-        this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
-        this._unsubscribers.length = 0;
 
         return super.stop();
     }

@@ -31,6 +31,9 @@ abstract class Brain {
     private readonly _hiScoreStore: PersistentStore<number>;
     private _gamepadHelper?: GamepadSettingsHelper<any>;
 
+    /** A universal list of unsubscribe functions. These are called on {@link Brain.stop} */
+    private readonly _unsubscribers: Array<() => void> = [];
+
     // Width and height the brains wants to set the renderer to
     private readonly _width: number;
     private readonly _height: number;
@@ -71,6 +74,10 @@ abstract class Brain {
         return this._height;
     }
 
+    protected get unsubscribers() {
+        return this._unsubscribers;
+    }
+
     /**
      * Get storage containing gamepads settings
      * @param defaultValue Default gamepads settings
@@ -107,6 +114,9 @@ abstract class Brain {
      * This function mainly used to clear all entities and event listeners.
      */
     stop() {
+        this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });
+        this._unsubscribers.length = 0;
+
         this.state = 'stopped';
 
         return callStop;
