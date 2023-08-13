@@ -129,10 +129,16 @@
             </div>
             <div class="buttons">
                 {#each modal.buttons as button, buttonIndex}
-                    <button class:active={buttonIndex === currentButtonIndex} on:click={() => {
-                        button.onClick?.();
-                        button.closeAfterClick && closeCurrentModal();
-                    }}>{button.text}</button>
+                    <button
+                        class:active={buttonIndex === currentButtonIndex}
+                        on:click={() => {
+                            button.onClick?.();
+                            button.closeAfterClick && closeCurrentModal();
+                        }}
+                        on:mousemove={() => (currentButtonIndex = buttonIndex)}
+                    >
+                        {button.text}
+                    </button>
                 {/each}
             </div>
         </div>
@@ -211,7 +217,7 @@
 
                     transition: border-color 0.2s linear;
 
-                    &:hover, &.active {
+                    &.active {
                         border-color: rgba(0, 0, 0, 0.3);
                         animation: infinite 0.5s linear 0.2s alternate pulse;
                     }
