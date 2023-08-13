@@ -27,6 +27,7 @@ class PongBrain extends Brain {
     private _canBallMove = false;
     // Initial speed is slower as it starts from middle screen
     private _ballMoveDelay = ballMoveDelayDefault + 50;
+    private _ballCollidedWithPaddle = 0;
 
     setRendererWidthHeight(): [width: number, height: number] {
         return [10, 20];
@@ -56,7 +57,6 @@ class PongBrain extends Brain {
         }
 
         if (this.state === 'running') {
-            let ballCollidedWithPaddle = false;
             const delta = timestamp - this.lastFrame;
 
             if (delta >= paddleMoveDelay) {
@@ -76,11 +76,11 @@ class PongBrain extends Brain {
 
                     if (paddleBottomMoved > 0) {
                         this.ball.direction = 'up-right';
-                        ballCollidedWithPaddle = true;
                     } else {
                         this.ball.direction = 'up-left';
-                        ballCollidedWithPaddle = true;
                     }
+
+                    this._ballCollidedWithPaddle = playerBottomID;
                 }
 
                 let paddleTopMoved = 0;
@@ -96,11 +96,11 @@ class PongBrain extends Brain {
 
                     if (paddleTopMoved > 0) {
                         this.ball.direction = 'down-right';
-                        ballCollidedWithPaddle = true;
                     } else {
                         this.ball.direction = 'down-left';
-                        ballCollidedWithPaddle = true;
                     }
+
+                    this._ballCollidedWithPaddle = playerTopID;
                 }
 
                 this.lastFrame = timestamp;
@@ -140,37 +140,35 @@ class PongBrain extends Brain {
                             switch (this.ball.direction) {
                                 case 'down-left':
                                     this.ball.direction = 'up-left';
-                                    ballCollidedWithPaddle = true;
                                     break;
                                 case 'down-right':
                                     this.ball.direction = 'up-right';
-                                    ballCollidedWithPaddle = true;
                                     break;
                                 default:
                                     this.ball.direction = Math.random() > 0.5 ? 'up-left' : 'up-right';
-                                    ballCollidedWithPaddle = true;
                                     break;
                             }
+
+                            this._ballCollidedWithPaddle = playerBottomID;
                         } else if (this.ball.isCollidingBox(this.paddleTop, ballFutureX, ballFutureY)) {
                             switch (this.ball.direction) {
                                 case 'up-left':
                                     this.ball.direction = 'down-left';
-                                    ballCollidedWithPaddle = true;
                                     break;
                                 case 'up-right':
                                     this.ball.direction = 'down-right';
-                                    ballCollidedWithPaddle = true;
                                     break;
                                 default:
                                     this.ball.direction = Math.random() > 0.5 ? 'down-left' : 'down-right';
-                                    ballCollidedWithPaddle = true;
                                     break;
                             }
+
+                            this._ballCollidedWithPaddle = playerTopID;
                         }
 
-                        if (ballCollidedWithPaddle) {
+                        if (this._ballCollidedWithPaddle > 0) {
                             this.onBallCollideWithPaddle();
-                            ballCollidedWithPaddle = false;
+                            this._ballCollidedWithPaddle = 0;
                         }
 
                         this.ball.update();
