@@ -87,9 +87,8 @@ class GameMenu extends Brain {
 
             this.loadLetterAnimation(index);
             this.loadGameAnimation(index, 0);
-            this.loadGameVariantNumber(0);
 
-            const highScore = getHiScoreStore(this._gamesArray[index]);
+            const highScore = getHiScoreStore(this._gamesArray[index] + '0');
             this.score.set(padLeft(highScore.value, 3));
         }));
 
@@ -97,6 +96,9 @@ class GameMenu extends Brain {
         this.unsubscribers.push(menuCurrentGameVariantStore.subscribe((variant) => {
             this.loadGameAnimation(menuCurrentGameIndex, variant);
             this.loadGameVariantNumber(variant);
+
+            const highScore = getHiScoreStore(menuCurrentGameId + variant.toString());
+            this.score.set(padLeft(highScore.value, 3));
         }));
 
         return super.start();

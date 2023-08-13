@@ -95,7 +95,7 @@
 
             gameLoadPromise = cancelablePromise(GamesList[id][variant].loader());
             gameLoadPromise.promise.then(Game => {
-                game = new Game(id);
+                game = new Game(id + variant.toString());
             }).catch((ex) => {
                 if (!(ex instanceof CanceledPromiseError)) {
                     console.error('Failed to load game.');
