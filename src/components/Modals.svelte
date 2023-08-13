@@ -121,42 +121,48 @@
 
 {#if modal}
     <dialog bind:this={modalElement}>
-        <h2 class="title">{modal.title}</h2>
-        <div class="content">
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html DOMPurify.sanitize(modal.content)}
-        </div>
-        <div class="buttons">
-            {#each modal.buttons as button, buttonIndex}
-                <button class:active={buttonIndex === currentButtonIndex} on:click={() => {
-                    button.onClick?.();
-                    button.closeAfterClick && closeCurrentModal();
-                }}>{button.text}</button>
-            {/each}
+        <div class="innerDialog">
+            <h2 class="title">{modal.title}</h2>
+            <div class="content">
+                <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html DOMPurify.sanitize(modal.content)}
+            </div>
+            <div class="buttons">
+                {#each modal.buttons as button, buttonIndex}
+                    <button class:active={buttonIndex === currentButtonIndex} on:click={() => {
+                        button.onClick?.();
+                        button.closeAfterClick && closeCurrentModal();
+                    }}>{button.text}</button>
+                {/each}
+            </div>
         </div>
     </dialog>
 {/if}
 
 <style lang="scss">
     dialog {
-        --dialog-border-width: 0.2em;
+        --background-color: black;
+        --dialog-border-width: 0.1em;
 
         font-family: 'JetbrainsMono', Courier, monospace;
         width: 38em;
         text-align: center;
-        background-color: #bacb97;
+        background-color: var(--background-color);
+        padding: calc(var(--dialog-border-width) * 6);
 
-        border-top: calc(var(--dialog-border-width) * 5) solid black;
-        border-bottom: calc(var(--dialog-border-width) * 5) solid black;
         box-shadow:
-            calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) black,   /* Left 1 */
-            calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) black, /* Left 2 */
-            calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) black, /* Left 3 */
-            calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) black, /* Left 4 */
-            calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) black,   /* Right 1 */
-            calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) black, /* Right 2 */
-            calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) black, /* Right 3 */
-            calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) black,; /* Right 4 */
+            calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Left 1 */
+            calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Left 2 */
+            calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Left 3 */
+            calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Left 4 */
+            calc(var(--dialog-border-width) * -10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color), /* Left 5 */
+            calc(var(--dialog-border-width) * -12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color), /* Left 6 */
+            calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Right 1 */
+            calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Right 2 */
+            calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Right 3 */
+            calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Right 4 */
+            calc(var(--dialog-border-width) * 10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color), /* Right 5 */
+            calc(var(--dialog-border-width) * 12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color); /* Right 6 */
 
         @media (max-width: 38em) {
             width: 90vw;
@@ -169,39 +175,59 @@
         &:focus-visible {
             outline: none;
         }
+        
+        .innerDialog {
+            --background-color: #bacb97;
+            
+            padding: 1em 0;
+            background-color: var(--background-color);
+            box-shadow:
+                calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Left 1 */
+                calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Left 2 */
+                calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Left 3 */
+                calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Left 4 */
+                calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Right 1 */
+                calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Right 2 */
+                calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Right 3 */
+                calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color),; /* Right 4 */
 
-        .buttons {
-            display: flex;
-            justify-content: space-evenly;
-            margin-top: 1em;
-
-            button {
-                font-family: inherit;
-                font-size: 1.3em;
-                background-color: transparent;
-                border: 0.2em solid rgba(0, 0, 0, 0);
-                text-transform: uppercase;
-                padding: 0.2em 0.4em;
-                cursor: pointer;
-
-                transition: border-color 0.2s linear;
-
-                &:hover, &.active {
-                    border-color: rgba(0, 0, 0, 0.3);
-                    animation: infinite 0.5s linear 0.2s alternate pulse;
-                }
-
-                &:focus-visible {
-                    outline: none;
-                }
+            .title {
+                margin-top: 0;
             }
 
-            @keyframes pulse {
-                from {
-                    border-color: rgba(0, 0, 0, 0.3);
+            .buttons {
+                display: flex;
+                justify-content: space-evenly;
+                margin-top: 1em;
+
+                button {
+                    font-family: inherit;
+                    font-size: 1.3em;
+                    background-color: transparent;
+                    border: 0.2em solid rgba(0, 0, 0, 0);
+                    text-transform: uppercase;
+                    padding: 0.2em 0.4em;
+                    cursor: pointer;
+
+                    transition: border-color 0.2s linear;
+
+                    &:hover, &.active {
+                        border-color: rgba(0, 0, 0, 0.3);
+                        animation: infinite 0.5s linear 0.2s alternate pulse;
+                    }
+
+                    &:focus-visible {
+                        outline: none;
+                    }
                 }
-                to {
-                    border-color: rgba(0, 0, 0, 1);
+
+                @keyframes pulse {
+                    from {
+                        border-color: rgba(0, 0, 0, 0.3);
+                    }
+                    to {
+                        border-color: rgba(0, 0, 0, 1);
+                    }
                 }
             }
         }
