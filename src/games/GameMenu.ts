@@ -11,7 +11,7 @@ import type Entity from './libs/Entity';
 import { numberToEntity } from './libs/common-entities/numbers';
 import { getHiScoreStore } from '../stores/HighscoresStore';
 import { showHighScore } from '../stores/SettingsStore';
-import { addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, GamepadStandardAxis, GamepadStandardButton, removeGamepadAxisInRangeListener, removeGamepadButtonDownListener, type GamepadAxisRangeListener } from '../libs/GamepadHandler';
+import { addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, GamepadStandardAxis, GamepadStandardButton, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -50,7 +50,7 @@ class GameMenu extends Brain {
     private _gameVariantNumber?: Entity;
     private _gameVariantNumberPromise?: CancelablePromise<Callable<Entity, [x: number, y: number]> | undefined>;
     private readonly _unsubscribers: Unsubscriber[] = [];
-    private readonly _gamepadAxisInRangeListeners: Array<[axis: number, listener: GamepadAxisRangeListener]> = [];
+    private readonly _gamepadAxisInRangeUnsubscribers: Array<() => void> = [];
 
     constructor() {
         super('game-menu');
@@ -71,11 +71,11 @@ class GameMenu extends Brain {
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         addGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         addGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        this._gamepadAxisInRangeListeners.push(
-            [GamepadStandardAxis.LeftStickX, addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickX, this.selectPreviousGame)],
-            [GamepadStandardAxis.LeftStickX, addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickX, this.selectNextGame)],
-            [GamepadStandardAxis.LeftStickY, addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickY, this.selectNextGameVariant)],
-            [GamepadStandardAxis.LeftStickY, addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickY, this.selectPreviousGameVariant)]
+        this._gamepadAxisInRangeUnsubscribers.push(
+            addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickX, this.selectPreviousGame),
+            addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickX, this.selectNextGame),
+            addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickY, this.selectNextGameVariant),
+            addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickY, this.selectPreviousGameVariant)
         );
         addGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
 
@@ -132,10 +132,8 @@ class GameMenu extends Brain {
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        this._gamepadAxisInRangeListeners.forEach(([axis, listener]) => {
-            removeGamepadAxisInRangeListener(axis, listener);
-        });
-        this._gamepadAxisInRangeListeners.length = 0;
+        this._gamepadAxisInRangeUnsubscribers.forEach(unsubscribe => { unsubscribe(); });
+        this._gamepadAxisInRangeUnsubscribers.length = 0;
         removeGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
 
         this._unsubscribers.forEach(unsubscribe => { unsubscribe(); });

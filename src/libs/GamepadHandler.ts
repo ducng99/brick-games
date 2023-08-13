@@ -109,14 +109,14 @@ function setupGamepad(gamepad: Gamepad) {
                 gamepadInfo.axisInRangeListeners.get(index)?.forEach(inRangeHandler);
                 gamepadAxisInRangeCallbacks.get(index)?.forEach(inRangeHandler);
 
-                const outOfRangeHandler = (listener: GamepadAxisRangeListener) => {
+                const outRangeHandler = (listener: GamepadAxisRangeListener) => {
                     if ((axis < listener.range[0] || axis > listener.range[1]) && gamepadInfo.axes[index] >= listener.range[0] && gamepadInfo.axes[index] <= listener.range[1]) {
                         listener.callback();
                     }
                 };
 
-                gamepadInfo.axisOutRangeListeners.get(index)?.forEach(outOfRangeHandler);
-                gamepadAxisOutRangeCallbacks.get(index)?.forEach(outOfRangeHandler);
+                gamepadInfo.axisOutRangeListeners.get(index)?.forEach(outRangeHandler);
+                gamepadAxisOutRangeCallbacks.get(index)?.forEach(outRangeHandler);
             });
 
             gamepadInfo.axes = gamepad.axes;
@@ -320,7 +320,7 @@ export function removeGamepadAxisInRangeListener(axis: number, listener: Gamepad
  * @param listener Listener containing the range to check (0.0 to 1.0) and the callback
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
  */
-export function addGamepadAxisOutOfRangeListener(axis: number, listener: GamepadAxisRangeListener, gamepadIndex?: number) {
+export function addGamepadAxisOutRangeListener(axis: number, listener: GamepadAxisRangeListener, gamepadIndex?: number) {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             const gamepadInfo = gamepads[gamepadIndex];
@@ -343,10 +343,10 @@ export function addGamepadAxisOutOfRangeListener(axis: number, listener: Gamepad
 /**
  * Remove a previously added callback to be called when a gamepad axis is out of range.
  * @param axis Axis index
- * @param listener Listener was added with {@link addGamepadAxisOutOfRangeListener}.
+ * @param listener Listener was added with {@link addGamepadAxisOutRangeListener}.
  * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
-export function removeGamepadAxisOutOfRangeListener(axis: number, listener: GamepadAxisRangeListener, gamepadIndex?: number) {
+export function removeGamepadAxisOutRangeListener(axis: number, listener: GamepadAxisRangeListener, gamepadIndex?: number) {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             gamepads[gamepadIndex].axisOutRangeListeners.get(axis)?.delete(listener);
@@ -362,14 +362,14 @@ export function removeGamepadAxisOutOfRangeListener(axis: number, listener: Game
  * @param axis Axis index
  * @param callback Callback to be called when the axis has positive value.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
- * @returns Listener object, can be passed to {@link removeGamepadAxisInRangeListener}
+ * @returns A function to {@link removeGamepadAxisInRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisInRangeListener}
  */
-export function addGamepadAxisInRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): GamepadAxisRangeListener {
+export function addGamepadAxisInRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [stickInRangeTriggerZone, 1], callback };
     addGamepadAxisInRangeListener(axis, listener, gamepadIndex);
 
-    return listener;
+    return () => { removeGamepadAxisInRangeListener(axis, listener, gamepadIndex); };
 }
 
 /**
@@ -378,14 +378,14 @@ export function addGamepadAxisInRangePositiveListener(axis: number, callback: ()
  * @param axis Axis index
  * @param callback Callback to be called when the axis has negative value.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
- * @returns Listener object, can be passed to {@link removeGamepadAxisInRangeListener}
+ * @returns A function to {@link removeGamepadAxisInRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisInRangeListener}
  */
-export function addGamepadAxisInRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): GamepadAxisRangeListener {
+export function addGamepadAxisInRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [-1, -stickInRangeTriggerZone], callback };
     addGamepadAxisInRangeListener(axis, listener, gamepadIndex);
 
-    return listener;
+    return () => { removeGamepadAxisInRangeListener(axis, listener, gamepadIndex); };
 }
 
 /**
@@ -394,14 +394,14 @@ export function addGamepadAxisInRangeNegativeListener(axis: number, callback: ()
  * @param axis Axis index
  * @param callback Callback to be called when the axis no longer has positive value.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
- * @returns Listener object, can be passed to {@link removeGamepadAxisOutOfRangeListener}
- * @uses {@link addGamepadAxisOutOfRangeListener}
+ * @returns A function to {@link removeGamepadAxisOutRangeListener} to remove the listener.
+ * @uses {@link addGamepadAxisOutRangeListener}
  */
-export function addGamepadAxisOutOfRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): GamepadAxisRangeListener {
+export function addGamepadAxisOutRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [stickInRangeTriggerZone, 1], callback };
-    addGamepadAxisOutOfRangeListener(axis, listener, gamepadIndex);
+    addGamepadAxisOutRangeListener(axis, listener, gamepadIndex);
 
-    return listener;
+    return () => { removeGamepadAxisOutRangeListener(axis, listener, gamepadIndex); };
 }
 
 /**
@@ -410,14 +410,14 @@ export function addGamepadAxisOutOfRangePositiveListener(axis: number, callback:
  * @param axis Axis index
  * @param callback Callback to be called when the axis no longer has negative value.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
- * @returns Listener object, can be passed to {@link removeGamepadAxisOutOfRangeListener}
- * @uses {@link addGamepadAxisOutOfRangeListener}
+ * @returns A function to {@link removeGamepadAxisOutRangeListener} to remove the listener.
+ * @uses {@link addGamepadAxisOutRangeListener}
  */
-export function addGamepadAxisOutOfRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): GamepadAxisRangeListener {
+export function addGamepadAxisOutRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [-1, -stickInRangeTriggerZone], callback };
-    addGamepadAxisOutOfRangeListener(axis, listener, gamepadIndex);
+    addGamepadAxisOutRangeListener(axis, listener, gamepadIndex);
 
-    return listener;
+    return () => { removeGamepadAxisOutRangeListener(axis, listener, gamepadIndex); };
 }
 
 /**
