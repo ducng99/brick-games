@@ -151,18 +151,18 @@
         padding: calc(var(--dialog-border-width) * 6);
 
         box-shadow:
-            calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Left 1 */
-            calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Left 2 */
-            calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Left 3 */
-            calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Left 4 */
-            calc(var(--dialog-border-width) * -10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color), /* Left 5 */
-            calc(var(--dialog-border-width) * -12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color), /* Left 6 */
-            calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Right 1 */
-            calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Right 2 */
-            calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Right 3 */
-            calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Right 4 */
-            calc(var(--dialog-border-width) * 10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color), /* Right 5 */
-            calc(var(--dialog-border-width) * 12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color); /* Right 6 */
+            calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),    /* Left 1 */
+            calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color),    /* Left 2 */
+            calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color),    /* Left 3 */
+            calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color),    /* Left 4 */
+            calc(var(--dialog-border-width) * -10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color),   /* Left 5 */
+            calc(var(--dialog-border-width) * -12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color),   /* Left 6 */
+            calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),     /* Right 1 */
+            calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color),     /* Right 2 */
+            calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color),     /* Right 3 */
+            calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color),     /* Right 4 */
+            calc(var(--dialog-border-width) * 10) 0 0 calc(var(--dialog-border-width) * -5) var(--background-color),    /* Right 5 */
+            calc(var(--dialog-border-width) * 12) 0 0 calc(var(--dialog-border-width) * -6) var(--background-color);    /* Right 6 */
 
         @media (max-width: 38em) {
             width: 90vw;
@@ -175,21 +175,21 @@
         &:focus-visible {
             outline: none;
         }
-        
+
         .innerDialog {
             --background-color: #bacb97;
-            
+
             padding: 1em 0;
             background-color: var(--background-color);
             box-shadow:
-                calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Left 1 */
-                calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Left 2 */
-                calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Left 3 */
-                calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color), /* Left 4 */
-                calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),   /* Right 1 */
-                calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color), /* Right 2 */
-                calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color), /* Right 3 */
-                calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color),; /* Right 4 */
+                calc(var(--dialog-border-width) * -2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),    /* Left 1 */
+                calc(var(--dialog-border-width) * -4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color),    /* Left 2 */
+                calc(var(--dialog-border-width) * -6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color),    /* Left 3 */
+                calc(var(--dialog-border-width) * -8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color),    /* Left 4 */
+                calc(var(--dialog-border-width) * 2) 0 0 calc(var(--dialog-border-width) * -1) var(--background-color),     /* Right 1 */
+                calc(var(--dialog-border-width) * 4) 0 0 calc(var(--dialog-border-width) * -2) var(--background-color),     /* Right 2 */
+                calc(var(--dialog-border-width) * 6) 0 0 calc(var(--dialog-border-width) * -3) var(--background-color),     /* Right 3 */
+                calc(var(--dialog-border-width) * 8) 0 0 calc(var(--dialog-border-width) * -4) var(--background-color);     /* Right 4 */
 
             .title {
                 margin-top: 0;

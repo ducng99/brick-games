@@ -8,8 +8,8 @@
     "build": "vite build",
     "build:prod": "vite build --base=/brick-games/",
     "preview": "vite preview",
-    "lint": "eslint ./src/",
-    "lint:fix": "eslint --fix ./src/",
+    "lint": "eslint --ext .js,.ts,.svelte ./src/",
+    "lint:fix": "eslint --fix --ext .js,.ts,.svelte ./src/",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "release:prep": "node scripts/release.js"
   },
