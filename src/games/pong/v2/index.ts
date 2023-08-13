@@ -173,7 +173,7 @@ class PongBrain extends Brain {
                         }
 
                         if (this._ballCollidedWithPaddle > 0) {
-                            this.onBallCollideWithPaddle();
+                            this.onBallCollideWithPaddle(this._ballCollidedWithPaddle);
                             this._ballCollidedWithPaddle = 0;
                         }
 
@@ -213,7 +213,7 @@ class PongBrain extends Brain {
         this.state = 'started';
     }
 
-    onBallCollideWithPaddle() {
+    onBallCollideWithPaddle(playerID: number) {
         // Random chance of ball speed change
         if (this._ballMoveDelay != ballMoveDelayDefault) {
             this._ballMoveDelay = ballMoveDelayDefault;
@@ -233,6 +233,12 @@ class PongBrain extends Brain {
                     this.ball.direction = 'right-straight';
                     break;
             }
+        }
+
+        // Vibrate gamepad of the colliding player
+        const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerID);
+        if (gamepadIndex >= 0) {
+            vibrateGamepad(gamepadIndex, 1.0, 150).catch(() => {});
         }
     }
 
