@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2023-08-13
+
+### ⛰️  Features
+
+- *(gamepad)* Added support function to vibrate
+- *(gamepad)* Added joystick support 🕹
+- *(gamepad)* Added joystick support to Modals, GameMenu and SplashScreen
+- *(gamepad)* Added gamepad support for games brain
+- *(modal)* Added `onOpen` and `onClose` callbacks
+- *(modal)* Added DOMPurifiy sanitize modal content
+- *(persistentstore)* Added lz-string compression
+- *(pong)* Added gamepad support for Pong v1
+
+### 🐛 Bug Fixes
+
+- Fixed modal ESC key stop showing other modals in queue
+
+### 🚜 Refactor
+
+- *(Modal)* Now use UUID as identifier instead of index
+- *(utils)* Renamed `pad` to `padLeft`
+- Removed using `window` object 👀
+
+### ⚙️ Miscellaneous Tasks
+
+- *(action)* Lint action now runs svelte-check
+- *(action)* Fixed lint not triggering on src file change
+- *(deps)* Bump dependencies
+- *(deps)* Bump vite to v4.4.9
+- *(deps)* Bump @sveltejs/vite-plugin-svelte to v2.4.4
+- *(deps)* Bump svelte from 4.1.2 to 4.2.0
+- *(deps)* Bump @sveltejs/vite-plugin-svelte from 2.4.4 to 2.4.5
+- *(deps)* Bump sass from 1.64.2 to 1.65.1
+- *(deps-dev)* Bump svelte-check from 3.4.6 to 3.5.0
+- *(deps-dev)* Bump eslint from 8.46.0 to 8.47.0
+
 ## [0.5.2] - 2023-08-02
 
 ### ⛰️  Features
