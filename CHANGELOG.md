@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2] - 2023-08-13
+
+### ⛰️  Features
+
+- *(car-racing)* Added engine start rumbling on start
+- *(car-racing)* Added vibrating on explosion
+- *(pong)* Added vibration on collision
+
+### 🐛 Bug Fixes
+
+- *(pong)* Fixed `onBallCollideWithPaddle` not called when paddle moved
+
 ## [0.6.1] - 2023-08-13
 
 ### ⛰️  Features
