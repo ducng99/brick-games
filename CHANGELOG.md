@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2+patch1] - 2023-08-13
+
+### 🐛 Bug Fixes
+
+- *(modal)* Fixed incorrect syntax to unsubscribe
+
+### ⚙️ Miscellaneous Tasks
+
+- *(action)* Use bun to run actions
+
 ## [0.6.2] - 2023-08-13
 
 ### ⛰️  Features
