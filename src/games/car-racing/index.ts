@@ -55,9 +55,12 @@ class CarRacingBrain extends Brain {
             await Promise.all(getAllGamepadIndexes().map(async index => {
                 if (canGamepadVibrate(index)) {
                     await vibrateGamepad(index, 0.1, 1000);
-                    await vibrateGamepad(index, 0.6, 500);
-                    await vibrateGamepad(index, 0.2, 500);
+                    await vibrateGamepad(index, 0.5, 500);
+                    await vibrateGamepad(index, 0.1, 500);
+                    await vibrateGamepad(index, 0.7, 600);
+                    await vibrateGamepad(index, 0.1, 500);
                     await vibrateGamepad(index, 1.0, 800);
+                    await vibrateGamepad(index, 0.6, 300);
                     await vibrateGamepad(index, 0.2, 1500);
                 }
             }));
