@@ -7,6 +7,8 @@ export async function numberToEntity(num: number): Promise<Callable<Entity, [ x:
             return (await import('./Number01')).default;
         case 2:
             return (await import('./Number02')).default;
+        case 3:
+            return (await import('./Number03')).default;
         default:
             break;
     }

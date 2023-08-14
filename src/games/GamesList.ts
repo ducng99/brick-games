@@ -32,6 +32,11 @@ const GamesList: Record<string, GameInfo[]> = {
             name: 'Pong 2',
             animation: async () => (await import('./pong/v2/MenuAnimation')).default,
             loader: async () => (await import('./pong/v2')).default
+        },
+        {
+            name: 'Pong 3',
+            animation: async () => (await import('./pong/v3/MenuAnimation')).default,
+            loader: async () => (await import('./pong/v3')).default
         }
     ]
 };
