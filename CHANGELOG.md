@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3] - 2023-08-14
+
+### ⛰️  Features
+
+- *(pong)* Added Pong 3 with power 💪
+
+### 🐛 Bug Fixes
+
+- Fixed incorrect letter B rotation
+
+### 🎨 Styling
+
+- *(modal)* Better button select highlighting
+- Re-style modal borders
+
 ## [0.6.2+patch1] - 2023-08-13
 
 ### 🐛 Bug Fixes
