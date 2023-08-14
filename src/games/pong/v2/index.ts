@@ -1,4 +1,4 @@
-import { addGamepadConnectedListener, canGamepadVibrate, vibrateGamepad, isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive } from '../../../libs/GamepadHandler';
+import { addGamepadConnectedListener, canGamepadVibrate, vibrateGamepad, isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive, removeGamepadConnectedListener } from '../../../libs/GamepadHandler';
 import { isKeyDown } from '../../../libs/KeyboardHandler';
 import { padLeft } from '../../../libs/utils';
 import { ModalsInstance } from '../../../stores/ModalStore';
@@ -199,6 +199,8 @@ class PongBrain extends Brain {
         this._paddleLeft = undefined;
         this._paddleRight = undefined;
         this._ball = undefined;
+
+        removeGamepadConnectedListener(this.onGamepadConnected);
 
         return super.stop();
     }
