@@ -31,7 +31,6 @@ abstract class Brain {
     private readonly _hiScoreStore: PersistentStore<number>;
     private _gamepadHelper?: GamepadSettingsHelper<any>;
 
-    /** A universal list of unsubscribe functions. These are called on {@link Brain.stop} */
     private readonly _unsubscribers: Array<() => void> = [];
 
     // Width and height the brains wants to set the renderer to
@@ -74,6 +73,7 @@ abstract class Brain {
         return this._height;
     }
 
+    /** A universal list of unsubscribe functions. These are called on {@link Brain.stop} */
     protected get unsubscribers() {
         return this._unsubscribers;
     }

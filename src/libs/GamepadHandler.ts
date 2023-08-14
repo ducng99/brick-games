@@ -1,21 +1,23 @@
 import { clamp } from './utils';
 
+type GamepadConnectionCallback = (gamepadIndex: number, gamepadId: string) => void;
+type GamepadButtonCallback = (gamepadIndex: number, gamepadId: string) => void;
+type GamepadAxisCallback = (gamepadIndex: number, gamepadId: string) => void;
+
 export interface GamepadAxisRangeListener {
     range: [lower: number, upper: number];
-    callback: () => void;
+    callback: GamepadAxisCallback;
 }
 
 interface GamepadInfo {
     controller: Gamepad;
     axes: readonly number[];
     buttonsDown: Set<number>;
-    buttonDownListeners: Map<number, Set<() => void>>;
-    buttonUpListeners: Map<number, Set<() => void>>;
+    buttonDownListeners: Map<number, Set<GamepadButtonCallback>>;
+    buttonUpListeners: Map<number, Set<GamepadButtonCallback>>;
     axisInRangeListeners: Map<number, Set<GamepadAxisRangeListener>>;
     axisOutRangeListeners: Map<number, Set<GamepadAxisRangeListener>>;
 }
-
-type GamepadConnectionCallback = (gamepadIndex: number, gamepadId: string) => void;
 
 const stickDeadzone = 0.2;
 const stickInRangeTriggerZone = 0.6;
@@ -23,8 +25,8 @@ const stickInRangeTriggerZone = 0.6;
 const gamepads: Record<number, GamepadInfo> = {};
 const gamepadConnectedCallbacks = new Set<GamepadConnectionCallback>();
 const gamepadDisconnectedCallbacks = new Set<GamepadConnectionCallback>();
-const gamepadButtonDownCallbacks = new Map<number, Set<() => void>>();
-const gamepadButtonUpCallbacks = new Map<number, Set<() => void>>();
+const gamepadButtonDownCallbacks = new Map<number, Set<GamepadButtonCallback>>();
+const gamepadButtonUpCallbacks = new Map<number, Set<GamepadButtonCallback>>();
 const gamepadAxisInRangeCallbacks = new Map<number, Set<GamepadAxisRangeListener>>();
 const gamepadAxisOutRangeCallbacks = new Map<number, Set<GamepadAxisRangeListener>>();
 
@@ -87,14 +89,14 @@ function setupGamepad(gamepad: Gamepad) {
                 if ((typeof button === 'number' && button === 1) || button.pressed) {
                     if (!gamepadInfo.buttonsDown.has(index)) {
                         gamepadInfo.buttonsDown.add(index);
-                        gamepadInfo.buttonDownListeners.get(index)?.forEach((callback) => { callback(); });
-                        gamepadButtonDownCallbacks.get(index)?.forEach((callback) => { callback(); });
+                        gamepadInfo.buttonDownListeners.get(index)?.forEach((callback) => { callback(gamepad.index, gamepad.id); });
+                        gamepadButtonDownCallbacks.get(index)?.forEach((callback) => { callback(gamepad.index, gamepad.id); });
                     }
                 } else {
                     if (gamepadInfo.buttonsDown.has(index)) {
                         gamepadInfo.buttonsDown.delete(index);
-                        gamepadInfo.buttonUpListeners.get(index)?.forEach((callback) => { callback(); });
-                        gamepadButtonUpCallbacks.get(index)?.forEach((callback) => { callback(); });
+                        gamepadInfo.buttonUpListeners.get(index)?.forEach((callback) => { callback(gamepad.index, gamepad.id); });
+                        gamepadButtonUpCallbacks.get(index)?.forEach((callback) => { callback(gamepad.index, gamepad.id); });
                     }
                 }
             });
@@ -102,7 +104,7 @@ function setupGamepad(gamepad: Gamepad) {
             gamepad.axes.forEach((axis, index) => {
                 const inRangeHandler = (listener: GamepadAxisRangeListener) => {
                     if (axis >= listener.range[0] && axis <= listener.range[1] && (gamepadInfo.axes[index] < listener.range[0] || gamepadInfo.axes[index] > listener.range[1])) {
-                        listener.callback();
+                        listener.callback(gamepad.index, gamepad.id);
                     }
                 };
 
@@ -111,7 +113,7 @@ function setupGamepad(gamepad: Gamepad) {
 
                 const outRangeHandler = (listener: GamepadAxisRangeListener) => {
                     if ((axis < listener.range[0] || axis > listener.range[1]) && gamepadInfo.axes[index] >= listener.range[0] && gamepadInfo.axes[index] <= listener.range[1]) {
-                        listener.callback();
+                        listener.callback(gamepad.index, gamepad.id);
                     }
                 };
 
@@ -133,13 +135,13 @@ function setupGamepad(gamepad: Gamepad) {
         };
 
         gamepads[gamepad.index].buttonsDown.forEach((button) => {
-            gamepadButtonDownCallbacks.get(button)?.forEach((callback) => { callback(); });
+            gamepadButtonDownCallbacks.get(button)?.forEach((callback) => { callback(gamepad.index, gamepad.id); });
         });
 
         gamepads[gamepad.index].axes.forEach((axis, index) => {
             gamepadAxisInRangeCallbacks.get(index)?.forEach((listener) => {
                 if (axis >= listener.range[0] && axis <= listener.range[1]) {
-                    listener.callback();
+                    listener.callback(gamepad.index, gamepad.id);
                 }
             });
         });
@@ -198,9 +200,8 @@ export function removeGamepadDisconnectedListener(callback: GamepadConnectionCal
  * @param button Gamepad button index
  * @param callback Callback to be called when the button is pressed.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
- * @returns `true` if the button is down or if any button is down.
  */
-export function addGamepadButtonDownListener(button: number, callback: () => void, gamepadIndex?: number) {
+export function addGamepadButtonDownListener(button: number, callback: GamepadButtonCallback, gamepadIndex?: number): GamepadButtonCallback {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             const gamepadInfo = gamepads[gamepadIndex];
@@ -228,7 +229,7 @@ export function addGamepadButtonDownListener(button: number, callback: () => voi
  * @param callback Callback was added with {@link addGamepadButtonDownListener}.
  * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
-export function removeGamepadButtonDownListener(button: number, callback: () => void, gamepadIndex?: number) {
+export function removeGamepadButtonDownListener(button: number, callback: GamepadButtonCallback, gamepadIndex?: number) {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             gamepads[gamepadIndex].buttonDownListeners.get(button)?.delete(callback);
@@ -244,7 +245,7 @@ export function removeGamepadButtonDownListener(button: number, callback: () => 
  * @param callback Callback to be called when the button is released.
  * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
  */
-export function addGamepadButtonUpListener(button: number, callback: () => void, gamepadIndex?: number) {
+export function addGamepadButtonUpListener(button: number, callback: GamepadButtonCallback, gamepadIndex?: number): GamepadButtonCallback {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             const gamepadInfo = gamepads[gamepadIndex];
@@ -262,6 +263,8 @@ export function addGamepadButtonUpListener(button: number, callback: () => void,
 
         gamepadButtonUpCallbacks.get(button)?.add(callback);
     }
+
+    return callback;
 }
 
 /**
@@ -270,7 +273,7 @@ export function addGamepadButtonUpListener(button: number, callback: () => void,
  * @param callback Callback was added with {@link addGamepadButtonUpListener}.
  * @param gamepadIndex Gamepad index. If not provided, remove callback in global listeners list.
  */
-export function removeGamepadButtonUpListener(button: number, callback: () => void, gamepadIndex?: number) {
+export function removeGamepadButtonUpListener(button: number, callback: GamepadButtonCallback, gamepadIndex?: number) {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             gamepads[gamepadIndex].buttonUpListeners.get(button)?.delete(callback);
@@ -373,7 +376,7 @@ export function removeGamepadAxisOutRangeListener(axis: number, listener: Gamepa
  * @returns A function to {@link removeGamepadAxisInRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisInRangeListener}
  */
-export function addGamepadAxisInRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
+export function addGamepadAxisInRangePositiveListener(axis: number, callback: GamepadAxisCallback, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [stickInRangeTriggerZone, 1], callback };
     addGamepadAxisInRangeListener(axis, listener, gamepadIndex);
 
@@ -389,7 +392,7 @@ export function addGamepadAxisInRangePositiveListener(axis: number, callback: ()
  * @returns A function to {@link removeGamepadAxisInRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisInRangeListener}
  */
-export function addGamepadAxisInRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
+export function addGamepadAxisInRangeNegativeListener(axis: number, callback: GamepadAxisCallback, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [-1, -stickInRangeTriggerZone], callback };
     addGamepadAxisInRangeListener(axis, listener, gamepadIndex);
 
@@ -405,7 +408,7 @@ export function addGamepadAxisInRangeNegativeListener(axis: number, callback: ()
  * @returns A function to {@link removeGamepadAxisOutRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisOutRangeListener}
  */
-export function addGamepadAxisOutRangePositiveListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
+export function addGamepadAxisOutRangePositiveListener(axis: number, callback: GamepadAxisCallback, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [stickInRangeTriggerZone, 1], callback };
     addGamepadAxisOutRangeListener(axis, listener, gamepadIndex);
 
@@ -421,7 +424,7 @@ export function addGamepadAxisOutRangePositiveListener(axis: number, callback: (
  * @returns A function to {@link removeGamepadAxisOutRangeListener} to remove the listener.
  * @uses {@link addGamepadAxisOutRangeListener}
  */
-export function addGamepadAxisOutRangeNegativeListener(axis: number, callback: () => void, gamepadIndex?: number): () => void {
+export function addGamepadAxisOutRangeNegativeListener(axis: number, callback: GamepadAxisCallback, gamepadIndex?: number): () => void {
     const listener: GamepadAxisRangeListener = { range: [-1, -stickInRangeTriggerZone], callback };
     addGamepadAxisOutRangeListener(axis, listener, gamepadIndex);
 
