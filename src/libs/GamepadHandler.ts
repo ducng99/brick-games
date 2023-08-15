@@ -473,7 +473,7 @@ export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boo
  * Check if a stick axis is in range.
  * @param axis The axis to check. If not provided, checks all axes.
  * @param range An array containing lower and upper bounds of the range. From -1 to 1.
- * @param gamepadIndex Gamepad index. If not provided, checks all gamepads.
+ * @param gamepadIndex Gamepad index. If not provided, checks all gamepads - only check gamepads with standard mapping to avoid unconventional devices.
  * @returns `true` if the stick is down. `false` if the stick is not down or if the gamepad does not support the specified axis.
  */
 export function isGamepadStickDown(range: [lower: number, upper: number], axis?: number, gamepadIndex?: number): boolean {
@@ -497,7 +497,7 @@ export function isGamepadStickDown(range: [lower: number, upper: number], axis?:
             }
         }
     } else {
-        const _gamepads = Object.values(gamepads);
+        const _gamepads = Object.values(gamepads).filter(gamepad => gamepad.controller.mapping === 'standard');
 
         for (let i = 0; i < _gamepads.length; i++) {
             const gamepad = _gamepads[i];
