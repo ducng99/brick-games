@@ -36,10 +36,10 @@ jobs:
           cache: yarn
 
       - name: Run install
-        run: yarn --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
       - name: Run svelte-check
-        run: yarn check
+        run: yarn run check
 
       - name: Lint check
-        run: yarn lint
+        run: yarn run lint

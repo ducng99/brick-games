@@ -35,10 +35,10 @@ jobs:
           cache: yarn
 
       - name: Run install
-        run: yarn install --frozen-lockfile --prod
+        run: yarn install --frozen-lockfile --production
 
       - name: Build static files
-        run: yarn build:prod
+        run: yarn run build:prod
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
