@@ -258,7 +258,7 @@ class CarRacingBrain extends Brain {
 
     set currentScore(score: number) {
         this._currentScore = score;
-        this.hiScoreStore.set(score);
+        this.hiScoreStore.update(hiScore => hiScore > score ? hiScore : score);
         this.score.set(padLeft(clamp(score ?? 0, 0, 999999), 3));
     };
 

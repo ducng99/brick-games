@@ -38,7 +38,12 @@ const GamesList: Record<string, GameInfo[]> = {
             animation: async () => (await import('./pong/v3/MenuAnimation')).default,
             loader: async () => (await import('./pong/v3')).default
         }
-    ]
+    ],
+    'shoot-bricks': [{
+        name: 'Shoot Bricks',
+        animation: async () => (await import('./shoot-bricks/MenuAnimation')).default,
+        loader: async () => (await import('./shoot-bricks')).default
+    }]
 };
 
 export default GamesList;
