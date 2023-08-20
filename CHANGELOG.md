@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.4] - 2023-08-20
+
+### ⛰️  Features
+
+- Added spinning LetterC
+- Returns gamepadIndex which button was pressed
+- Added shoot-bricks game 🎉
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deps)* Bump sass from 1.65.1 to 1.66.1
+- *(deps-dev)* Bump eslint-plugin-import from 2.28.0 to 2.28.1
+- Only checks standard mapping gamepad for axes in range
+
 ## [0.6.3] - 2023-08-14
 
 ### ⛰️  Features
