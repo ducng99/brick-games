@@ -435,9 +435,10 @@ export function addGamepadAxisOutRangeNegativeListener(axis: number, callback: G
  * Check if a button is down or if any button is down.
  * @param button If specified, checks if the button is being pressed. Otherwise, checks if any button is being pressed.
  * @param gamepadIndex If specified, only checks the specified gamepad. Otherwise, checks all gamepads.
+ * @param ref If specified, the gamepad index will be written to this object.
  * @returns `true` if the button is down or if any button is down.
  */
-export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boolean {
+export function isGamepadButtonDown(button?: number, gamepadIndex?: number, ref?: { gamepadIndex: number }): boolean {
     if (typeof gamepadIndex === 'number') {
         if (gamepadIndex in gamepads) {
             const buttonsPressed = gamepads[gamepadIndex]?.buttonsDown;
@@ -445,6 +446,10 @@ export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boo
             if (buttonsPressed) {
                 if (typeof button === 'number') {
                     return buttonsPressed.has(button);
+                }
+
+                if (ref) {
+                    ref.gamepadIndex = gamepadIndex;
                 }
 
                 return buttonsPressed.size > 0;
@@ -458,9 +463,17 @@ export function isGamepadButtonDown(button?: number, gamepadIndex?: number): boo
 
             if (typeof button === 'number') {
                 if (gamepad.buttonsDown.has(button)) {
+                    if (ref) {
+                        ref.gamepadIndex = gamepad.controller.index;
+                    }
+
                     return true;
                 }
             } else if (gamepad.buttonsDown.size > 0) {
+                if (ref) {
+                    ref.gamepadIndex = gamepad.controller.index;
+                }
+
                 return true;
             }
         }
