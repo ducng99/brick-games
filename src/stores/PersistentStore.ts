@@ -15,6 +15,7 @@ export class PersistentStore<T> implements Writable<T> {
      */
     constructor(key: string, value: T) {
         this._key = key;
+        this._value = value;
 
         const storedValue = localStorage.getItem(key);
         if (storedValue) {

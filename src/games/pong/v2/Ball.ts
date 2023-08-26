@@ -30,6 +30,9 @@ class Ball extends Entity {
             case 5:
                 this.direction = 'right-straight';
                 break;
+            default:
+                this.direction = 'up-right';
+                break;
         }
     }
 
