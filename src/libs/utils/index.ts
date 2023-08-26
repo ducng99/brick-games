@@ -68,7 +68,7 @@ export function removeKeyFromObject<K extends string | number | symbol, V>(obj: 
  */
 export function filterObject<K extends string | number | symbol, V>(obj: Record<K, V>, predicate: (key: K, value: V) => boolean): Omit<Record<K, V>, K> {
     return Object.keys(obj).reduce<Record<K, V>>((r, e) => {
-        if (predicate(e as K, obj[e])) r[e] = obj[e];
+        if (predicate(e as K, obj[e as K])) r[e as K] = obj[e as K];
         return r;
     // @ts-expect-error it's an empty object bruh
     }, {}) as Omit<Record<K, V>, K>;

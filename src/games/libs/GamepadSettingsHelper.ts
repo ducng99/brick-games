@@ -49,9 +49,16 @@ export class GamepadSettingsHelper<T> {
      * @returns Gamepad index for the player, -1 if not found
      */
     getGamepadForPlayer(player: number) {
-        const gamepadIndex = Object.keys(this.settings).find(index => this.settings[index].player === player);
+        let gamepadIndex = -1;
 
-        return gamepadIndex ? Number.parseInt(gamepadIndex) : -1;
+        for (const index in this.settings) {
+            if (this.settings[(index as unknown) as number].player === player) {
+                gamepadIndex = Number.parseInt(index);
+                break;
+            }
+        }
+
+        return gamepadIndex;
     }
 
     get settings() {
