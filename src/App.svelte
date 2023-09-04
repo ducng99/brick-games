@@ -15,6 +15,7 @@
     import { GamepadStandardButton, addGamepadButtonDownListener, removeGamepadButtonDownListener } from './libs/GamepadHandler';
     import Modals from './components/Modals.svelte';
     import { ModalsInstanceStore } from './stores/ModalStore';
+    import { initAudio } from './libs/AudioHandler';
 
     let windowWidth = 0;
     let windowHeight = 0;
@@ -78,6 +79,8 @@
                 $RendererInstanceStore?.clearScreen();
             }
         });
+
+        initAudio();
 
         return () => {
             removeOnKeyDownListener('KeyR', restartGame);
