@@ -6,7 +6,7 @@ export enum AudioTypes {
     Click
 }
 
-const audiosCache = new Map<AudioTypes, AudioBuffer>();
+const audiosCache: Partial<Record<AudioTypes, AudioBuffer>> = {};
 
 export function initAudio() {
     // Loads all the audio files
@@ -18,8 +18,8 @@ export function initAudio() {
 }
 
 async function cacheAudio(type: AudioTypes, filepath: string) {
-    if (!audiosCache.has(type)) {
-        audiosCache.set(type, await loadAudioFile(filepath));
+    if (!(type in audiosCache)) {
+        audiosCache[type] = await loadAudioFile(filepath);
     }
 }
 
@@ -36,19 +36,21 @@ async function loadAudioFile(filepath: string) {
     return audioBuffer;
 }
 
+/**
+ * Plays an audio
+ * @param type The type of the audio to play
+ */
 export function playAudio(type: AudioTypes) {
     if (audioCtx.state === 'suspended') {
         audioCtx.resume().catch(() => { console.error('Failed to resume audio context'); });
     }
 
-    if (audiosCache.has(type)) {
-        const audioBuffer = audiosCache.get(type);
-
-        if (audioBuffer) {
-            const source = audioCtx.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioCtx.destination);
-            source.start(0);
-        }
+    if (type in audiosCache) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const audioBuffer = audiosCache[type]!;
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
     }
 }

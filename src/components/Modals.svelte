@@ -68,6 +68,7 @@
             if (modal) {
                 modal.buttons[currentButtonIndex].onClick?.();
                 modal.buttons[currentButtonIndex].closeAfterClick && closeCurrentModal();
+                playAudio(AudioTypes.Click);
             }
         });
 
