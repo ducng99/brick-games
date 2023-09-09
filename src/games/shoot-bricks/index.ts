@@ -1,3 +1,4 @@
+import { AudioTypes, playAudio } from '../../libs/AudioHandler';
 import { isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive, vibrateGamepad, getAllGamepadIndexes } from '../../libs/GamepadHandler';
 import { isKeyDown } from '../../libs/KeyboardHandler';
 import { padLeft, clamp } from '../../libs/utils';
@@ -141,6 +142,8 @@ class ShootingBricksBrain extends Brain {
                         vibrateGamepad(gamepadIndexShot.gamepadIndex, 1.0, 120).catch(() => {});
                     }
 
+                    // Play sound on shoot
+                    playAudio(AudioTypes.LaserShoot);
                     this._lastShoot = timestamp;
                 }
             } else {
@@ -235,6 +238,8 @@ class ShootingBricksBrain extends Brain {
         getAllGamepadIndexes().forEach(index => {
             vibrateGamepad(index, 1.0, 1000).catch(() => {});
         });
+
+        playAudio(AudioTypes.Explosion);
     };
 
     get player(): Player {

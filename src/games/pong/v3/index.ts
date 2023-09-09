@@ -1,3 +1,4 @@
+import { AudioTypes, playAudio } from '../../../libs/AudioHandler';
 import { addGamepadConnectedListener, canGamepadVibrate, vibrateGamepad, isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive, addGamepadButtonDownListener, addGamepadButtonUpListener, removeGamepadConnectedListener, removeGamepadButtonDownListener, removeGamepadButtonUpListener } from '../../../libs/GamepadHandler';
 import { addOnKeyDownListener, addOnKeyUpListener, isKeyDown, removeOnKeyDownListener, removeOnKeyUpListener } from '../../../libs/KeyboardHandler';
 import { padLeft } from '../../../libs/utils';
@@ -237,9 +238,13 @@ class PongBrain extends Brain {
                         if (this.ball.x < 0) {
                             this.restart();
                             this.playerRightScore++;
+
+                            playAudio(AudioTypes.PickupCoin);
                         } else if (this.ball.x >= rendererWidth) {
                             this.restart();
                             this.playerLeftScore++;
+
+                            playAudio(AudioTypes.PickupCoin);
                         }
                     }
                 }
@@ -311,6 +316,7 @@ class PongBrain extends Brain {
             this.handlePowerKeyUp(this._playerRight);
         } else {
             // Vibrate gamepad of the colliding player
+            // * We only vibrate if power key is not down as gamepad is already vibrating
             const gamepadIndex = this.gamepadHelper().getGamepadForPlayer(playerID);
             if (gamepadIndex >= 0) {
                 vibrateGamepad(gamepadIndex, 1.0, 150).catch(() => {});
@@ -332,6 +338,9 @@ class PongBrain extends Brain {
             default:
                 break;
         }
+
+        // Play sound
+        playAudio(AudioTypes.Hit);
     }
 
     onGamepadConnected = (gamepadIndex: number, gamepadId: string) => {
