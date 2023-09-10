@@ -1,4 +1,4 @@
-{
+module.exports = {
     "env": {
         "browser": true,
         "es2021": true
@@ -27,7 +27,8 @@
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": "./tsconfig.json",
+        "project": "tsconfig.json",
+        "tsconfigRootDir": __dirname,
         "extraFileExtensions": [ ".svelte" ]
     },
     "rules": {

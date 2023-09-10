@@ -12,6 +12,7 @@ import { numberToEntity } from './libs/common-entities/numbers';
 import { getHiScoreStore } from '../stores/HighscoresStore';
 import { showHighScore } from '../stores/SettingsStore';
 import { addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, GamepadStandardAxis, GamepadStandardButton, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
+import { AudioTypes, playAudio } from '../libs/AudioHandler';
 
 /**
  * Used to detect which game is currently selected in the menu.
@@ -139,20 +140,24 @@ class GameMenu extends Brain {
 
     selectPreviousGame = () => {
         menuCurrentGameIndexStore.update(index => (index - 1 + this._gamesArray.length) % this._gamesArray.length);
+        playAudio(AudioTypes.Click);
     };
 
     selectNextGame = () => {
         menuCurrentGameIndexStore.update(index => (index + 1) % this._gamesArray.length);
+        playAudio(AudioTypes.Click);
     };
 
     selectPreviousGameVariant = () => {
         const variants = GamesList[menuCurrentGameId].length;
         menuCurrentGameVariantStore.update(variant => (((variant - 1) % variants) + variants) % variants);
+        playAudio(AudioTypes.Click);
     };
 
     selectNextGameVariant = () => {
         const variants = GamesList[menuCurrentGameId].length;
         menuCurrentGameVariantStore.update(variant => (variant + 1) % variants);
+        playAudio(AudioTypes.Click);
     };
 
     loadLetterAnimation = (index: number) => {
