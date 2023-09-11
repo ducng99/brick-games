@@ -149,14 +149,14 @@ class GameMenu extends Brain {
     };
 
     selectPreviousGameVariant = () => {
-        const variants = GamesList[menuCurrentGameId].length;
-        menuCurrentGameVariantStore.update(variant => (((variant - 1) % variants) + variants) % variants);
+        const variantsLength = GamesList[menuCurrentGameId].length;
+        menuCurrentGameVariantStore.update(variant => (variant - 1 + variantsLength) % variantsLength);
         playAudio(AudioTypes.Click);
     };
 
     selectNextGameVariant = () => {
-        const variants = GamesList[menuCurrentGameId].length;
-        menuCurrentGameVariantStore.update(variant => (variant + 1) % variants);
+        const variantsLength = GamesList[menuCurrentGameId].length;
+        menuCurrentGameVariantStore.update(variant => (variant + 1) % variantsLength);
         playAudio(AudioTypes.Click);
     };
 
