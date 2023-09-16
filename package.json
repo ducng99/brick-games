@@ -27,7 +27,7 @@
     "svelte-check": "^3.5.1"
   },
   "dependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.4.5",
+    "@sveltejs/vite-plugin-svelte": "^2.4.6",
     "@tsconfig/svelte": "^5.0.2",
     "dompurify": "^3.0.5",
     "lz-string": "^1.5.0",
