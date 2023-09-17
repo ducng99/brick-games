@@ -8,7 +8,7 @@ import WipeBottomToTopTransition from '../libs/common-entities/WipeBottomToTopTr
 import { clamp, padLeft, randomInt } from '../../libs/utils';
 import { RendererMiniInstance } from '../../stores/RendererMiniStore';
 import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, canGamepadVibrate, getAllGamepadIndexes, isGamepadButtonDown, removeGamepadButtonDownListener, vibrateGamepad } from '../../libs/GamepadHandler';
-import { AudioTypes, playAudio } from '../../libs/AudioHandler';
+import { AudioTypes, getAudioPlayer } from '../../libs/AudioHandler';
 
 const carHeight = 4;
 const carWidth = 3;
@@ -252,7 +252,7 @@ class CarRacingBrain extends Brain {
             vibrateGamepad(index, 1.0, 1000).catch(() => {});
         });
 
-        playAudio(AudioTypes.Explosion);
+        getAudioPlayer(AudioTypes.Explosion)?.play();
     };
 
     get currentScore() {

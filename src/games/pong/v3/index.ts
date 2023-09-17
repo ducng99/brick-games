@@ -1,4 +1,4 @@
-import { AudioTypes, playAudio } from '../../../libs/AudioHandler';
+import { AudioTypes, getAudioPlayer } from '../../../libs/AudioHandler';
 import { addGamepadConnectedListener, canGamepadVibrate, vibrateGamepad, isGamepadButtonDown, GamepadStandardButton, isGamepadStickNegative, GamepadStandardAxis, isGamepadStickPositive, addGamepadButtonDownListener, addGamepadButtonUpListener, removeGamepadConnectedListener, removeGamepadButtonDownListener, removeGamepadButtonUpListener } from '../../../libs/GamepadHandler';
 import { addOnKeyDownListener, addOnKeyUpListener, isKeyDown, removeOnKeyDownListener, removeOnKeyUpListener } from '../../../libs/KeyboardHandler';
 import { padLeft } from '../../../libs/utils';
@@ -239,12 +239,12 @@ class PongBrain extends Brain {
                             this.restart();
                             this.playerRightScore++;
 
-                            playAudio(AudioTypes.PickupCoin);
+                            getAudioPlayer(AudioTypes.PickupCoin)?.play();
                         } else if (this.ball.x >= rendererWidth) {
                             this.restart();
                             this.playerLeftScore++;
 
-                            playAudio(AudioTypes.PickupCoin);
+                            getAudioPlayer(AudioTypes.PickupCoin)?.play();
                         }
                     }
                 }
@@ -340,7 +340,7 @@ class PongBrain extends Brain {
         }
 
         // Play sound
-        playAudio(AudioTypes.Hit);
+        getAudioPlayer(AudioTypes.Hit)?.play();
     }
 
     onGamepadConnected = (gamepadIndex: number, gamepadId: string) => {

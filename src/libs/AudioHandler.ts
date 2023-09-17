@@ -14,7 +14,7 @@ export enum AudioTypes {
     PickupCoin,
 }
 
-const audiosCache: Partial<Record<AudioTypes | string, AudioBuffer>> = {};
+const audiosCache: Partial<Record<AudioTypes | string, AudioPlayer>> = {};
 
 /**
  * Preloads all the audio files
@@ -52,7 +52,7 @@ async function loadAudioFile(filepath: string) {
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-    return audioBuffer;
+    return new AudioPlayer(audioBuffer);
 }
 
 /**
@@ -60,20 +60,17 @@ async function loadAudioFile(filepath: string) {
  * @param type The type of the audio to play
  * @param repeat The number of times to repeat the audio. Default is 1
  */
-export function playAudio(type: AudioTypes, repeat = 1) {
+export function getAudioPlayer(type: AudioTypes): AudioPlayer | null {
     if (audioCtx.state === 'suspended') {
         audioCtx.resume().catch(() => { console.error('Failed to resume audio context'); });
     }
 
-    if (type in audiosCache) {
-        for (let i = 0; i < repeat; i++) {
-            const source = audioCtx.createBufferSource();
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            source.buffer = audiosCache[type]!;
-            source.connect(audioCtx.destination);
-            source.start();
-        }
+    if (type in audiosCache && typeof audiosCache[type] !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return audiosCache[type]!;
     }
+
+    return null;
 }
 
 /**
@@ -82,16 +79,38 @@ export function playAudio(type: AudioTypes, repeat = 1) {
  * @param repeat The number of times to repeat the audio. Default is 1
  * @returns The audio buffer
  */
-export async function playCustomAudio(filepath: string, repeat = 1) {
+export async function getCustomAudioPlayer(filepath: string) {
     if (!(filepath in audiosCache)) {
         audiosCache[filepath] = await loadAudioFile(filepath);
     }
 
-    for (let i = 0; i < repeat; i++) {
-        const source = audioCtx.createBufferSource();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        source.buffer = audiosCache[filepath]!;
-        source.connect(audioCtx.destination);
-        source.start();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return audiosCache[filepath]!;
+}
+
+export class AudioPlayer {
+    private readonly audioBuffer: AudioBuffer;
+    private source?: AudioBufferSourceNode;
+
+    constructor(audioBuffer: AudioBuffer) {
+        this.audioBuffer = audioBuffer;
+    }
+
+    play() {
+        if (!this.source) {
+            this.source = audioCtx.createBufferSource();
+            this.source.buffer = this.audioBuffer;
+            this.source.connect(audioCtx.destination);
+            this.source.addEventListener('ended', () => {
+                this.source?.disconnect();
+                this.source = undefined;
+            });
+        }
+
+        this.source.start();
+    }
+
+    stop() {
+        this.source?.stop();
     }
 }

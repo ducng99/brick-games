@@ -4,7 +4,7 @@
     import { GamepadStandardAxis, GamepadStandardButton, addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
     import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
     import { removeKeyFromObject, uuidv4 } from '../libs/utils';
-    import { AudioTypes, playAudio } from '../libs/AudioHandler';
+    import { AudioTypes, getAudioPlayer } from '../libs/AudioHandler';
 
     interface ModalButton {
         text: string;
@@ -47,7 +47,7 @@
         const highlightPreviousButton = addOnKeyDownListener('ArrowLeft', () => {
             if (modal) {
                 currentButtonIndex = (currentButtonIndex - 1 + modal.buttons.length) % modal.buttons.length;
-                playAudio(AudioTypes.Click);
+                getAudioPlayer(AudioTypes.Click)?.play();
             }
         });
 
@@ -57,7 +57,7 @@
         const highlightNextButton = addOnKeyDownListener('ArrowRight', () => {
             if (modal) {
                 currentButtonIndex = (currentButtonIndex + 1) % modal.buttons.length;
-                playAudio(AudioTypes.Click);
+                getAudioPlayer(AudioTypes.Click)?.play();
             }
         });
 
@@ -68,7 +68,7 @@
             if (modal) {
                 modal.buttons[currentButtonIndex].onClick?.();
                 modal.buttons[currentButtonIndex].closeAfterClick && closeCurrentModal();
-                playAudio(AudioTypes.Click);
+                getAudioPlayer(AudioTypes.Click)?.play();
             }
         });
 
