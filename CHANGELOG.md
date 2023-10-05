@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2023-10-05
+
+### ⛰️  Features
+
+- *(audio)* Added simple AudioHandler 🎶
+- *(audio)* Added audio for all games (no bg music yet)
+- *(audio)* Added sfx to GameMenu
+
+### 🐛 Bug Fixes
+
+- Fixed some errors with TS 5.2
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deps)* Bump typescript from 5.0.4 to 5.2.2
+- *(deps)* Bump @tsconfig/svelte from 5.0.0 to 5.0.2
+- *(deps)* Bump sass from 1.66.1 to 1.67.0
+- *(deps)* Bump @sveltejs/vite-plugin-svelte from 2.4.5 to 2.4.6
+- *(deps)* Bump sass from 1.67.0 to 1.68.0
+- *(deps)* Bump svelte from 4.2.0 to 4.2.1
+- *(deps)* Bump dompurify from 3.0.5 to 3.0.6
+- *(deps)* Bump postcss from 8.4.28 to 8.4.31
+- *(deps-dev)* Bump eslint from 8.47.0 to 8.48.0
+- *(deps-dev)* Bump eslint-plugin-n from 16.0.1 to 16.0.2
+- *(deps-dev)* Bump eslint-plugin-svelte from 2.32.4 to 2.33.0
+- *(deps-dev)* Bump svelte-check from 3.5.0 to 3.5.1
+- *(deps-dev)* Bump eslint-plugin-svelte from 2.33.0 to 2.33.1
+- *(deps-dev)* Bump eslint from 8.48.0 to 8.49.0
+- *(deps-dev)* Bump eslint-plugin-n from 16.0.2 to 16.1.0
+- *(deps-dev)* Bump svelte-check from 3.5.1 to 3.5.2
+- *(deps-dev)* Bump @types/dompurify from 3.0.2 to 3.0.3
+- *(deps-dev)* Bump eslint-plugin-svelte from 2.33.1 to 2.33.2
+- *(deps-dev)* Bump eslint from 8.49.0 to 8.50.0
+
 ## [0.6.4] - 2023-08-20
 
 ### ⛰️  Features
