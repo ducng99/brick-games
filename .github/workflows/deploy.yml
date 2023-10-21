@@ -32,13 +32,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: yarn
+          cache: npm
 
       - name: Run install
-        run: yarn install --frozen-lockfile --production
+        run: npm install --production
 
       - name: Build static files
-        run: yarn run build:prod
+        run: npm run build:prod
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1

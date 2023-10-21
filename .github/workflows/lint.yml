@@ -11,7 +11,7 @@ on:
       - ".eslintrc.json"
       - "tsconfig.json"
       - "package.json"
-      - "yarn.lock"
+      - "package-lock.json"
 
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -33,13 +33,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: yarn
+          cache: npm
 
       - name: Run install
-        run: yarn install --frozen-lockfile
+        run: npm install
 
       - name: Run svelte-check
-        run: yarn run check
+        run: npm run check
 
       - name: Lint check
-        run: yarn run lint
+        run: npm run lint
