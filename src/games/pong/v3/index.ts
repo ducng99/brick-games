@@ -263,9 +263,6 @@ class PongBrain extends Brain {
     }
 
     restart() {
-        this._playerLeft.power = 0;
-        this._playerRight.power = 0;
-
         clearInterval(this._playerLeftPowerVibratingInterval);
         clearInterval(this._playerRightPowerVibratingInterval);
 
