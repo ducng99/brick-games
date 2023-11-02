@@ -9,6 +9,8 @@ export async function charToLetter(char: string): Promise<Callable<AnimatedFrame
             return (await import('./LetterB')).default;
         case 'c':
             return (await import('./LetterC')).default;
+        case 'd':
+            return (await import('./LetterD')).default;
         default:
             break;
     }
