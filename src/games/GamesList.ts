@@ -43,6 +43,11 @@ const GamesList: Record<string, GameInfo[]> = {
         name: 'Shoot Bricks',
         animation: async () => (await import('./shoot-bricks/MenuAnimation')).default,
         loader: async () => (await import('./shoot-bricks')).default
+    }],
+    'flappy-brick': [{
+        name: 'Flappy Brick',
+        animation: async () => (await import('./flappy-brick/MenuAnimation')).default,
+        loader: async () => (await import('./flappy-brick')).default
     }]
 };
 
