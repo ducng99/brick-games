@@ -3,6 +3,7 @@ import AudioSoundLaserShoot from '@/assets/sounds/laserShoot.wav?url';
 import AudioSoundExplosion from '@/assets/sounds/explosion.wav?url';
 import AudioSoundHit from '@/assets/sounds/hit.wav?url';
 import AudioSoundPickupCoin from '@/assets/sounds/pickupCoin.wav?url';
+import AudioSoundJump from '@/assets/sounds/jump.wav?url';
 
 const audioCtx = new AudioContext();
 
@@ -12,6 +13,7 @@ export enum AudioTypes {
     Explosion,
     Hit,
     PickupCoin,
+    Jump,
 }
 
 const audiosCache: Partial<Record<AudioTypes | string, AudioBuffer>> = {};
@@ -25,7 +27,8 @@ export function initAudio() {
         cacheAudio(AudioTypes.LaserShoot, AudioSoundLaserShoot),
         cacheAudio(AudioTypes.Explosion, AudioSoundExplosion),
         cacheAudio(AudioTypes.Hit, AudioSoundHit),
-        cacheAudio(AudioTypes.PickupCoin, AudioSoundPickupCoin)
+        cacheAudio(AudioTypes.PickupCoin, AudioSoundPickupCoin),
+        cacheAudio(AudioTypes.Jump, AudioSoundJump)
     ]).catch(err => {
         console.error(err);
     });
