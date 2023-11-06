@@ -31,8 +31,12 @@ class FlappyBrick extends Brain {
 
     start() {
         // Setup controls
-        addOnKeyDownListener('Space', () => { this.player.jump(); });
-        addGamepadButtonDownListener(GamepadStandardButton.A, () => { this.player.jump(); });
+        const playerJump = addOnKeyDownListener('Space', () => {
+            this.player.jump();
+            getAudioPlayer(AudioTypes.Jump)?.play();
+        });
+
+        addGamepadButtonDownListener(GamepadStandardButton.A, playerJump);
 
         this.restart();
         return super.start();
@@ -101,6 +105,7 @@ class FlappyBrick extends Brain {
 
                     if (this._pipes[i].x === this.player.x - 1) {
                         this.currentScore++;
+                        getAudioPlayer(AudioTypes.PickupCoin)?.play();
                     } else if (this._pipes[i].isColliding(this.player)) {
                         playerCollided = true;
                         this.createExplosion(this.player.x, this.player.y);
