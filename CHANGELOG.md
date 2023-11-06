@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1] - 2023-11-06
+
+### ⛰️  Features
+
+- *(flappy-brick)* Added audio on jump and score
+
+### 🐛 Bug Fixes
+
+- *(audio)* Fixed audio error when start() called while playing
+
 ## [0.7.0] - 2023-10-05
 
 ### ⛰️  Features
