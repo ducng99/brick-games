@@ -14,7 +14,7 @@ export enum AudioTypes {
     PickupCoin,
 }
 
-const audiosCache: Partial<Record<AudioTypes | string, AudioPlayer>> = {};
+const audiosCache: Partial<Record<AudioTypes | string, AudioBuffer>> = {};
 
 /**
  * Preloads all the audio files
@@ -50,9 +50,7 @@ async function cacheAudio(type: AudioTypes, filepath: string) {
 async function loadAudioFile(filepath: string) {
     const response = await fetch(filepath);
     const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-    return new AudioPlayer(audioBuffer);
+    return await audioCtx.decodeAudioData(arrayBuffer);
 }
 
 /**
@@ -67,7 +65,7 @@ export function getAudioPlayer(type: AudioTypes): AudioPlayer | null {
 
     if (type in audiosCache && typeof audiosCache[type] !== 'undefined') {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return audiosCache[type]!;
+        return new AudioPlayer(audiosCache[type]!);
     }
 
     return null;
@@ -91,23 +89,31 @@ export async function getCustomAudioPlayer(filepath: string) {
 export class AudioPlayer {
     private readonly audioBuffer: AudioBuffer;
     private source?: AudioBufferSourceNode;
+    private isPlaying = false;
 
     constructor(audioBuffer: AudioBuffer) {
         this.audioBuffer = audioBuffer;
     }
 
     play() {
-        if (!this.source) {
-            this.source = audioCtx.createBufferSource();
-            this.source.buffer = this.audioBuffer;
-            this.source.connect(audioCtx.destination);
-            this.source.addEventListener('ended', () => {
-                this.source?.disconnect();
-                this.source = undefined;
-            });
-        }
+        try {
+            if (!this.source) {
+                this.source = audioCtx.createBufferSource();
+                this.source.buffer = this.audioBuffer;
+                this.source.connect(audioCtx.destination);
+                this.source.addEventListener('ended', () => {
+                    this.source?.disconnect();
+                    this.source = undefined;
+                });
+            }
 
-        this.source.start();
+            if (!this.isPlaying) {
+                this.source.start();
+                this.isPlaying = true;
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     stop() {
