@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { addOnKeyDownListener, removeOnKeyDownListener } from '../libs/KeyboardHandler';
+import { addOnKeyDownListener, addOnKeyUpListener, removeOnKeyDownListener, removeOnKeyUpListener } from '../libs/KeyboardHandler';
 import GamesList, { CurrentGameId, CurrentGameVariant } from './GamesList';
 import Brain from './libs/Brain';
 import type AnimatedFrames from './libs/AnimatedFrames';
@@ -11,7 +11,7 @@ import type Entity from './libs/Entity';
 import { numberToEntity } from './libs/common-entities/numbers';
 import { getHiScoreStore } from '../stores/HighscoresStore';
 import { showHighScore } from '../stores/SettingsStore';
-import { addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, GamepadStandardAxis, GamepadStandardButton, removeGamepadButtonDownListener } from '../libs/GamepadHandler';
+import { addGamepadAxisInRangeNegativeListener, addGamepadAxisInRangePositiveListener, addGamepadButtonDownListener, addGamepadButtonUpListener, GamepadStandardAxis, GamepadStandardButton, removeGamepadButtonDownListener, removeGamepadButtonUpListener } from '../libs/GamepadHandler';
 import { AudioTypes, getAudioPlayer } from '../libs/AudioHandler';
 
 /**
@@ -64,7 +64,7 @@ class GameMenu extends Brain {
         addOnKeyDownListener('ArrowRight', this.selectNextGame);
         addOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
         addOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
-        addOnKeyDownListener('Space', loadGame);
+        addOnKeyUpListener('Space', loadGame);
 
         addGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
         addGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
@@ -76,7 +76,7 @@ class GameMenu extends Brain {
             addGamepadAxisInRangeNegativeListener(GamepadStandardAxis.LeftStickY, this.selectNextGameVariant),
             addGamepadAxisInRangePositiveListener(GamepadStandardAxis.LeftStickY, this.selectPreviousGameVariant)
         );
-        addGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
+        addGamepadButtonUpListener(GamepadStandardButton.A, loadGame);
 
         // Show high score
         showHighScore.set(true);
@@ -127,13 +127,13 @@ class GameMenu extends Brain {
         removeOnKeyDownListener('ArrowRight', this.selectNextGame);
         removeOnKeyDownListener('ArrowUp', this.selectNextGameVariant);
         removeOnKeyDownListener('ArrowDown', this.selectPreviousGameVariant);
-        removeOnKeyDownListener('Space', loadGame);
+        removeOnKeyUpListener('Space', loadGame);
 
         removeGamepadButtonDownListener(GamepadStandardButton.DPadLeft, this.selectPreviousGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadRight, this.selectNextGame);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadUp, this.selectNextGameVariant);
         removeGamepadButtonDownListener(GamepadStandardButton.DPadDown, this.selectPreviousGameVariant);
-        removeGamepadButtonDownListener(GamepadStandardButton.A, loadGame);
+        removeGamepadButtonUpListener(GamepadStandardButton.A, loadGame);
 
         return super.stop();
     }
